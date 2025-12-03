@@ -1,0 +1,47 @@
+/* Base */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  line-height: 1.6;
+  background-color: #fdfdfd;
+  color: #111;
+}
+
+/* Layout */
+main {
+  padding: 24px;
+}
+
+main > section,
+header,
+footer {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* Sections */
+main > section + section {
+  margin-top: 24px;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+
+p {
+  margin-bottom: 12px;
+}
+
+/* Footer */
+footer {
+  padding-bottom: 32px;
+  text-align: center;
+  font-size: 0.9rem;
+}
