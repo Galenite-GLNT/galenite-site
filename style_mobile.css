@@ -1,189 +1,272 @@
 /* ===== MOBILE STYLE FOR GALENITE ===== */
-/* Подключен в head так:
-<link rel="stylesheet" href="style_mobile.css" media="(max-width: 900px)">
+/* Файл подключен так:
+   <link rel="stylesheet" href="style_mobile.css" media="(max-width: 900px)">
 */
 
 /* HEADER */
 .header {
-  padding-top: 10px !important;
-  padding-bottom: 6px !important;
-  background: rgba(221, 226, 238, 0.9) !important;
+  padding-top: 10px;
+  padding-bottom: 6px;
+  background: rgba(221, 226, 238, 0.96);
 }
 
 .logo-img {
-  width: 28px !important;
+  width: 28px;
 }
 
 /* NAV */
 .nav {
-  font-size: 9px !important;
-  letter-spacing: 0.18em !important;
-  padding: 0 16px !important;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  padding: 0 16px;
 }
 
 .nav-group {
-  gap: 10px !important;
+  gap: 10px;
 }
 
-/* Блоки по высоте контента */
+/* БЛОКИ — высота по контенту */
 .block {
-  aspect-ratio: unset !important;
-  padding: 32px 0 !important;
-  flex-direction: column !important;
+  aspect-ratio: unset;
+  padding: 32px 0;
+  flex-direction: column;
 }
 
 /* HERO */
-.hero-title {
-  font-size: 32px !important;
-  line-height: 1.05 !important;
-}
-
 .block-hero {
-  padding-top: 40px !important;
-  padding-bottom: 40px !important;
+  padding: 32px 0 40px;
 }
 
 .block-hero::before {
-  background-size: 180% auto !important;
-  opacity: 0.7 !important;
+  background-size: 220% auto;
+  opacity: 0.7;
 }
 
-/* BLOCK 2 (Цель) */
+.hero-inner {
+  flex-direction: column;
+  gap: 28px;
+  padding: 32px 18px 40px;
+}
+
+.hero-text {
+  text-align: left;
+}
+
+.hero-kicker {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+}
+
+.hero-title {
+  font-size: 28px;
+}
+
+.hero-subtitle {
+  font-size: 14px;
+  max-width: none;
+}
+
+.hero-actions {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.btn {
+  width: 100%;
+  justify-content: center;
+}
+
+.hero-visual {
+  width: 100%;
+  justify-content: center;
+}
+
+.hero-crystal {
+  position: static;
+  width: 220px;
+  margin-bottom: 10px;
+}
+
+.hero-phone {
+  transform: none;
+  animation: none;
+}
+
+.hero-phone img {
+  height: 320px;
+}
+
+/* BLOCK 2 (GOAL) */
 .block-goal {
-  padding: 24px 0 40px !important;
+  padding: 24px 0 38px;
 }
 
 .goal-inner {
-  flex-direction: column !important;
-  align-items: flex-start !important;
-  gap: 20px !important;
-  padding: 0 16px !important;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 22px;
+  padding: 0 16px;
 }
 
-.goal-image {
-  width: 100% !important;
-  justify-content: center !important;
+.goal-card {
+  width: 100%;
+  padding: 22px 18px 22px;
 }
 
-.goal-img {
-  width: 240px !important;
+.goal-title {
+  font-size: 22px;
 }
 
-/* BLOCK 3 (Tech) – чат + телефон + текст в колонку */
-/* Телефон лежит на спине между чатом и текстом */
+.goal-text {
+  font-size: 14px;
+}
+
+.goal-finance-icon {
+  width: 170px;
+}
+
+/* BLOCK 3 (TECH) — колоночная верстка,
+   телефон лежит на спине между чатом и текстом */
 
 .block-tech {
-  padding: 32px 0 40px !important;
+  padding: 30px 0 40px;
 }
 
 .tech-inner {
-  position: static !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  gap: 20px !important;
-  padding: 0 16px !important;
+  position: static;
+  width: 100%;
+  height: auto;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
 }
 
 .tech-chat,
 .tech-phone,
 .tech-content {
-  position: static !important;
-  transform: none !important;
-  margin: 0 !important;
-  width: 100% !important;
+  position: static;
+  transform: none;
+  margin: 0;
+  width: 100%;
 }
 
 .tech-chat {
-  max-width: 420px !important;
-}
-
-/* телефон как разделитель, лежит горизонтально */
-.tech-phone {
-  display: flex !important;
-  justify-content: center !important;
-}
-
-.tech-phone-img {
-  height: 220px !important;
-  width: auto !important;
-  animation: none !important;
-  transform: rotate(90deg) !important;
-  transform-origin: center center !important;
-  display: block !important;
-  margin: 8px 0 4px !important;
+  max-width: 420px;
 }
 
 .tech-chat-img {
-  animation: none !important;
+  animation: none;
+}
+
+/* телефон лежит горизонтально как разделитель */
+.tech-phone {
+  display: flex;
+  justify-content: center;
+}
+
+.tech-phone-img {
+  height: 220px;
+  width: auto;
+  animation: none;
+  transform: rotate(90deg);
+  transform-origin: center center;
 }
 
 .tech-content {
-  max-width: 480px !important;
+  max-width: 480px;
 }
 
-/* текст поменьше */
-.goal-title,
-.tech-title,
-.module-title {
-  font-size: 24px !important;
+.tech-title {
+  font-size: 22px;
 }
 
-.goal-text,
-.tech-text,
-.module-text {
-  font-size: 15px !important;
+.tech-text {
+  font-size: 14px;
 }
 
-/* BLOCK 4 (Modules) */
+/* BLOCK 4 (MODULES) */
 .block-modules {
-  padding: 32px 0 40px !important;
+  padding: 30px 0 40px;
 }
 
 .modules-inner {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 32px !important;
-  padding: 0 16px !important;
+  padding: 0 16px;
+}
+
+.modules-header {
+  margin-bottom: 24px;
+}
+
+.modules-title {
+  font-size: 24px;
+}
+
+.modules-subtitle {
+  font-size: 14px;
+}
+
+.modules-grid {
+  grid-template-columns: 1fr;
+  column-gap: 0;
+  row-gap: 22px;
 }
 
 .module-item {
-  gap: 14px !important;
-  padding: 12px 14px !important;
-  border-radius: 12px !important;
+  padding: 12px 12px;
+  gap: 14px;
 }
 
 .module-icon {
-  width: 70px !important;
+  width: 64px;
 }
 
-/* BLOCK 5 (Contacts) – убираем картинку, оставляем только текст */
-.block-contacts-simple {
-  aspect-ratio: unset !important;
-  padding: 32px 16px 48px !important;
-  background: none !important;      /* убираем фон-картинку */
+.module-title {
+  font-size: 20px;
 }
 
-/* вырубаем подсветку ::before */
-.block-contacts-simple::before {
-  display: none !important;
+.module-text {
+  font-size: 14px;
 }
 
-/* показываем текстовый слой нормально */
-.contacts-content {
-  display: flex !important;
-  position: static !important;
-  right: auto !important;
-  flex-direction: column !important;
-  gap: 10px !important;
-  align-items: center !important;
-  text-align: center !important;
-  font-size: 20px !important;
-  font-weight: 600 !important;
-  color: rgba(0,0,0,0.85) !important;
+/* BLOCK 5 (CONTACTS) — без фоновой картинки, только текст */
+.block-contacts {
+  padding: 32px 16px 40px;
+  background: none;
 }
 
-.contacts-content p:nth-child(2),
-.contacts-content p:nth-child(3) {
-  font-weight: 800 !important;
+.contacts-overlay {
+  display: none;
 }
+
+.contacts-inner {
+  padding: 0;
+  flex-direction: column;
+  gap: 18px;
+  align-items: center;
+}
+
+.contacts-left {
+  display: none; /* убираем телефон */
+}
+
+.contacts-right {
+  flex-direction: column;
+  gap: 16px;
+}
+
+.contacts-qr {
+  width: 150px;
+}
+
+.contacts-text {
+  align-items: center;
+  text-align: center;
+}
+
+.contacts-line {
+  font-size: 18px;
+}
+
+/* КОНЕЦ MOBILE */
