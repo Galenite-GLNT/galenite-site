@@ -1,6 +1,9 @@
 /* ===== MOBILE STYLE FOR GALENITE ===== */
+/* Подключен в head так:
+<link rel="stylesheet" href="style_mobile.css" media="(max-width: 900px)">
+*/
 
-/* Уменьшаем хедер */
+/* HEADER */
 .header {
   padding-top: 10px !important;
   padding-bottom: 6px !important;
@@ -11,7 +14,7 @@
   width: 28px !important;
 }
 
-/* Навигация */
+/* NAV */
 .nav {
   font-size: 9px !important;
   letter-spacing: 0.18em !important;
@@ -22,7 +25,7 @@
   gap: 10px !important;
 }
 
-/* Все блоки теперь идут по высоте контента */
+/* Блоки по высоте контента */
 .block {
   aspect-ratio: unset !important;
   padding: 32px 0 !important;
@@ -35,12 +38,21 @@
   line-height: 1.05 !important;
 }
 
+.block-hero {
+  padding-top: 40px !important;
+  padding-bottom: 40px !important;
+}
+
 .block-hero::before {
   background-size: 180% auto !important;
   opacity: 0.7 !important;
 }
 
 /* BLOCK 2 (Цель) */
+.block-goal {
+  padding: 24px 0 40px !important;
+}
+
 .goal-inner {
   flex-direction: column !important;
   align-items: flex-start !important;
@@ -57,7 +69,13 @@
   width: 240px !important;
 }
 
-/* BLOCK 3 (Tech) */
+/* BLOCK 3 (Tech) – чат + телефон + текст в колонку */
+/* Телефон лежит на спине между чатом и текстом */
+
+.block-tech {
+  padding: 32px 0 40px !important;
+}
+
 .tech-inner {
   position: static !important;
   display: flex !important;
@@ -76,9 +94,24 @@
   width: 100% !important;
 }
 
+.tech-chat {
+  max-width: 420px !important;
+}
+
+/* телефон как разделитель, лежит горизонтально */
+.tech-phone {
+  display: flex !important;
+  justify-content: center !important;
+}
+
 .tech-phone-img {
   height: 220px !important;
+  width: auto !important;
   animation: none !important;
+  transform: rotate(90deg) !important;
+  transform-origin: center center !important;
+  display: block !important;
+  margin: 8px 0 4px !important;
 }
 
 .tech-chat-img {
@@ -86,10 +119,27 @@
 }
 
 .tech-content {
-  max-width: 500px !important;
+  max-width: 480px !important;
+}
+
+/* текст поменьше */
+.goal-title,
+.tech-title,
+.module-title {
+  font-size: 24px !important;
+}
+
+.goal-text,
+.tech-text,
+.module-text {
+  font-size: 15px !important;
 }
 
 /* BLOCK 4 (Modules) */
+.block-modules {
+  padding: 32px 0 40px !important;
+}
+
 .modules-inner {
   display: flex !important;
   flex-direction: column !important;
@@ -107,15 +157,33 @@
   width: 70px !important;
 }
 
-/* BLOCK 5 (Contacts) */
+/* BLOCK 5 (Contacts) – убираем картинку, оставляем только текст */
 .block-contacts-simple {
   aspect-ratio: unset !important;
-  padding: 20px 0 40px !important;
-  background-size: contain !important;
-  background-position: center bottom !important;
+  padding: 32px 16px 48px !important;
+  background: none !important;      /* убираем фон-картинку */
 }
 
-/* На мобилке текст поверх не нужен — скрываем */
-.contacts-content {
+/* вырубаем подсветку ::before */
+.block-contacts-simple::before {
   display: none !important;
+}
+
+/* показываем текстовый слой нормально */
+.contacts-content {
+  display: flex !important;
+  position: static !important;
+  right: auto !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  align-items: center !important;
+  text-align: center !important;
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  color: rgba(0,0,0,0.85) !important;
+}
+
+.contacts-content p:nth-child(2),
+.contacts-content p:nth-child(3) {
+  font-weight: 800 !important;
 }
