@@ -8,9 +8,11 @@
   <!-- Шрифт Inter -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-  <!-- Основные стили (десктоп / планшеты) -->
+  <!-- Основной стиль (десктоп по умолчанию) -->
   <link rel="stylesheet" href="style.css">
-  <!-- Мобильные стили -->
+  <!-- Стиль для маленьких ноутбуков -->
+  <link rel="stylesheet" href="style_laptop.css" media="(min-width: 901px) and (max-width: 1280px)">
+  <!-- Стиль для телефонов -->
   <link rel="stylesheet" href="style_mobile.css" media="(max-width: 900px)">
 </head>
 <body>
@@ -66,34 +68,33 @@
           <div class="hero-crystal">
             <img src="image/logo.png" alt="Galenite crystal">
           </div>
-          <div class="hero-phone">
-            <img src="image/iphone1.png" alt="Galenite on iPhone">
-          </div>
         </div>
       </div>
     </section>
 
-    <!-- BLOCK 2: FINANCE / GOAL -->
+    <!-- BLOCK 2: ЦЕЛЬ GALENITE -->
     <section class="block block-goal">
       <div class="goal-inner">
         <div class="goal-card">
           <div class="goal-badge">
             <img src="image/cup.png" alt="" class="goal-icon">
-            <span>Galenite Finance</span>
+            <span>Цель Galenite</span>
           </div>
-          <h2 class="goal-title">Цель системы</h2>
+          <h2 class="goal-title">Контроль над жизнью, а не только над цифрами</h2>
           <p class="goal-text">
-            Galenite Finance — модуль, созданный для сохранения и грамотного умножения капитала.
-            Подключается напрямую к банковским счетам и видит картину сразу по нескольким картам.
+            Galenite — это система, которая помогает держать под контролем ключевые части
+            жизни: финансы, здоровье, дом, работу и время. Всё, что обычно разорвано между
+            разными сервисами, собирается в одну прозрачную картину.
           </p>
           <p class="goal-text">
-            Модуль фиксирует потоки, прогнозирует кассовые разрывы и помогает держать
-            под контролем и личные, и корпоративные финансы — в одном экране.
+            Galenite снимает рутину, подсказывает, что делать дальше, и даёт ощущение,
+            что ты управляешь своим днём и долгосрочными целями, а не тонешь в хаосе
+            чатов и уведомлений.
           </p>
         </div>
 
         <div class="goal-visual">
-          <img src="image/finance.png" alt="Finance icon" class="goal-finance-icon">
+          <img src="image/finance.png" alt="Galenite core" class="goal-finance-icon">
         </div>
       </div>
     </section>
@@ -107,7 +108,7 @@
           <img src="image/chat-with-galen.png" alt="Chat with Galen" class="tech-chat-img">
         </div>
 
-        <!-- ТЕЛЕФОН В ЦЕНТРЕ -->
+        <!-- ТЕЛЕФОН ПО ЦЕНТРУ -->
         <div class="tech-phone">
           <img src="image/iphone2.png" alt="Galenite hardware" class="tech-phone-img">
         </div>
@@ -251,8 +252,6 @@
 
     <!-- BLOCK 5: CONTACTS -->
     <section class="block block-contacts" id="contacts">
-      <div class="contacts-overlay"></div>
-
       <div class="contacts-inner">
         <div class="contacts-left">
           <img src="image/iphone1.png" alt="Galenite phone" class="contacts-phone">
