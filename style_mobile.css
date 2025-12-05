@@ -1,5 +1,5 @@
 /* ===== MOBILE STYLE FOR GALENITE ===== */
-/* Файл подключен так:
+/* Подключен в head как:
    <link rel="stylesheet" href="style_mobile.css" media="(max-width: 900px)">
 */
 
@@ -82,18 +82,8 @@
 }
 
 .hero-crystal {
-  position: static;
   width: 220px;
-  margin-bottom: 10px;
-}
-
-.hero-phone {
-  transform: none;
-  animation: none;
-}
-
-.hero-phone img {
-  height: 320px;
+  margin-top: 8px;
 }
 
 /* BLOCK 2 (GOAL) */
@@ -125,9 +115,7 @@
   width: 170px;
 }
 
-/* BLOCK 3 (TECH) — колоночная верстка,
-   телефон лежит на спине между чатом и текстом */
-
+/* BLOCK 3 (TECH) — чат / телефон / текст в колонку */
 .block-tech {
   padding: 30px 0 40px;
 }
@@ -230,14 +218,10 @@
   font-size: 14px;
 }
 
-/* BLOCK 5 (CONTACTS) — без фоновой картинки, только текст */
+/* BLOCK 5 (CONTACTS) — без фоновой картинки, только текст + QR */
 .block-contacts {
   padding: 32px 16px 40px;
   background: none;
-}
-
-.contacts-overlay {
-  display: none;
 }
 
 .contacts-inner {
@@ -248,7 +232,7 @@
 }
 
 .contacts-left {
-  display: none; /* убираем телефон */
+  display: none;
 }
 
 .contacts-right {
@@ -268,5 +252,3 @@
 .contacts-line {
   font-size: 18px;
 }
-
-/* КОНЕЦ MOBILE */
