@@ -1,41 +1,274 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Galenite</title>
-  <link rel="stylesheet" href="assets/css/style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Шрифт Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <!-- TODO: шапка сайта (логотип, меню) -->
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo-block">
+        <img src="image/logo.png" class="logo-img" alt="Galenite logo">
+      </div>
+
+      <nav class="nav">
+        <div class="nav-group nav-group-left">
+          <a class="nav-link" href="#install">INSTALL</a>
+          <a class="nav-link" href="#modules">MODULES</a>
+        </div>
+
+        <!-- центральный пункт под логотипом -->
+        <a class="nav-link nav-center nav-link-active" href="#galenite">GALENITE</a>
+
+        <div class="nav-group nav-group-right">
+          <a class="nav-link" href="#ecosystem">ECOSYSTEM</a>
+          <a class="nav-link" href="#contacts">CONTACTS</a>
+        </div>
+      </nav>
+    </div>
   </header>
 
-  <main>
-    <section id="hero">
-      <!-- TODO: главный блок / приветственный экран -->
-      <h1>Galenite — placeholder</h1>
-      <p>Текст-заглушка. Будет заменён позже.</p>
-    </section>
+  <!-- BLOCK 1: HERO (16:9) -->
+  <section class="block block-hero block-visible" id="galenite">
+    <div class="hero">
+      <h1 class="hero-title">
+        <span class="line">BEYOND ARTIFICIAL</span>
+        <span class="line">INTO INTELLIGENCE</span>
+      </h1>
+    </div>
+  </section>
 
-    <section id="section-1">
-      <!-- TODO: блок 1 -->
-    </section>
+  <!-- BLOCK 2: ЦЕЛЬ (16:9) -->
+  <section class="block block-goal">
+    <div class="goal-inner">
+      <div class="goal-image">
+        <img src="image/logo.png" alt="Galenite crystal" class="goal-img">
+      </div>
 
-    <section id="section-2">
-      <!-- TODO: блок 2 -->
-    </section>
+      <div class="goal-content">
+        <div class="goal-title-row">
+          <img src="image/cup.png" alt="" class="goal-icon-img">
+          <h2 class="goal-title">Цель</h2>
+        </div>
 
-    <section id="section-3">
-      <!-- TODO: блок 3 -->
-    </section>
-  </main>
+        <p class="goal-text">
+          Galenite Finance — это модуль, созданный для сохранения и грамотного умножения финансов.
+        </p>
 
-  <footer>
-    <!-- TODO: футер -->
-    <p>© <span id="year-placeholder"></span> Galenite</p>
-  </footer>
+        <p class="goal-text">
+          Благодаря прямому подключению к банковским счетам модуль способен включать в себя
+          и анализировать сразу несколько карт.
+        </p>
+      </div>
+    </div>
+  </section>
 
-  <script src="assets/js/main.js"></script>
+  <!-- BLOCK 3: AI TECHNOLOGIES + HARDWARE (16:9) -->
+  <section class="block block-tech">
+    <div class="tech-inner">
+
+      <!-- ЧАТ слева -->
+      <div class="tech-chat">
+        <img src="image/chat-with-galen.png" alt="Chat with Galen" class="tech-chat-img">
+      </div>
+
+      <!-- Телефон по центру (правый край в центре экрана) -->
+      <div class="tech-phone">
+        <img src="image/iphone2.png" alt="iPhone side" class="tech-phone-img">
+      </div>
+
+      <!-- Текст справа -->
+      <div class="tech-content">
+        <!-- AI Technologies -->
+        <div class="tech-block">
+          <div class="tech-title-row">
+            <img src="image/CPU.png" alt="" class="tech-icon">
+            <h2 class="tech-title">AI Technologies</h2>
+          </div>
+          <p class="tech-text">
+            Our solutions are powered by in-house artificial intelligence models,
+            developed and trained on exclusive datasets collected by our team.
+          </p>
+        </div>
+
+        <!-- Galenite's Hardware -->
+        <div class="tech-block">
+          <div class="tech-title-row">
+            <img src="image/units.png" alt="" class="tech-icon">
+            <h2 class="tech-title">Galenite's Hardware</h2>
+          </div>
+          <p class="tech-text">
+            Thanks to custom-built servers designed specifically for <strong>GALENITE</strong>,
+            our AI delivers lightning-fast response times to your queries. This minimizes latency
+            and ensures seamless performance, even under heavy workloads.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- BLOCK 4: MODULES (16:9) -->
+  <section class="block block-modules" id="modules">
+    <div class="modules-inner">
+
+      <!-- FINANCE -->
+      <div class="module-item">
+        <div class="module-icon-wrap">
+          <img src="image/finance.png" alt="Finance icon" class="module-icon">
+        </div>
+        <div class="module-content">
+          <h3 class="module-title">FINANCE</h3>
+          <p class="module-text">
+            Модуль, созданный для сохранения и грамотного умножения финансов.
+          </p>
+          <p class="module-text">
+            Благодаря прямому подключению к банковским счетам модуль способен
+            включать в себя и анализировать сразу несколько карт.
+          </p>
+        </div>
+      </div>
+
+      <!-- HEALTH -->
+      <div class="module-item">
+        <div class="module-icon-wrap">
+          <img src="image/health.png" alt="Health icon" class="module-icon">
+        </div>
+        <div class="module-content">
+          <h3 class="module-title">HEALTH</h3>
+          <p class="module-text">
+            Модуль, который помогает держать тело в норме без лишней волокиты.
+          </p>
+          <p class="module-text">
+            Следит за питанием, тренировками, шагами, водой и режимом сна —
+            собирает всё в одну систему и даёт понятную картину твоего
+            физического состояния.
+          </p>
+        </div>
+      </div>
+
+      <!-- BOTHIVE -->
+      <div class="module-item">
+        <div class="module-icon-wrap">
+          <img src="image/bothive.png" alt="Bothive icon" class="module-icon">
+        </div>
+        <div class="module-content">
+          <h3 class="module-title">BOTHIVE</h3>
+          <p class="module-text">
+            Модуль для бизнеса, который создаёт умных ИИ-ботов под продажи,
+            поддержку и обучение.
+          </p>
+          <p class="module-text">
+            Боты знают продукт, отвечают клиентам 24/7/365, не болеют, не устают
+            и закрывают рутину так, как будто это цифровые сотрудники компании.
+          </p>
+        </div>
+      </div>
+
+      <!-- HOUSEHUB -->
+      <div class="module-item">
+        <div class="module-icon-wrap">
+          <img src="image/househub.png" alt="Househub icon" class="module-icon">
+        </div>
+        <div class="module-content">
+          <h3 class="module-title">HOUSEHUB</h3>
+          <p class="module-text">
+            Модуль для управления умным домом.
+          </p>
+          <p class="module-text">
+            Подключает устройства, автоматизирует бытовые процессы и даёт
+            контроль над всей домашней системой в одном месте.
+          </p>
+        </div>
+      </div>
+
+      <!-- KIDS -->
+      <div class="module-item">
+        <div class="module-icon-wrap">
+          <img src="image/kids.png" alt="Kids icon" class="module-icon">
+        </div>
+        <div class="module-content">
+          <h3 class="module-title">KIDS</h3>
+          <p class="module-text">
+            Модуль для детей, где у ребёнка появляется свой ИИ-друг.
+          </p>
+          <p class="module-text">
+            Он придумывает задания, игры, квесты, помогает развиваться и учиться
+            новому — но при этом не «привязывает» ребёнка к себе и мягко
+            объясняет важность настоящего общения и реальных друзей.
+          </p>
+        </div>
+      </div>
+
+      <!-- AUTOPILOT -->
+      <div class="module-item">
+        <div class="module-icon-wrap">
+          <img src="image/autopilot.png" alt="Autopilot icon" class="module-icon">
+        </div>
+        <div class="module-content">
+          <h3 class="module-title">AUTOPILOT</h3>
+          <p class="module-text">
+            Модуль, который сам планирует твой день, неделю и месяц.
+          </p>
+          <p class="module-text">
+            Он учитывает привычки, расписание, переносы дел и мгновенно
+            перестраивает план, если что-то изменилось. Просто пишешь ему в чат,
+            и он корректирует весь график так, чтобы всё сходилось.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- BLOCK 5: CONTACTS (IMAGE BACKGROUND + TEXT) -->
+  <section class="block block-contacts-simple" id="contacts">
+    <div class="contacts-content">
+      <p>+7 (913) 009 2961</p>
+      <p>WWW.GALENITE.RU</p>
+      <p>INFO@GALENITE.RU</p>
+    </div>
+  </section>
+
+  <!-- JS: анимации появления и скролл-хедер -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const header = document.querySelector('.header');
+      const blocks = document.querySelectorAll('.block');
+
+      // липкий хедер с тенью
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 40) {
+          header.classList.add('header-scrolled');
+        } else {
+          header.classList.remove('header-scrolled');
+        }
+      });
+
+      // плавное появление блоков при скролле
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('block-visible');
+          }
+        });
+      }, { threshold: 0.25 });
+
+      blocks.forEach(block => {
+        // hero уже виден, остальные анимируем по скроллу
+        if (!block.classList.contains('block-hero')) {
+          observer.observe(block);
+        }
+      });
+    });
+  </script>
+
 </body>
 </html>
