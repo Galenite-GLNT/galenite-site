@@ -1,0 +1,80 @@
+/* ===== LAPTOP STYLE (901px–1280px) ===== */
+/* Подключен в head как:
+   <link rel="stylesheet" href="style_laptop.css"
+         media="(min-width: 901px) and (max-width: 1280px)">
+*/
+
+/* немного ужимаем всё, чтобы на макбуке не разваливалось */
+
+.header-inner {
+  max-width: 1000px;
+}
+
+.hero-inner {
+  padding: 36px 40px 60px;
+  gap: 40px;
+}
+
+.hero-title {
+  font-size: clamp(40px, 4.3vw, 64px);
+}
+
+.hero-subtitle {
+  max-width: 380px;
+}
+
+.hero-crystal {
+  width: 230px;
+}
+
+/* goal */
+.goal-inner {
+  padding: 24px 30px;
+  gap: 44px;
+}
+
+.goal-finance-icon {
+  width: 200px;
+}
+
+/* tech */
+.tech-chat {
+  margin-right: 60px;
+  width: 420px;
+}
+
+.tech-phone-img {
+  height: 520px;
+}
+
+.tech-content {
+  margin-left: 130px;
+  width: 420px;
+}
+
+/* modules */
+.modules-inner {
+  padding: 0 30px;
+}
+
+.modules-grid {
+  column-gap: 60px;
+}
+
+/* contacts */
+.contacts-inner {
+  padding: 32px 30px;
+  gap: 56px;
+}
+
+.contacts-phone {
+  height: 460px;
+}
+
+.contacts-qr {
+  width: 150px;
+}
+
+.contacts-line {
+  font-size: 22px;
+}
