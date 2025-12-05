@@ -4,9 +4,8 @@
 
 ## Структура
 - `index.html`
-- `assets/css`
-- `assets/js`
-- `assets/img`
+- `style.css`
+- `/image`
 - `CNAME`
 
 ## Запуск локально
