@@ -1,0 +1,121 @@
+/* ===== MOBILE STYLE FOR GALENITE ===== */
+
+/* Уменьшаем хедер */
+.header {
+  padding-top: 10px !important;
+  padding-bottom: 6px !important;
+  background: rgba(221, 226, 238, 0.9) !important;
+}
+
+.logo-img {
+  width: 28px !important;
+}
+
+/* Навигация */
+.nav {
+  font-size: 9px !important;
+  letter-spacing: 0.18em !important;
+  padding: 0 16px !important;
+}
+
+.nav-group {
+  gap: 10px !important;
+}
+
+/* Все блоки теперь идут по высоте контента */
+.block {
+  aspect-ratio: unset !important;
+  padding: 32px 0 !important;
+  flex-direction: column !important;
+}
+
+/* HERO */
+.hero-title {
+  font-size: 32px !important;
+  line-height: 1.05 !important;
+}
+
+.block-hero::before {
+  background-size: 180% auto !important;
+  opacity: 0.7 !important;
+}
+
+/* BLOCK 2 (Цель) */
+.goal-inner {
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 20px !important;
+  padding: 0 16px !important;
+}
+
+.goal-image {
+  width: 100% !important;
+  justify-content: center !important;
+}
+
+.goal-img {
+  width: 240px !important;
+}
+
+/* BLOCK 3 (Tech) */
+.tech-inner {
+  position: static !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 20px !important;
+  padding: 0 16px !important;
+}
+
+.tech-chat,
+.tech-phone,
+.tech-content {
+  position: static !important;
+  transform: none !important;
+  margin: 0 !important;
+  width: 100% !important;
+}
+
+.tech-phone-img {
+  height: 220px !important;
+  animation: none !important;
+}
+
+.tech-chat-img {
+  animation: none !important;
+}
+
+.tech-content {
+  max-width: 500px !important;
+}
+
+/* BLOCK 4 (Modules) */
+.modules-inner {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 32px !important;
+  padding: 0 16px !important;
+}
+
+.module-item {
+  gap: 14px !important;
+  padding: 12px 14px !important;
+  border-radius: 12px !important;
+}
+
+.module-icon {
+  width: 70px !important;
+}
+
+/* BLOCK 5 (Contacts) */
+.block-contacts-simple {
+  aspect-ratio: unset !important;
+  padding: 20px 0 40px !important;
+  background-size: contain !important;
+  background-position: center bottom !important;
+}
+
+/* На мобилке текст поверх не нужен — скрываем */
+.contacts-content {
+  display: none !important;
+}
