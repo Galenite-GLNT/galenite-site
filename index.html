@@ -4,36 +4,161 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Galenite</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-  <header>
-    <!-- TODO: шапка сайта (логотип, меню) -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">Galenite</div>
+      <button class="nav-toggle" aria-label="Меню" aria-expanded="false">☰</button>
+      <nav>
+        <ul class="nav-list">
+          <li><a class="nav-link" href="#modules">Модули</a></li>
+          <li><a class="nav-link" href="#finance">Финансы</a></li>
+          <li><a class="nav-link" href="#technology">Технологии</a></li>
+          <li><a class="nav-link" href="#contacts">Контакты</a></li>
+        </ul>
+      </nav>
+      <a class="button" href="#contacts">Связаться</a>
+    </div>
   </header>
 
   <main>
-    <section id="hero">
-      <!-- TODO: главный блок / приветственный экран -->
-      <h1>Galenite — placeholder</h1>
-      <p>Текст-заглушка. Будет заменён позже.</p>
+    <section class="hero" id="hero">
+      <div class="hero-card">
+        <p class="section-header">Beyond artificial · Into intelligence</p>
+        <h1>Гибкая экосистема AI‑модулей Galenite</h1>
+        <p>Инструменты для бизнеса и жизни, которые работают как единая платформа: от финансов до здоровья, от умного дома до детского развития.</p>
+        <div class="hero-actions">
+          <a class="button" href="#modules">Установить модули</a>
+          <a class="button" href="#finance" style="background: rgba(255,255,255,0.08);">Посмотреть демо</a>
+        </div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat">
+          <span class="label">Низкая задержка</span>
+          <span class="value">Собственные серверы</span>
+          <p>Аппаратная платформа оптимизирована под модели Galenite — быстрые ответы даже при высокой нагрузке.</p>
+        </div>
+        <div class="stat">
+          <span class="label">Надёжная аналитика</span>
+          <span class="value">Собственные датасеты</span>
+          <p>Модели обучены на эксклюзивных данных команды и работают точнее готовых решений.</p>
+        </div>
+        <div class="stat">
+          <span class="label">Экосистема</span>
+          <span class="value">6 модулей</span>
+          <p>Каждый модуль решает отдельную задачу, но данные остаются в одной защищённой платформе.</p>
+        </div>
+      </div>
     </section>
 
-    <section id="section-1">
-      <!-- TODO: блок 1 -->
+    <section id="modules">
+      <p class="section-header">Модули</p>
+      <h2 class="section-title">Модульная архитектура под твои сценарии</h2>
+      <p class="section-subtitle">Собери только то, что нужно: подключай бизнес‑ботов, автопилот расписаний или помощник по здоровью. Модули подключаются за минуты и работают синхронно.</p>
+      <div class="card-grid">
+        <article class="card">
+          <span class="eyebrow">Finance</span>
+          <h3>Умное управление капиталом</h3>
+          <p>Прямое подключение к банковским счетам, поддержка нескольких карт и точные рекомендации по сохранению и росту средств.</p>
+        </article>
+        <article class="card">
+          <span class="eyebrow">Autopilot</span>
+          <h3>Планировщик дня, недели и месяца</h3>
+          <p>Учитывает привычки, переносы дел и мгновенно перестраивает расписание, если что‑то изменилось.</p>
+        </article>
+        <article class="card">
+          <span class="eyebrow">Bothive</span>
+          <h3>ИИ‑боты для бизнеса</h3>
+          <p>Знают продукт, отвечают 24/7/365, берут на себя продажи, поддержку и обучение без перерывов.</p>
+        </article>
+        <article class="card">
+          <span class="eyebrow">Househub</span>
+          <h3>Управление умным домом</h3>
+          <p>Подключает устройства, автоматизирует быт и даёт контроль над системой из одного интерфейса.</p>
+        </article>
+        <article class="card">
+          <span class="eyebrow">Kids</span>
+          <h3>ИИ‑друг для ребёнка</h3>
+          <p>Придумывает задания и игры, помогает учиться и мягко напоминает о важности общения с настоящими друзьями.</p>
+        </article>
+        <article class="card">
+          <span class="eyebrow">Health</span>
+          <h3>Цифровой трекер здоровья</h3>
+          <p>Следит за питанием, тренировками, водой, сном и собирает данные в понятную картину физического состояния.</p>
+        </article>
+      </div>
     </section>
 
-    <section id="section-2">
-      <!-- TODO: блок 2 -->
+    <section id="finance" class="finance">
+      <div class="content">
+        <div>
+          <div class="section-header">Finance</div>
+          <h2 class="section-title">Финансовый модуль, который работает за тебя</h2>
+          <p class="section-subtitle">Единое окно для карт и счетов, прозрачная аналитика и подсказки по росту капитала. Поддерживает несколько банков и обновляет данные в реальном времени.</p>
+          <div class="pill">Подключение карт напрямую</div>
+        </div>
+        <div>
+          <ul class="list">
+            <li><strong>Цель</strong><span>— сохранить и грамотно умножать финансы через рекомендации, построенные на ваших привычках.</span></li>
+            <li><strong>Сценарии</strong><span>— планирование бюджета, распределение расходов по категориям, контроль подписок.</span></li>
+            <li><strong>Прозрачность</strong><span>— аккуратные визуализации и уведомления, которые не отвлекают.</span></li>
+          </ul>
+        </div>
+      </div>
     </section>
 
-    <section id="section-3">
-      <!-- TODO: блок 3 -->
+    <section id="technology">
+      <p class="section-header">AI technologies</p>
+      <h2 class="section-title">Собственные модели и железо Galenite</h2>
+      <p class="section-subtitle">Модели обучены на эксклюзивных датасетах команды Galenite. Инфраструктура — кастомные серверы, настроенные под быстрые ответы даже при пиковой нагрузке.</p>
+      <div class="card-grid">
+        <article class="card">
+          <span class="eyebrow">Скорость</span>
+          <h3>Минимальная задержка</h3>
+          <p>Оптимизированный стек и низкоуровневый тюнинг железа обеспечивает молниеносные ответы ассистентов.</p>
+        </article>
+        <article class="card">
+          <span class="eyebrow">Безопасность</span>
+          <h3>Закрытая платформа</h3>
+          <p>Данные остаются внутри экосистемы Galenite. Гибкие уровни доступа для команд и семей.</p>
+        </article>
+        <article class="card">
+          <span class="eyebrow">Гибкость</span>
+          <h3>API и интеграции</h3>
+          <p>Модули подключаются к вашим системам: CRM, платёжные сервисы, устройства умного дома.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="contacts">
+      <p class="section-header">Контакты</p>
+      <h2 class="section-title">Давайте обсудим ваш сценарий</h2>
+      <p class="section-subtitle">Напишите, какой модуль хотите подключить, и мы подготовим демонстрацию под вашу задачу.</p>
+      <div class="contact">
+        <div class="contact-card">
+          <h3>Сайт</h3>
+          <a href="https://www.galenite.ru" target="_blank" rel="noopener">www.galenite.ru</a>
+        </div>
+        <div class="contact-card">
+          <h3>Телефон</h3>
+          <a href="tel:+79130092961">+7 (913) 009 2961</a>
+        </div>
+        <div class="contact-card">
+          <h3>Почта</h3>
+          <a href="mailto:info@galenite.ru">info@galenite.ru</a>
+        </div>
+      </div>
     </section>
   </main>
 
-  <footer>
-    <!-- TODO: футер -->
-    <p>© <span id="year-placeholder"></span> Galenite</p>
+  <footer class="footer">
+    <span>© <span id="year-placeholder"></span> Galenite. Beyond artificial — into intelligence.</span>
+    <a href="#hero">Наверх ↑</a>
   </footer>
 
   <script src="assets/js/main.js"></script>
