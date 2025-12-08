@@ -27,14 +27,31 @@
         <img class="logo-img" src="images/logo.png" alt="Galenite logo">
         <span>GALENITE</span>
       </div>
+      <div class="user-card" id="user-card">
+        <div class="user-avatar" id="sidebar-avatar">G</div>
+        <div class="user-meta">
+          <div class="user-name" id="sidebar-name">Гость</div>
+          <div class="user-email" id="sidebar-email">Войдите, чтобы сохранять чаты</div>
+        </div>
+        <button class="ghost-button" id="open-auth-btn">Войти</button>
+      </div>
+    </div>
 
-      <div class="sidebar-beta">
-        <div class="beta-label">THIS IS BETA VERSION</div>
-        <p>На данный момент история чатов не сохраняется</p>
+    <div class="sidebar-section">
+      <div class="section-header">
+        <span>История</span>
+        <button class="primary-button small" id="new-chat-btn">+ Новый</button>
+      </div>
+      <div class="conversation-list" id="conversation-list">
+        <div class="empty-state">Войдите, чтобы увидеть сохранённые диалоги</div>
       </div>
     </div>
 
     <div class="sidebar-bottom">
+      <div class="sidebar-actions">
+        <button class="ghost-button" id="profile-btn">Профиль</button>
+        <button class="ghost-button danger" id="logout-btn">Выйти</button>
+      </div>
       <span class="sidebar-caption">GALEN v0.1 BETA</span>
     </div>
   </aside>
@@ -43,13 +60,53 @@
   <main class="main">
     <header class="topbar">
       <span class="topbar-left">GALENITE</span>
-      <span class="topbar-right">GALEN v0.1 BETA</span>
+      <span class="topbar-right" id="active-conversation-title">GALEN v0.1 BETA</span>
     </header>
 
     <section class="canvas">
       <!-- Вертикальные пунктирные линии -->
       <div class="grid-line grid-line-left"></div>
       <div class="grid-line grid-line-right"></div>
+
+      <div class="auth-panel" id="auth-panel">
+        <div class="auth-header">
+          <div>
+            <div class="panel-title">Вход в аккаунт</div>
+            <div class="panel-subtitle">Сохранение истории и личные настройки</div>
+          </div>
+          <div class="auth-mode">
+            <button class="ghost-button" data-mode="login" id="mode-login" aria-pressed="true">Вход</button>
+            <button class="ghost-button" data-mode="register" id="mode-register" aria-pressed="false">Регистрация</button>
+          </div>
+        </div>
+        <form class="auth-form" id="auth-form">
+          <label class="form-control">
+            <span>Имя</span>
+            <input type="text" id="display-name" placeholder="Как вас называть" autocomplete="name">
+          </label>
+          <label class="form-control">
+            <span>Email</span>
+            <input type="email" id="email" placeholder="you@example.com" autocomplete="email" required>
+          </label>
+          <label class="form-control">
+            <span>Пароль</span>
+            <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required>
+          </label>
+          <div class="auth-actions">
+            <button type="submit" class="primary-button" id="auth-submit">Продолжить</button>
+            <button type="button" class="ghost-button" id="google-auth">Войти через Google</button>
+          </div>
+          <div class="auth-hint" id="auth-hint"></div>
+        </form>
+      </div>
+
+      <div class="locked-overlay" id="locked-overlay">
+        <div class="locked-card">
+          <div class="panel-title">Требуется вход</div>
+          <p>Авторизуйтесь, чтобы сохранять переписку и видеть историю диалогов.</p>
+          <button class="primary-button" id="locked-login-btn">Войти</button>
+        </div>
+      </div>
 
       <!-- Область чата -->
       <div class="chat-shell">
@@ -83,6 +140,35 @@
   </main>
 </div>
 
-<script src="chat.js"></script>
+<div class="modal" id="profile-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div>
+        <div class="panel-title">Профиль</div>
+        <div class="panel-subtitle">Имя, аватар и дефолтный промт</div>
+      </div>
+      <button class="ghost-button" id="close-profile">Закрыть</button>
+    </div>
+    <form class="profile-form" id="profile-form">
+      <label class="form-control">
+        <span>Отображаемое имя</span>
+        <input type="text" id="profile-name" placeholder="Как обращаться" />
+      </label>
+      <label class="form-control">
+        <span>Дефолтный промт</span>
+        <textarea id="profile-prompt" rows="4" placeholder="Например: говори со мной коротко и давай план на день"></textarea>
+      </label>
+      <label class="form-control">
+        <span>Аватар</span>
+        <input type="file" id="profile-avatar" accept="image/*" />
+      </label>
+      <div class="auth-actions">
+        <button type="submit" class="primary-button">Сохранить</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script type="module" src="chat.js"></script>
 </body>
-<
+</html>
