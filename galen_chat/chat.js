@@ -1,4 +1,4 @@
-const API_KEY = "https://galen-chat-proxy.ilyasch2020.workers.dev"; // <-- сюда свой ключ
+const API_URL = "https://galen-chat-proxy.ilyasch2020.workers.dev";
 const MODEL = "gpt-4o-mini";
 
 const chatEl = document.getElementById("chat");
@@ -10,8 +10,8 @@ const galenPhraseEl = document.getElementById("galen-phrase");
 // лёгкая "память" на фронте
 const history = [
   {
-  role: "system",
-  content: `
+    role: "system",
+    content: `
 Ты — Galen, центральный ассистент экосистемы Galenite.
 
 Galenite — это модульная операционная система для жизни и бизнеса. 
@@ -42,7 +42,7 @@ Galenite — это модульная операционная система �
 
 Если пользователь задаёт вопрос про Galenite, рассказывай уверенно и понятно, как будто ты — сердце системы.
 `
-}
+  }
 ];
 
 // рандомные фразы под аватаром
@@ -160,5 +160,3 @@ async function askGalen(historyMessages) {
   const data = JSON.parse(text);
   return data.choices[0].message.content.trim();
 }
-
-
