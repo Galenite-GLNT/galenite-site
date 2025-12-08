@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Galen Chat — Beta</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layout">
+
+  <!-- ЛЕВАЯ БЕЛАЯ ПАНЕЛЬ -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="sidebar-logo">
+        <!-- если есть svg/иконка – сюда -->
+        <img class="logo-img" src="images/logo.png" alt="Galenite logo">
+        <span>GALENITE</span>
+      </div>
+
+      <div class="sidebar-beta">
+        <div class="beta-label">THIS IS BETA VERSION</div>
+        <p>На данный момент история чатов не сохраняется</p>
+      </div>
+    </div>
+
+    <div class="sidebar-bottom">
+      <span class="sidebar-caption">GALEN v0.1 BETA</span>
+    </div>
+  </aside>
+
+  <!-- ОСНОВНАЯ ОБЛАСТЬ -->
+  <main class="main">
+    <header class="topbar">
+      <span class="topbar-left">GALENITE</span>
+      <span class="topbar-right">GALEN v0.1 BETA</span>
+    </header>
+
+    <section class="canvas">
+      <!-- Вертикальные пунктирные линии -->
+      <div class="grid-line grid-line-left"></div>
+      <div class="grid-line grid-line-right"></div>
+
+      <!-- Область чата -->
+      <div class="chat-shell">
+        <div class="galen-block" id="galen-block">
+          <div class="galen-avatar">
+            <img src="images/galen.png" alt="Galen avatar">
+          </div>
+          <div class="galen-phrase" id="galen-phrase">
+            Место под рандомную фразу
+          </div>
+        </div>
+
+        <div class="chat-messages" id="chat"></div>
+      </div>
+    </section>
+
+    <!-- ИНПУТ-СТРОКА СНИЗУ -->
+    <form class="input-bar" id="chat-form">
+      <div class="input-pill">
+        <input
+          id="message"
+          type="text"
+          autocomplete="off"
+          placeholder="Введите сообщение..."
+        />
+        <button type="submit" id="send" aria-label="Отправить">
+          <span class="send-icon">↑</span>
+        </button>
+      </div>
+    </form>
+  </main>
+</div>
+
+<script src="chat.js"></script>
+</body>
+</html>

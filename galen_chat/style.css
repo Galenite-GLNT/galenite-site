@@ -1,0 +1,400 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-main: #171717;
+  --bg-panel: #111111;
+  --white: #ffffff;
+  --text-muted: #9ca3af;
+  --divider: rgba(255, 255, 255, 0.16);
+  --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.6);
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg-main);
+  color: var(--white);
+}
+
+/* ЛЕЙАУТ */
+
+.layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* SIDEBAR */
+
+.sidebar {
+  width: 260px;
+  background: #ffffff;
+  color: #111827;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px 24px 32px;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.logo-img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.sidebar-beta {
+  margin-top: 48px;
+}
+
+.beta-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.sidebar-beta p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #6b7280;
+}
+
+.sidebar-bottom {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #9ca3af;
+}
+
+/* MAIN */
+
+.main {
+  flex: 1;
+  background: var(--bg-panel);
+  display: flex;
+  flex-direction: column;
+}
+
+/* TOPBAR */
+
+.topbar {
+  height: 56px;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #9ca3af;
+}
+
+/* CANVAS */
+
+.canvas {
+  position: relative;
+  flex: 1;
+  padding: 32px 72px 24px;
+  overflow: hidden;
+}
+
+/* Пунктирные линии — просто невидимые направляющие */
+
+.grid-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  opacity: 0;
+  pointer-events: none;
+  border-left: none;
+}
+
+.grid-line-left {
+  left: 32%;
+}
+
+.grid-line-right {
+  right: 10%;
+}
+
+/* Оболочка чата */
+
+.chat-shell {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Блок с аватаром и рандомной фразой */
+
+.galen-block {
+  margin-top: 80px;
+  text-align: center;
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  opacity: 0.8;
+}
+
+.galen-avatar img {
+  width: 160px;
+  height: 160px;
+  object-fit: contain;
+  filter: drop-shadow(0 18px 40px rgba(0, 0, 0, 0.8));
+  animation: galen-float 6s ease-in-out infinite;
+}
+
+.galen-phrase {
+  margin-top: 16px;
+  font-size: 14px;
+  color: #e5e7eb;
+}
+
+/* Сообщения */
+
+.chat-messages {
+  margin-top: 40px;
+  width: 100%;
+  max-width: 820px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 32px;
+  overflow-y: auto;
+}
+
+/* базовый вид msg — как "пузырь", потом переопределяем под бота */
+
+.msg {
+  max-width: 78%;
+  font-size: 14px;
+  line-height: 1.5;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  transform-origin: 50% 50%;
+  animation: msg-pop 0.16s ease-out;
+}
+
+/* пользователь: справа, белый пузырь */
+
+.msg.user {
+  margin-left: auto;
+  background: #f9fafb;
+  color: #111827;
+  padding: 12px 16px;
+  border-radius: 18px;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.7);
+}
+
+/* Galen: слева, просто текст без капсулы */
+
+.msg.bot {
+  margin-right: auto;
+  background: transparent;
+  color: #f9fafb;
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* системные/служебные */
+
+.msg.system {
+  margin: 0 auto;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+/* Лоадер */
+
+.msg.loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dots {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.dots span {
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  animation: dots 0.9s infinite ease-in-out;
+}
+
+.dots span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.dots span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+/* INPUT BAR */
+
+.input-bar {
+  padding: 0 72px 32px;
+}
+
+.input-pill {
+  max-width: 820px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border-radius: 999px;
+  box-shadow: var(--shadow-soft);
+  padding: 4px 6px 4px 20px;
+}
+
+.input-pill input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 10px 0;
+  font-size: 15px;
+  background: transparent;
+  color: #111827;
+}
+
+.input-pill input::placeholder {
+  color: #9ca3af;
+}
+
+.input-pill button {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #111827;
+  color: #ffffff;
+  font-size: 18px;
+  transform: translateX(0);
+  transition: transform 0.16s ease, box-shadow 0.16s ease, opacity 0.16s ease;
+}
+
+.input-pill button:hover {
+  transform: translateX(2px) translateY(-1px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
+}
+
+.input-pill button:disabled {
+  opacity: 0.4;
+  cursor: default;
+  box-shadow: none;
+  transform: none;
+}
+
+/* АНИМАЦИИ */
+
+@keyframes galen-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes msg-pop {
+  from {
+    transform: scale(0.96) translateY(4px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes dots {
+  0%, 80%, 100% {
+    transform: scale(0.7);
+    opacity: 0.4;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* АДАПТИВ */
+
+@media (max-width: 1024px) {
+  .sidebar {
+    display: none;
+  }
+
+  .canvas {
+    padding: 24px 20px 20px;
+  }
+
+  .input-bar {
+    padding: 0 20px 20px;
+  }
+
+  .grid-line-left {
+    left: 25%;
+  }
+
+  .grid-line-right {
+    right: 6%;
+  }
+}
+
+@media (max-width: 640px) {
+  .topbar {
+    padding: 0 16px;
+    font-size: 10px;
+  }
+
+  .galen-block {
+    margin-top: 40px;
+  }
+
+  .chat-messages {
+    max-width: 100%;
+  }
+
+  .input-pill {
+    max-width: 100%;
+    padding-left: 16px;
+  }
+
+  .msg {
+    max-width: 90%;
+  }
+}
