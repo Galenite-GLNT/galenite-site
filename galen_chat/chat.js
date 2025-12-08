@@ -1,4 +1,4 @@
-const API_KEY = "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"; // <-- сюда свой ключ
+const API_KEY = "https://galen-chat-proxy.ilyasch2020.workers.dev"; // <-- сюда свой ключ
 const MODEL = "gpt-4o-mini";
 
 const chatEl = document.getElementById("chat");
@@ -137,26 +137,28 @@ async function handleSend() {
 }
 
 async function askGalen(historyMessages) {
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+  const response = await fetch(API_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${API_KEY}`
     },
     body: JSON.stringify({
       model: MODEL,
       messages: historyMessages,
-      temperature: 0.6
-    })
+      temperature: 0.6,
+    }),
   });
 
+  const text = await response.text();
+
   if (!response.ok) {
-    const text = await response.text();
-    console.error("OpenAI error:", text);
-    throw new Error("OpenAI request failed");
+    console.error("Proxy error status:", response.status);
+    console.error("Proxy error body:", text);
+    throw new Error("PROXY_" + response.status);
   }
 
-  const data = await response.json();
+  const data = JSON.parse(text);
   return data.choices[0].message.content.trim();
 }
+
 
