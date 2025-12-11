@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bothive Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="topbar">
+    <button class="icon-button" aria-label="Open menu">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="4" y="6" width="16" height="2" rx="1"></rect>
+        <rect x="4" y="11" width="16" height="2" rx="1"></rect>
+        <rect x="4" y="16" width="16" height="2" rx="1"></rect>
+      </svg>
+    </button>
+    <div class="topbar__title">GALENITE BOTHIVE</div>
+    <button class="icon-button" aria-label="Notifications">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 3a6 6 0 0 0-6 6v3.586l-1.293 1.293A1 1 0 0 0 5 16h14a1 1 0 0 0 .707-1.707L18.414 12.6V9a6 6 0 0 0-6-6Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+        <path d="M9.5 17.5a2.5 2.5 0 0 0 5 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+      </svg>
+    </button>
+  </header>
+
+  <main class="page">
+    <nav class="view-toggle" aria-label="Dashboard views">
+      <button class="toggle active" data-view="login">Login</button>
+      <button class="toggle" data-view="bots">Bots</button>
+      <button class="toggle" data-view="insight">Insights</button>
+    </nav>
+
+    <section class="panel" data-view-panel="login">
+      <div class="logo-stack">
+        <img src="../image/logo.png" alt="Bothive logo" class="logo" />
+      </div>
+      <div class="card auth-card">
+        <div class="tab-row" role="tablist">
+          <button class="tab active" role="tab" aria-selected="true">Login</button>
+          <button class="tab" role="tab" aria-selected="false">Register</button>
+        </div>
+        <label class="input">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4 0-7 2-7 4v1h14v-1c0-2-3-4-7-4Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+          <input type="text" placeholder="Username" aria-label="Username" />
+        </label>
+        <label class="input">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 11a6 6 0 1 1 12 0v4H6Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M4 11h16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path>
+          </svg>
+          <input type="password" placeholder="Password" aria-label="Password" />
+        </label>
+        <button class="primary">Login</button>
+        <div class="social-row" aria-label="Social login options">
+          <button class="social github" aria-label="Login with GitHub">
+            <span class="pill">GH</span>
+            <span>Github</span>
+          </button>
+          <button class="social google" aria-label="Login with Google">
+            <span class="pill">G</span>
+            <span>Google</span>
+          </button>
+          <button class="social telegram" aria-label="Login with Telegram">
+            <span class="pill">TG</span>
+            <span>Telegram</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel hidden" data-view-panel="bots">
+      <div class="device">
+        <div class="device__screen"></div>
+        <div class="device__base"></div>
+      </div>
+      <div class="bot-list">
+        <article class="bot-card">
+          <div class="bot-card__logo">H</div>
+          <div class="bot-card__body">
+            <h3>GAINT bot #1</h3>
+            <p>Real-time ops</p>
+          </div>
+          <div class="bot-card__status">12:40pm</div>
+        </article>
+        <article class="bot-card">
+          <div class="bot-card__logo">H</div>
+          <div class="bot-card__body">
+            <h3>GAINT bot #2</h3>
+            <p>Risk monitor</p>
+          </div>
+          <div class="bot-card__status">08:20am</div>
+        </article>
+        <article class="bot-card">
+          <div class="bot-card__logo">H</div>
+          <div class="bot-card__body">
+            <h3>GAINT bot #3</h3>
+            <p>Ticket queue</p>
+          </div>
+          <div class="bot-card__status">07:10am</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel hidden" data-view-panel="insight">
+      <div class="device">
+        <div class="device__screen"></div>
+        <div class="device__base"></div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-card__header">
+          <div class="bot-chip">
+            <span class="bot-chip__logo">H</span>
+            <div>
+              <div class="bot-chip__name">GAINT bot #1</div>
+              <div class="bot-chip__meta">Live • updated just now</div>
+            </div>
+          </div>
+          <button class="icon-button" aria-label="More options">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="6" cy="12" r="1.2"></circle>
+              <circle cx="12" cy="12" r="1.2"></circle>
+              <circle cx="18" cy="12" r="1.2"></circle>
+            </svg>
+          </button>
+        </div>
+        <div class="insight-card__body">
+          <div class="metric">
+            <div class="metric__label">Average response</div>
+            <div class="metric__value">1.2K</div>
+            <div class="metric__desc">per hour</div>
+          </div>
+          <div class="metric">
+            <div class="metric__label">Voice notes</div>
+            <div class="metric__value">475</div>
+            <div class="metric__desc">today</div>
+          </div>
+          <div class="chart">
+            <svg viewBox="0 0 160 100" role="img" aria-label="Performance chart">
+              <defs>
+                <linearGradient id="lineGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#8ae6ff" stop-opacity="0.9" />
+                  <stop offset="100%" stop-color="#4f7bff" stop-opacity="0.1" />
+                </linearGradient>
+              </defs>
+              <polyline points="0,70 20,60 40,65 60,40 80,55 100,35 120,50 140,20 160,30" fill="none" stroke="#9de7ff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+              <polygon points="0,100 0,70 20,60 40,65 60,40 80,55 100,35 120,50 140,20 160,30 160,100" fill="url(#lineGradient)" opacity="0.45" />
+            </svg>
+          </div>
+        </div>
+        <div class="insight-card__footer">
+          <button class="pill-btn" aria-label="Action for insights">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3v18M3 12h18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            </svg>
+          </button>
+          <button class="pill-btn" aria-label="Secondary action">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 12h14M5 7h14M5 17h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const toggles = document.querySelectorAll('[data-view]');
+    const panels = document.querySelectorAll('[data-view-panel]');
+
+    toggles.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        toggles.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const view = btn.getAttribute('data-view');
+        panels.forEach((panel) => {
+          const isMatch = panel.getAttribute('data-view-panel') === view;
+          panel.classList.toggle('hidden', !isMatch);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
