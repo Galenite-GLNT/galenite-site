@@ -149,6 +149,7 @@ async function handleSend() {
   toggleGalenBlock(true);
 
   await appendMessage(currentUser, activeChatId, "user", value);
+  window.dispatchEvent(new Event("galen:chatsShouldRefresh"));
   addMessage(value, "user");
   history.push({ role: "user", content: value });
   inputEl.value = "";
@@ -161,6 +162,7 @@ async function handleSend() {
     const reply = await askGalen(history);
     loader.remove();
     await appendMessage(currentUser, activeChatId, "assistant", reply);
+    window.dispatchEvent(new Event("galen:chatsShouldRefresh"));
     addMessage(reply, "bot");
     history.push({ role: "assistant", content: reply });
   } catch (err) {
