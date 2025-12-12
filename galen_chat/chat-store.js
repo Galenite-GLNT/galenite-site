@@ -1,7 +1,14 @@
 import {
-  collection, addDoc, doc, setDoc, getDocs, getDoc,
-  query, orderBy, serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+  collection,
+  addDoc,
+  doc,
+  setDoc,
+  getDocs,
+  getDoc,
+  query,
+  orderBy,
+  serverTimestamp,
+} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
 import { db } from "/shared/firebase.js";
 
