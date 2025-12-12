@@ -142,9 +142,22 @@ formEl.addEventListener("submit", async (e) => {
   await handleSend();
 });
 
+function ensureActiveChat() {
+  if (activeChatId) return activeChatId;
+
+  const fallbackId = "draft_" + Math.random().toString(36).slice(2, 10);
+  activeChatId = fallbackId;
+  window.dispatchEvent(
+    new CustomEvent("galen:chatChanged", { detail: { chatId: fallbackId } })
+  );
+  return fallbackId;
+}
+
 async function handleSend() {
   const value = (inputEl.value || "").trim();
-  if (!value || !activeChatId) return;
+  if (!value) return;
+
+  ensureActiveChat();
 
   toggleGalenBlock(true);
 
@@ -178,34 +191,26 @@ async function handleSend() {
 }
 
 async function askGalen(historyMessages) {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(new Error("timeout")), 30000);
+  const response = await fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: MODEL,
+      messages: historyMessages,
+      temperature: 0.6,
+    }),
+  });
 
-  try {
-    const response = await fetch(API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        messages: historyMessages,
-        temperature: 0.6,
-      }),
-      signal: controller.signal,
-    });
+  const text = await response.text();
 
-    const text = await response.text();
-
-    if (!response.ok) {
-      console.error("Proxy error status:", response.status);
-      console.error("Proxy error body:", text);
-      throw new Error("PROXY_" + response.status);
-    }
-
-    const data = JSON.parse(text);
-    return data.choices[0].message.content.trim();
-  } finally {
-    clearTimeout(timeout);
+  if (!response.ok) {
+    console.error("Proxy error status:", response.status);
+    console.error("Proxy error body:", text);
+    throw new Error("PROXY_" + response.status);
   }
+
+  const data = JSON.parse(text);
+  return data.choices[0].message.content.trim();
 }
