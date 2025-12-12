@@ -1,7 +1,8 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
+// Конфигурация проекта Firebase (из консоли galenite-glnt)
 export const FIREBASE_CONFIG = {
   apiKey: "AIzaSyCI1Vp5CSBu0veADOHtuUcFATSaOnXPswc",
   authDomain: "galenite-glnt.firebaseapp.com",
@@ -9,6 +10,7 @@ export const FIREBASE_CONFIG = {
   storageBucket: "galenite-glnt.firebasestorage.app",
   messagingSenderId: "94081808482",
   appId: "1:94081808482:web:2f5f4842c293c18621f93b",
+  measurementId: "G-WT9LDP619Q",
 };
 
 export const app = initializeApp(FIREBASE_CONFIG);

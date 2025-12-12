@@ -59,8 +59,35 @@ async function doRedirect() {
   window.location.href = returnTo;
 }
 
+function mapErrorToHint(error) {
+  const code = error?.code || "";
+
+  switch (code) {
+    case "auth/invalid-api-key":
+    case "auth/api-key-not-valid":
+      return "Проверь конфигурацию Firebase API key.";
+    case "auth/invalid-email":
+      return "Некорректный email.";
+    case "auth/missing-password":
+      return "Введи пароль.";
+    case "auth/wrong-password":
+    case "auth/invalid-credential":
+      return "Неверная связка email + пароль.";
+    case "auth/user-not-found":
+      return "Такого пользователя нет.";
+    case "auth/email-already-in-use":
+      return "Email уже занят.";
+    case "auth/weak-password":
+      return "Пароль должен быть длиннее 6 символов.";
+    case "auth/network-request-failed":
+      return "Нет сети или проблемы с Firebase.";
+    default:
+      return error?.message || "Auth failed";
+  }
+}
+
 async function handleSubmit() {
-  const u = username.value.trim();
+  const u = username.value.trim().toLowerCase();
   const p = password.value; // пароль НЕ тримим
 
   if (!u || !p) return setHint("Заполни оба поля.");
@@ -77,7 +104,7 @@ async function handleSubmit() {
 
     await doRedirect();
   } catch (err) {
-    setHint(err?.message || "Auth failed");
+    setHint(mapErrorToHint(err));
   } finally {
     setLoading(false);
   }
@@ -92,7 +119,7 @@ async function handleGoogle() {
 
     await doRedirect();
   } catch (err) {
-    setHint(err?.message || "Google Auth failed");
+    setHint(mapErrorToHint(err));
   } finally {
     setLoading(false);
   }
