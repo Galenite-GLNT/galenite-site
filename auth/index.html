@@ -1,35 +1,74 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Galenite Auth</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="/auth/style.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <title>Galenite Auth</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css" />
 </head>
+
 <body>
-  <div class="auth-container">
-    <img src="/auth/images/logo.png" alt="logo" class="logo" />
+  <main class="page">
+    <div class="header">GALENITE AUTH</div>
 
-    <div class="tab-switch">
-      <button id="loginTab" class="active">Login</button>
-      <div class="divider"></div>
-      <button id="registerTab">Register</button>
+    <div class="center">
+      <img class="crystal" src="./images/logo.png" alt="Galenite logo" />
+
+      <div class="tabs" role="tablist" aria-label="Auth mode">
+        <button id="loginTab" class="tab active" type="button" role="tab" aria-selected="true">LOGIN</button>
+        <div class="tab-sep" aria-hidden="true"></div>
+        <button id="registerTab" class="tab" type="button" role="tab" aria-selected="false">REGISTER</button>
+        <div class="tab-underline" aria-hidden="true"></div>
+      </div>
+
+      <form class="form" autocomplete="on" onsubmit="return false;">
+        <div class="field-row">
+          <div class="field-ico" aria-hidden="true">
+            <!-- user icon -->
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 12a4.2 4.2 0 1 0-4.2-4.2A4.2 4.2 0 0 0 12 12Z" stroke="currentColor" stroke-width="1.6"/>
+              <path d="M4.8 20.2c1.8-4 12.6-4 14.4 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <input id="username" class="field" type="text" placeholder="USERNAME..." autocomplete="username" />
+        </div>
+
+        <div class="field-row">
+          <div class="field-ico" aria-hidden="true">
+            <!-- lock icon -->
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M8.2 11V8.8A3.8 3.8 0 0 1 12 5a3.8 3.8 0 0 1 3.8 3.8V11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M7.4 11h9.2a1.6 1.6 0 0 1 1.6 1.6v5.6a1.6 1.6 0 0 1-1.6 1.6H7.4a1.6 1.6 0 0 1-1.6-1.6v-5.6A1.6 1.6 0 0 1 7.4 11Z" stroke="currentColor" stroke-width="1.6"/>
+            </svg>
+          </div>
+          <input id="password" class="field" type="password" placeholder="PASSWORD..." autocomplete="current-password" />
+        </div>
+
+        <button id="submitBtn" class="cta" type="button">LOGIN</button>
+
+        <div class="social">
+          <button class="social-btn" type="button" id="githubBtn" aria-label="GitHub (WIP)">
+            <img src="./images/github_logo.png" alt="GitHub" />
+          </button>
+
+          <button class="social-btn" type="button" id="googleBtn" aria-label="Google">
+            <img src="./images/google_logo.png" alt="Google" />
+          </button>
+
+          <button class="social-btn" type="button" id="telegramBtn" aria-label="Telegram (WIP)">
+            <img src="./images/telegram_logo.png" alt="Telegram" />
+          </button>
+        </div>
+
+        <div id="hint" class="hint" aria-live="polite"></div>
+      </form>
     </div>
+  </main>
 
-    <div class="auth-form">
-      <input type="text" id="username" placeholder="Username..." />
-      <input type="password" id="password" placeholder="Password..." />
-      <button id="submitBtn">Login</button>
-    </div>
-
-    <div class="social-row">
-      <img src="/auth/images/github_logo.png" title="GitHub" />
-      <img src="/auth/images/google_logo.png" id="googleBtn" title="Google" />
-      <img src="/auth/images/telegram_logo.png" title="Telegram (WIP)" />
-    </div>
-  </div>
-
-  <script type="module" src="/auth/auth.js"></script>
+  <script type="module" src="./auth.js"></script>
 </body>
 </html>
