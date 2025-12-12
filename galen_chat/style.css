@@ -5,20 +5,27 @@
 }
 
 :root {
-  --bg-main: #171717;
-  --bg-panel: #111111;
-  --white: #ffffff;
-  --text-muted: #9ca3af;
-  --divider: rgba(255, 255, 255, 0.16);
-  --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.6);
+  /* ОСНОВНОЙ ФОН */
+  --bg-gradient: linear-gradient(180deg, #DDE2EE 0%, #FFFFFF 100%);
+
+  /* ПАНЕЛИ */
+  --bg-panel: rgba(255, 255, 255, 0.55);
+
+  /* ТЕКСТ */
+  --text-main: #0b0f19;
+  --text-muted: #6b7280;
+
+  /* ДРУГОЕ */
+  --divider: rgba(0, 0, 0, 0.08);
+  --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.18);
 }
 
 body {
   margin: 0;
   height: 100vh;
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--bg-main);
-  color: var(--white);
+  background: var(--bg-gradient);
+  color: var(--text-main);
 }
 
 /* ЛЕЙАУТ */
@@ -39,6 +46,7 @@ body {
   flex-direction: column;
   justify-content: space-between;
   padding: 24px 24px 32px;
+  border-right: 1px solid var(--divider);
 }
 
 .sidebar-logo {
@@ -87,7 +95,6 @@ body {
 
 .main {
   flex: 1;
-  background: var(--bg-panel);
   display: flex;
   flex-direction: column;
 }
@@ -100,11 +107,12 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid var(--divider);
   font-size: 11px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #9ca3af;
+  color: #6b7280;
+  backdrop-filter: blur(6px);
 }
 
 /* CANVAS */
@@ -116,7 +124,7 @@ body {
   overflow: hidden;
 }
 
-/* Пунктирные линии — просто невидимые направляющие */
+/* НАПРАВЛЯЮЩИЕ */
 
 .grid-line {
   position: absolute;
@@ -125,7 +133,6 @@ body {
   width: 1px;
   opacity: 0;
   pointer-events: none;
-  border-left: none;
 }
 
 .grid-line-left {
@@ -136,7 +143,7 @@ body {
   right: 10%;
 }
 
-/* Оболочка чата */
+/* ЧАТ */
 
 .chat-shell {
   position: relative;
@@ -147,31 +154,31 @@ body {
   align-items: center;
 }
 
-/* Блок с аватаром и рандомной фразой */
+/* GALEN */
 
 .galen-block {
   margin-top: 80px;
   text-align: center;
   pointer-events: none;
   transition: opacity 0.4s ease, transform 0.4s ease;
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
 .galen-avatar img {
   width: 160px;
   height: 160px;
   object-fit: contain;
-  filter: drop-shadow(0 18px 40px rgba(0, 0, 0, 0.8));
+  filter: drop-shadow(0 18px 40px rgba(15, 23, 42, 0.35));
   animation: galen-float 6s ease-in-out infinite;
 }
 
 .galen-phrase {
   margin-top: 16px;
   font-size: 14px;
-  color: #e5e7eb;
+  color: #4b5563;
 }
 
-/* Сообщения */
+/* СООБЩЕНИЯ */
 
 .chat-messages {
   margin-top: 40px;
@@ -184,52 +191,45 @@ body {
   overflow-y: auto;
 }
 
-/* базовый вид msg — как "пузырь", потом переопределяем под бота */
-
 .msg {
   max-width: 78%;
   font-size: 14px;
   line-height: 1.5;
   word-wrap: break-word;
   white-space: pre-wrap;
-  transform-origin: 50% 50%;
   animation: msg-pop 0.16s ease-out;
 }
 
-/* пользователь: справа, белый пузырь */
+/* USER */
 
 .msg.user {
   margin-left: auto;
-  background: #f9fafb;
+  background: #ffffff;
   color: #111827;
   padding: 12px 16px;
   border-radius: 18px;
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.25);
 }
 
-/* Galen: слева, просто текст без капсулы */
+/* GALEN */
 
 .msg.bot {
   margin-right: auto;
   background: transparent;
-  color: #f9fafb;
+  color: #0b0f19;
   padding: 0;
-  border-radius: 0;
-  box-shadow: none;
 }
 
-/* системные/служебные */
+/* SYSTEM */
 
 .msg.system {
   margin: 0 auto;
   background: transparent;
-  border: none;
-  box-shadow: none;
   color: #6b7280;
   font-size: 12px;
 }
 
-/* Лоадер */
+/* LOADER */
 
 .msg.loading {
   display: inline-flex;
@@ -246,7 +246,7 @@ body {
   width: 4px;
   height: 4px;
   border-radius: 999px;
-  background: #e5e7eb;
+  background: #9ca3af;
   animation: dots 0.9s infinite ease-in-out;
 }
 
@@ -258,7 +258,7 @@ body {
   animation-delay: 0.3s;
 }
 
-/* INPUT BAR */
+/* INPUT */
 
 .input-bar {
   padding: 0 72px 32px;
@@ -291,7 +291,6 @@ body {
 
 .input-pill button {
   border: none;
-  outline: none;
   cursor: pointer;
   width: 40px;
   height: 40px;
@@ -302,13 +301,12 @@ body {
   background: #111827;
   color: #ffffff;
   font-size: 18px;
-  transform: translateX(0);
-  transition: transform 0.16s ease, box-shadow 0.16s ease, opacity 0.16s ease;
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
 }
 
 .input-pill button:hover {
   transform: translateX(2px) translateY(-1px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.35);
 }
 
 .input-pill button:disabled {
@@ -321,12 +319,8 @@ body {
 /* АНИМАЦИИ */
 
 @keyframes galen-float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
 @keyframes msg-pop {
