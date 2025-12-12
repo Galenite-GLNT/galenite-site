@@ -30,9 +30,19 @@
 
       <div class="sidebar-beta">
         <div class="beta-label">THIS IS BETA VERSION</div>
-        <p>На данный момент история чатов не сохраняется</p>
+        <p>История чатов сохраняется локально или в облаке после авторизации</p>
       </div>
     </div>
+
+    <div class="sidebar-chats">
+      <div class="chats-head">
+        <div class="chats-title">Chats</div>
+        <button id="newChatBtn" class="chats-new">+</button>
+      </div>
+      <div id="chatList" class="chat-list"></div>
+    </div>
+
+    <div class="sidebar-footer" id="sidebarFooter"></div>
 
     <div class="sidebar-bottom">
       <span class="sidebar-caption">GALEN v0.2 BETA</span>
@@ -83,8 +93,10 @@
   </main>
 </div>
 
-<script src="chat.js"></script>
+<script type="module" src="chat.js"></script>
+<script type="module" src="./sidebar-auth.js"></script>
+<script type="module" src="./sidebar-chats.js"></script>
 </body>
-<
+</html>
 
 

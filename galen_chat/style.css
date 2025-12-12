@@ -44,7 +44,8 @@ body {
   color: #111827;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 22px;
   padding: 24px 24px 32px;
   border-right: 1px solid var(--divider);
 }
@@ -90,6 +91,24 @@ body {
   text-transform: uppercase;
   color: #9ca3af;
 }
+
+.sidebar-chats{ margin-top: 22px; display:flex; flex-direction:column; gap:12px; }
+.chats-head{ display:flex; align-items:center; justify-content:space-between; }
+.chats-title{ font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:#6b7280; font-weight:700; }
+.chats-new{ width:28px; height:28px; border-radius:10px; border:0; background:#111827; color:#fff; cursor:pointer; }
+
+.chat-list{ display:flex; flex-direction:column; gap:8px; max-height: 52vh; overflow:auto; padding-right: 6px; }
+.chat-item{ text-align:left; border:0; cursor:pointer; padding:10px 12px; border-radius:12px; background:rgba(17,24,39,.06); color:#111827; font-size:13px; }
+.chat-item.active{ background:rgba(17,24,39,.12); }
+
+.sidebar-footer{ margin-top:auto; padding-top:16px; }
+.sidebar-auth-btn{ width:100%; border:0; border-radius:12px; padding:10px 12px; cursor:pointer; background:#111827; color:#fff; font-size:13px; }
+.sidebar-user{ display:flex; align-items:center; gap:10px; }
+.avatar{ width:34px; height:34px; border-radius:999px; overflow:hidden; background:rgba(17,24,39,.1); display:flex; align-items:center; justify-content:center; color:#111827; font-weight:700; }
+.avatar img{ width:100%; height:100%; object-fit:cover; }
+.user-meta{ display:flex; flex-direction:column; gap:4px; }
+.user-name{ font-size:12px; color:#111827; font-weight:700; }
+.user-logout{ border:0; background:transparent; padding:0; cursor:pointer; font-size:12px; color:#6b7280; text-align:left; }
 
 /* MAIN */
 
