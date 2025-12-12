@@ -9,6 +9,8 @@ const formEl = document.getElementById("chat-form");
 const inputEl = document.getElementById("message");
 const galenBlockEl = document.getElementById("galen-block");
 const galenPhraseEl = document.getElementById("galen-phrase");
+const sidebarToggleEl = document.getElementById("sidebarToggle");
+const sidebarBackdropEl = document.getElementById("sidebarBackdrop");
 
 const SYSTEM_MESSAGE = {
   role: "system",
@@ -69,6 +71,17 @@ setRandomPhrase();
 watchAuth((u) => {
   currentUser = u || null;
 });
+
+function closeSidebar() {
+  document.body.classList.remove("sidebar-open");
+}
+
+function toggleSidebar() {
+  document.body.classList.toggle("sidebar-open");
+}
+
+sidebarToggleEl?.addEventListener("click", toggleSidebar);
+sidebarBackdropEl?.addEventListener("click", closeSidebar);
 
 function addMessage(text, role) {
   const el = document.createElement("div");
@@ -131,6 +144,7 @@ async function renderLoadedMessages(messages) {
 
 window.addEventListener("galen:chatChanged", async (e) => {
   activeChatId = e.detail.chatId;
+  closeSidebar();
   resetHistory();
   const msgs = await loadMessages(currentUser, activeChatId);
   history = [SYSTEM_MESSAGE, ...msgs.map((m) => ({ role: m.role, content: m.content }))];

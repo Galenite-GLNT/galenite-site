@@ -15,6 +15,7 @@
   <!-- Inter -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style-mobile.css">
 </head>
 <body>
 <div class="layout">
@@ -48,10 +49,14 @@
       <span class="sidebar-caption">GALEN v0.2 BETA</span>
     </div>
   </aside>
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
   <!-- ОСНОВНАЯ ОБЛАСТЬ -->
   <main class="main">
     <header class="topbar">
+      <button type="button" class="sidebar-toggle" id="sidebarToggle" aria-label="Открыть меню">
+        ☰
+      </button>
       <span class="topbar-left">GALENITE</span>
       <span class="topbar-right">GALEN v0.2 BETA</span>
     </header>
