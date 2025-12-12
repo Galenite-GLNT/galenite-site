@@ -3,49 +3,123 @@ import { getQueryParam } from "/shared/utils.js";
 
 const loginTab = document.getElementById("loginTab");
 const registerTab = document.getElementById("registerTab");
+const underline = document.querySelector(".tab-underline");
+
 const username = document.getElementById("username");
 const password = document.getElementById("password");
 const submitBtn = document.getElementById("submitBtn");
 const googleBtn = document.getElementById("googleBtn");
 
-let isLogin = true;
+const hint = document.getElementById("hint");
+const form = document.querySelector(".form");
 
-loginTab.onclick = () => {
-  isLogin = true;
-  loginTab.classList.add("active");
-  registerTab.classList.remove("active");
-  submitBtn.textContent = "Login";
-};
+let mode = "login"; // "login" | "register"
 
-registerTab.onclick = () => {
-  isLogin = false;
-  registerTab.classList.add("active");
-  loginTab.classList.remove("active");
-  submitBtn.textContent = "Register";
-};
+function setHint(text = "") {
+  if (!hint) return;
+  hint.textContent = text;
+}
 
-submitBtn.onclick = async () => {
+function setLoading(isLoading) {
+  submitBtn.disabled = isLoading;
+  if (googleBtn) googleBtn.disabled = isLoading;
+
+  if (isLoading) {
+    submitBtn.style.opacity = "0.75";
+    submitBtn.style.cursor = "default";
+  } else {
+    submitBtn.style.opacity = "";
+    submitBtn.style.cursor = "";
+  }
+}
+
+function setMode(nextMode) {
+  mode = nextMode;
+
+  const isLogin = mode === "login";
+  loginTab.classList.toggle("active", isLogin);
+  registerTab.classList.toggle("active", !isLogin);
+
+  loginTab.setAttribute("aria-selected", String(isLogin));
+  registerTab.setAttribute("aria-selected", String(!isLogin));
+
+  // Текст на кнопке — капсом под макет
+  submitBtn.textContent = isLogin ? "LOGIN" : "REGISTER";
+
+  // underline
+  if (underline) {
+    underline.style.transform = isLogin ? "translateX(-44px)" : "translateX(44px)";
+  }
+
+  setHint("");
+}
+
+async function doRedirect() {
+  const returnTo = getQueryParam("return") || "/";
+  window.location.href = returnTo;
+}
+
+async function handleSubmit() {
   const u = username.value.trim();
-  const p = password.value.trim();
-  if (!u || !p) return alert("Fill both fields");
+  const p = password.value; // пароль НЕ тримим
+
+  if (!u || !p) return setHint("Заполни оба поля.");
 
   try {
-    if (isLogin) await loginEmail(u, p);
-    else await registerEmail(u, p, u);
+    setLoading(true);
+    setHint("...");
 
-    const returnTo = getQueryParam("return") || "/";
-    window.location.href = returnTo;
+    if (mode === "login") {
+      await loginEmail(u, p);
+    } else {
+      await registerEmail(u, p, u);
+    }
+
+    await doRedirect();
   } catch (err) {
-    alert(err.message || "Auth failed");
+    setHint(err?.message || "Auth failed");
+  } finally {
+    setLoading(false);
   }
-};
+}
 
-googleBtn.onclick = async () => {
+async function handleGoogle() {
   try {
+    setLoading(true);
+    setHint("...");
+
     await loginGoogle();
-    const returnTo = getQueryParam("return") || "/";
-    window.location.href = returnTo;
+
+    await doRedirect();
   } catch (err) {
-    alert(err.message || "Google Auth failed");
+    setHint(err?.message || "Google Auth failed");
+  } finally {
+    setLoading(false);
   }
-};
+}
+
+// Tabs
+loginTab.addEventListener("click", () => setMode("login"));
+registerTab.addEventListener("click", () => setMode("register"));
+
+// Buttons
+submitBtn.addEventListener("click", handleSubmit);
+if (googleBtn) googleBtn.addEventListener("click", handleGoogle);
+
+// Enter submit (чтобы работало как норм форма)
+if (form) {
+  form.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSubmit();
+    }
+  });
+}
+
+// Анимации влёта
+requestAnimationFrame(() => {
+  document.documentElement.classList.add("loaded");
+});
+
+// init
+setMode("login");
