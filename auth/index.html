@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Galenite Auth</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/auth/style.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="auth-container">
+    <img src="/images/logo.png" alt="logo" class="auth-logo">
+    <div class="auth-toggle">
+      <button id="loginTab" class="active">Login</button>
+      <button id="registerTab">Register</button>
+    </div>
+
+    <div class="auth-form">
+      <input type="text" id="username" placeholder="Username..." />
+      <input type="password" id="password" placeholder="Password..." />
+      <button id="submitBtn">Login</button>
+    </div>
+
+    <div class="social-login">
+      <img src="/images/github.svg" alt="GitHub" title="GitHub">
+      <img src="/images/google.svg" alt="Google" title="Google" id="googleBtn">
+      <img src="/images/telegram.svg" alt="Telegram" title="Telegram (TBD)">
+    </div>
+  </div>
+
+  <script type="module" src="/auth/auth.js"></script>
+</body>
+</html>
