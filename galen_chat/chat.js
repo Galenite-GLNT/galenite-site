@@ -1,5 +1,5 @@
 import { watchAuth } from "/shared/auth-core.js";
-import { loadMessages, appendMessage } from "./chat-store.js";
+import { loadMessages, appendMessage, createChat } from "./chat-store.js";
 
 const API_URL = "https://galen-chat-proxy.ilyasch2020.workers.dev";
 const MODEL = "gpt-4o-mini";
@@ -152,12 +152,12 @@ window.addEventListener("galen:chatChanged", async (e) => {
   closeSidebar();
   resetHistory();
   const msgs = await loadMessages(currentUser, activeChatId);
-  history = [SYSTEM_MESSAGE, ...msgs.map((m) => ({ role: m.role, content: m.content }))];
+  history = [
+    SYSTEM_MESSAGE,
+    ...msgs.map((m) => ({ role: m.role, content: m.content })),
+  ];
   await renderLoadedMessages(msgs);
 });
-
-// гарантируем, что чат активируется сразу и обработчики выше успевают отработать
-ensureActiveChat();
 
 formEl.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -171,22 +171,22 @@ inputEl?.addEventListener("keydown", (e) => {
   }
 });
 
-function ensureActiveChat() {
+async function ensureActiveChat() {
   if (activeChatId) return activeChatId;
 
-  const fallbackId = "draft_" + Math.random().toString(36).slice(2, 10);
-  activeChatId = fallbackId;
+  const created = await createChat(currentUser);
+  activeChatId = created.id;
   window.dispatchEvent(
-    new CustomEvent("galen:chatChanged", { detail: { chatId: fallbackId } })
+    new CustomEvent("galen:chatChanged", { detail: { chatId: activeChatId } })
   );
-  return fallbackId;
+  return activeChatId;
 }
 
 async function handleSend() {
   const value = (inputEl.value || "").trim();
   if (!value) return;
 
-  ensureActiveChat();
+  await ensureActiveChat();
 
   toggleGalenBlock(true);
 
