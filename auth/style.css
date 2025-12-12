@@ -329,3 +329,65 @@ html.loaded .form{ transform: translateY(0); opacity: 1; }
   .form{ width: 340px; }
   .tab-underline{ width: 60px; }
 }
+
+/* --- ALIGN FIXES --- */
+
+/* центрируем верх */
+.header{ text-align:center; width:100%; }
+.center{ align-items:center; }
+
+/* tabs по центру */
+.tabs{ justify-content:center; }
+
+/* форма: НЕ центрируем иконки, центрируем только прямоугольники */
+.form{
+  width: 420px;
+  max-width: calc(100vw - 32px);
+  align-items: center;
+}
+
+/* ширина прямоугольников */
+:root{
+  --rectW: 360px; /* можешь 340/380 по вкусу */
+  --icoW: 34px;
+  --gapIW: 14px;
+}
+
+.field-row{
+  width: calc(var(--rectW) + var(--icoW) + var(--gapIW));
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap: var(--gapIW);
+}
+
+/* иконка — отдельная колонка слева, НЕ участвует в центровке прямоугольников */
+.field-ico{
+  width: var(--icoW);
+  height: var(--icoW);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transform: translateX(-2px); /* чуть левее, как ты хочешь */
+}
+
+/* вот ЭТО и есть “центр прямоугольников” */
+.field-center{
+  width: var(--rectW);
+  display:flex;
+  justify-content:center; /* на всякий */
+}
+
+/* сам инпут ровно на ширину прямоугольника */
+.field{
+  width: 100%;
+}
+
+/* кнопка ровно 1:1 с прямоугольниками и по центру */
+.cta{
+  width: var(--rectW);
+  margin-left: 0; /* убираем старый трюк со сдвигом */
+  align-self: center;
+}
+
+
