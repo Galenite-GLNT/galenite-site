@@ -82,6 +82,11 @@ function toggleSidebar() {
 
 sidebarToggleEl?.addEventListener("click", toggleSidebar);
 sidebarBackdropEl?.addEventListener("click", closeSidebar);
+window.addEventListener("keyup", (e) => {
+  if (e.key === "Escape") {
+    closeSidebar();
+  }
+});
 
 function addMessage(text, role) {
   const el = document.createElement("div");
@@ -151,9 +156,19 @@ window.addEventListener("galen:chatChanged", async (e) => {
   await renderLoadedMessages(msgs);
 });
 
+// гарантируем, что чат активируется сразу и обработчики выше успевают отработать
+ensureActiveChat();
+
 formEl.addEventListener("submit", async (e) => {
   e.preventDefault();
   await handleSend();
+});
+
+inputEl?.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    handleSend();
+  }
 });
 
 function ensureActiveChat() {
