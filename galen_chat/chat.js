@@ -178,26 +178,34 @@ async function handleSend() {
 }
 
 async function askGalen(historyMessages) {
-  const response = await fetch(API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      messages: historyMessages,
-      temperature: 0.6,
-    }),
-  });
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(new Error("timeout")), 30000);
 
-  const text = await response.text();
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        messages: historyMessages,
+        temperature: 0.6,
+      }),
+      signal: controller.signal,
+    });
 
-  if (!response.ok) {
-    console.error("Proxy error status:", response.status);
-    console.error("Proxy error body:", text);
-    throw new Error("PROXY_" + response.status);
+    const text = await response.text();
+
+    if (!response.ok) {
+      console.error("Proxy error status:", response.status);
+      console.error("Proxy error body:", text);
+      throw new Error("PROXY_" + response.status);
+    }
+
+    const data = JSON.parse(text);
+    return data.choices[0].message.content.trim();
+  } finally {
+    clearTimeout(timeout);
   }
-
-  const data = JSON.parse(text);
-  return data.choices[0].message.content.trim();
 }
