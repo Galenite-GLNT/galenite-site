@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile settings — Galenite</title>
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+  <div class="layout">
+    <header class="topbar">
+      <div class="brand">
+        <img src="/image/logo.png" alt="Galenite" />
+        <div>
+          <div>Profile settings</div>
+          <small style="color: var(--text-muted)">Personal baseline prompt</small>
+        </div>
+      </div>
+      <div class="links">
+        <a class="badge" href="/profile">← Back to profile</a>
+        <a class="btn" href="/">Home</a>
+      </div>
+    </header>
+
+    <section class="settings-grid">
+      <form class="form-card" id="prompt-form">
+        <div class="label-row">
+          <div>
+            <div class="badge">Identity</div>
+            <h3 style="margin:6px 0 0">Baseline prompt</h3>
+          </div>
+          <span class="helper"><span id="char-count">0</span>/50</span>
+        </div>
+        <textarea id="prompt" maxlength="50" placeholder="Example: Calm operator who loves clear plans and evening walks."></textarea>
+        <div class="helper">Keep it short. This 50-character prompt sets the tone for how Galenite speaks and prioritizes nudges.</div>
+        <div class="chips" id="tone-chips">
+          <button class="chip" type="button">Calm</button>
+          <button class="chip" type="button">Proactive</button>
+          <button class="chip" type="button">Playful</button>
+          <button class="chip" type="button">Precise</button>
+        </div>
+        <button class="btn btn-primary" type="submit">Save baseline</button>
+      </form>
+
+      <div class="settings-side">
+        <div class="form-card">
+          <div class="label-row">
+            <div>
+              <div class="badge">Avatar</div>
+              <h3 style="margin:6px 0 0">Change portrait</h3>
+            </div>
+            <span class="helper">PNG/JPEG</span>
+          </div>
+          <div class="avatar-upload">
+            <div class="avatar-preview">
+              <img id="avatar-preview" src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=400&q=80" alt="Avatar preview" />
+            </div>
+            <div>
+              <input id="avatar-input" type="file" accept="image/*" />
+              <p class="helper">Upload a crisp headshot. Instant preview and sync with your assistants.</p>
+            </div>
+          </div>
+          <button class="btn" type="button" id="randomize">Shuffle gradient frame</button>
+        </div>
+
+        <div class="form-card">
+          <div class="label-row">
+            <div>
+              <div class="badge">Signals</div>
+              <h3 style="margin:6px 0 0">Status message</h3>
+            </div>
+            <span class="helper">Visible to assistants</span>
+          </div>
+          <input id="status" type="text" placeholder="Available · building a calmer week" />
+          <div class="preview-box" id="live-preview">Your new status will appear here.</div>
+          <button class="btn" type="button" id="apply-status">Apply status</button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">Changes here instantly shape how Galenite answers, reminds, and prioritizes for you.</footer>
+  </div>
+
+  <script>
+    const promptInput = document.getElementById('prompt');
+    const charCount = document.getElementById('char-count');
+    const livePreview = document.getElementById('live-preview');
+    const toneChips = document.querySelectorAll('#tone-chips .chip');
+
+    const syncCount = () => {
+      charCount.textContent = promptInput.value.length;
+      livePreview.textContent = promptInput.value || 'Your new status will appear here.';
+    };
+
+    promptInput.addEventListener('input', syncCount);
+    syncCount();
+
+    toneChips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        promptInput.value = (promptInput.value + ' ' + chip.textContent).trim().slice(0, 50);
+        syncCount();
+      });
+    });
+
+    document.getElementById('prompt-form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      livePreview.textContent = 'Saved: ' + promptInput.value;
+    });
+
+    const avatarInput = document.getElementById('avatar-input');
+    const avatarPreview = document.getElementById('avatar-preview');
+    avatarInput.addEventListener('change', (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => { avatarPreview.src = e.target?.result; };
+      reader.readAsDataURL(file);
+    });
+
+    const randomizeBtn = document.getElementById('randomize');
+    randomizeBtn.addEventListener('click', () => {
+      const hues = [180, 210, 260, 320, 45];
+      const hue = hues[Math.floor(Math.random() * hues.length)];
+      avatarPreview.style.filter = `hue-rotate(${hue}deg)`;
+      randomizeBtn.textContent = 'Frame hue ' + hue + '° applied';
+    });
+
+    const statusInput = document.getElementById('status');
+    const applyStatus = document.getElementById('apply-status');
+    applyStatus.addEventListener('click', () => {
+      livePreview.textContent = statusInput.value ? 'Status: ' + statusInput.value : 'Your new status will appear here.';
+    });
+  </script>
+</body>
+</html>
