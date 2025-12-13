@@ -16,6 +16,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="style-mobile.css">
+  <link rel="stylesheet" href="animations.css">
 </head>
 <body>
 <div class="layout">
@@ -58,7 +59,23 @@
         ☰
       </button>
       <span class="topbar-left">GALENITE</span>
-      <span class="topbar-right">GALEN v0.2 BETA</span>
+      <div class="topbar-right">
+        GALEN v0.2 BETA
+        <div class="focus-dropdown" id="focusDropdown" data-focus>
+          <button type="button" class="focus-trigger" id="focusTrigger" aria-haspopup="listbox" aria-expanded="false">
+            <span class="focus-trigger-label">Focus</span>
+            <span class="focus-trigger-value" id="focusValue">Default</span>
+            <span class="focus-caret" aria-hidden="true">▾</span>
+          </button>
+          <div class="focus-menu" id="focusMenu" role="listbox" aria-label="Выбор фокуса">
+            <button type="button" role="option" data-value="Default">Default</button>
+            <button type="button" role="option" data-value="Observe">Observe</button>
+            <button type="button" role="option" data-value="Analyze">Analyze</button>
+            <button type="button" role="option" data-value="Ideas">Ideas</button>
+            <button type="button" role="option" data-value="Minimal">Minimal</button>
+          </div>
+        </div>
+      </div>
     </header>
 
     <section class="canvas">
@@ -101,6 +118,7 @@
 <script type="module" src="chat.js"></script>
 <script type="module" src="./sidebar-auth.js"></script>
 <script type="module" src="./sidebar-chats.js"></script>
+<script type="module" src="./ui-motion.js"></script>
 </body>
 </html>
 

@@ -11,6 +11,10 @@ const galenBlockEl = document.getElementById("galen-block");
 const galenPhraseEl = document.getElementById("galen-phrase");
 const sidebarToggleEl = document.getElementById("sidebarToggle");
 const sidebarBackdropEl = document.getElementById("sidebarBackdrop");
+const focusDropdownEl = document.getElementById("focusDropdown");
+const focusTriggerEl = document.getElementById("focusTrigger");
+const focusMenuEl = document.getElementById("focusMenu");
+const focusValueEl = document.getElementById("focusValue");
 
 const SYSTEM_MESSAGE = {
   role: "system",
@@ -50,6 +54,8 @@ Galenite — это модульная операционная система �
 let history = [SYSTEM_MESSAGE];
 let currentUser = null;
 let activeChatId = null;
+const FOCUS_KEY = "galen_focus_selection";
+let currentFocus = loadFocusFromStorage();
 
 // рандомные фразы под аватаром
 const randomPhrases = [
@@ -60,6 +66,54 @@ const randomPhrases = [
   "Чем займёмся: делами, идеями или пиздёжом?"
 ];
 
+function loadFocusFromStorage() {
+  try {
+    return localStorage.getItem(FOCUS_KEY) || "Default";
+  } catch {
+    return "Default";
+  }
+}
+
+function saveFocusToStorage(value) {
+  try {
+    localStorage.setItem(FOCUS_KEY, value);
+  } catch {}
+}
+
+function getFocusSystemMessage(value = currentFocus) {
+  return { role: "system", content: `Текущий фокус Galen: ${value}` };
+}
+
+function syncFocusHistory() {
+  const focusMessage = getFocusSystemMessage();
+  const existingIndex = history.findIndex(
+    (m) => m.role === "system" && m.content.startsWith("Текущий фокус Galen:")
+  );
+
+  if (existingIndex >= 0) {
+    history[existingIndex] = focusMessage;
+  } else {
+    history.splice(1, 0, focusMessage);
+  }
+}
+
+function renderFocusUI() {
+  if (focusValueEl) {
+    focusValueEl.textContent = currentFocus;
+  }
+
+  focusMenuEl?.querySelectorAll("button[data-value]").forEach((btn) => {
+    btn.classList.toggle("active", btn.dataset.value === currentFocus);
+  });
+}
+
+function setFocus(value) {
+  currentFocus = value;
+  saveFocusToStorage(value);
+  renderFocusUI();
+  syncFocusHistory();
+}
+
 function setRandomPhrase() {
   const phrase =
     randomPhrases[Math.floor(Math.random() * randomPhrases.length)];
@@ -67,6 +121,8 @@ function setRandomPhrase() {
 }
 
 setRandomPhrase();
+syncFocusHistory();
+renderFocusUI();
 
 watchAuth((u) => {
   currentUser = u || null;
@@ -80,11 +136,47 @@ function toggleSidebar() {
   document.body.classList.toggle("sidebar-open");
 }
 
+function closeFocusDropdown() {
+  focusDropdownEl?.classList.remove("open");
+  focusTriggerEl?.setAttribute("aria-expanded", "false");
+}
+
+function toggleFocusDropdown(forceState) {
+  if (!focusDropdownEl) return;
+  const nextState =
+    typeof forceState === "boolean"
+      ? forceState
+      : !focusDropdownEl.classList.contains("open");
+  focusDropdownEl.classList.toggle("open", nextState);
+  focusTriggerEl?.setAttribute("aria-expanded", nextState ? "true" : "false");
+}
+
 sidebarToggleEl?.addEventListener("click", toggleSidebar);
 sidebarBackdropEl?.addEventListener("click", closeSidebar);
 window.addEventListener("keyup", (e) => {
   if (e.key === "Escape") {
     closeSidebar();
+    closeFocusDropdown();
+  }
+});
+
+focusTriggerEl?.addEventListener("click", (e) => {
+  e.stopPropagation();
+  toggleFocusDropdown();
+});
+
+focusMenuEl?.addEventListener("click", (e) => {
+  if (!(e.target instanceof HTMLButtonElement)) return;
+  const value = e.target.dataset.value;
+  if (!value) return;
+  setFocus(value);
+  toggleFocusDropdown(false);
+});
+
+document.addEventListener("click", (e) => {
+  if (!focusDropdownEl) return;
+  if (!focusDropdownEl.contains(e.target)) {
+    closeFocusDropdown();
   }
 });
 
@@ -135,6 +227,7 @@ function toggleGalenBlock(hasMessages) {
 
 function resetHistory() {
   history = [SYSTEM_MESSAGE];
+  syncFocusHistory();
 }
 
 async function renderLoadedMessages(messages) {
@@ -156,6 +249,7 @@ window.addEventListener("galen:chatChanged", async (e) => {
     SYSTEM_MESSAGE,
     ...msgs.map((m) => ({ role: m.role, content: m.content })),
   ];
+  syncFocusHistory();
   await renderLoadedMessages(msgs);
 });
 
@@ -187,6 +281,8 @@ async function handleSend() {
   if (!value) return;
 
   await ensureActiveChat();
+
+  syncFocusHistory();
 
   toggleGalenBlock(true);
 
@@ -229,6 +325,7 @@ async function askGalen(historyMessages) {
       model: MODEL,
       messages: historyMessages,
       temperature: 0.6,
+      focus: currentFocus,
     }),
   });
 
