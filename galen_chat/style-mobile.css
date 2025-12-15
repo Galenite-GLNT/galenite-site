@@ -96,4 +96,17 @@
   .galen-block {
     margin-top: 32px;
   }
+
+  .ai-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .ai-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .actions-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }

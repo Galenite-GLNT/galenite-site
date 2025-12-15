@@ -11,43 +11,118 @@ const galenBlockEl = document.getElementById("galen-block");
 const galenPhraseEl = document.getElementById("galen-phrase");
 const sidebarToggleEl = document.getElementById("sidebarToggle");
 const sidebarBackdropEl = document.getElementById("sidebarBackdrop");
+const toneButtonsEl = document.getElementById("toneButtons");
+const contextTogglesEl = document.getElementById("contextToggles");
+const promptChipsEl = document.getElementById("promptChips");
+const toneSummaryEl = document.getElementById("toneSummary");
+const contextSummaryEl = document.getElementById("contextSummary");
+const insightListEl = document.getElementById("insightList");
 
-const SYSTEM_MESSAGE = {
-  role: "system",
-  content: `
+const BASE_SYSTEM_PROMPT = `
 Ты — Galen, центральный ассистент экосистемы Galenite.
 
-Galenite — это модульная операционная система для жизни и бизнеса.
-Она подключается к финансам пользователя, привычкам, здоровью, задачам, дому, работе и коммуникациям.
-Задача Galenite — убрать хаос из жизни, автоматизировать рутину, помогать в принятии решений и создавать ощущение «жизни под управлением умной системы».
+Galenite — модульная операционная система для жизни и бизнеса. Она подключается к финансам, привычкам, здоровью, задачам, дому, работе и коммуникациям.
+Твоя цель — убирать хаос из жизни, автоматизировать рутину, помогать в принятии решений и давать чувство «жизни под управлением умной системы».
 
-Твоя роль:
-— быть спокойным, дружелюбным ассистентом, который говорит так, будто общается с пользователем лично;
-— не канцелярить, не звучать как робот, писать по-человечески, иногда с лёгким юмором;
-— объяснять Galenite как систему, если пользователь спрашивает;
-— помогать разбираться в задачах, днях, идеях, привычках, планировании;
-— давать советы мягко, без поучений.
+Тон общения: живой, уверенный, без канцелярита, иногда с лёгким юмором. Важна конкретика и спокойствие.
+Всегда начинай ответ с короткой сути или списка действий, потом поясняй детали. Если видишь риск или зависимость — предупреди, но без морали.
+`;
 
-Краткие описания модулей Galenite:
-• Finance — анализ расходов, доходов, шаблоны бюджета, прогнозирование, рекомендации.
-• Health — питание, шаги, тренировки, сон, вода, режим, постепенное улучшение привычек.
-• AutoPilot — ежедневный распорядок, автоматизация дел, расписание, дедлайны, оптимизация времени.
-• HouseHub — управление домом, устройства, сценарии, напоминания, домашние процессы.
-• Kids — ассистент для детей: обучает, общается, мотивирует, помогает, но не заменяет реальное общение.
-• BotHive — система создания кастомных ИИ-ботов и бизнес-автоматизаций.
-• Chat — твой личный интерфейс с пользователем, где ты говоришь естественно, быстро и по делу.
+const tonePresets = [
+  {
+    id: "balanced",
+    title: "Баланс",
+    desc: "50/50 скорость и глубина",
+    instruction: "Дай ясный план и пару быстрых шагов, остальное — кратко по делу.",
+  },
+  {
+    id: "short",
+    title: "Коротко",
+    desc: "Только тезисы",
+    instruction: "Ответь тезисами без воды, максимум 4–5 строк, никаких лишних слов.",
+  },
+  {
+    id: "deep",
+    title: "Глубоко",
+    desc: "Погружение в детали",
+    instruction: "Разложи тему слоями: что сделать сейчас, что улучшить, где риски, какие ресурсы нужны.",
+  },
+];
 
-Твой тон:
-— современный, живой, без официоза;
-— можно короткие фразы, но содержательно;
-— не перегружай текст;
-— будь уверенным, но не токсичным.
+const contextPresets = [
+  {
+    id: "autopilot",
+    label: "AutoPilot",
+    detail: "Режим дня, задачи, дедлайны",
+    prompt:
+      "Держи фокус на расписании, дедлайнах, приоритетах. Предлагай короткие сценарии и блоки времени.",
+  },
+  {
+    id: "finance",
+    label: "Finance",
+    detail: "Деньги, подписки",
+    prompt: "Смотри на бюджет, траты, подписки и доходы. Предлагай оптимизацию и контроль.",
+  },
+  {
+    id: "health",
+    label: "Health",
+    detail: "Режим, питание",
+    prompt: "Отслеживай сон, питание, движение, воду. Предлагай мягкие шаги без перегруза.",
+  },
+  {
+    id: "relationships",
+    label: "Relations",
+    detail: "Коммуникации",
+    prompt: "Помогай с формулировками, поддержкой, коммуникацией с людьми и детьми.",
+  },
+  {
+    id: "builder",
+    label: "Builder",
+    detail: "Бизнес и идеи",
+    prompt: "Думай как продуктолог и автоматизатор: гипотезы, простые прототипы, воронки и боты.",
+  },
+];
 
-Если пользователь задаёт вопрос про Galenite, рассказывай уверенно и понятно, как будто ты — сердце системы.
-`
-};
+const quickPrompts = [
+  {
+    title: "Разложи мой день",
+    prompt: "Вот мои планы. Разложи на блоки, учти перерывы и дай 3 коротких правила, чтобы не слиться: ",
+  },
+  {
+    title: "Финансы под контроль",
+    prompt: "Посмотри на мои расходы и доходы. Предложи бюджет на месяц, лимиты и быстрые фиксы: ",
+  },
+  {
+    title: "ЗОЖ без фанатизма",
+    prompt: "Подбери мягкий план на 2 недели: сон, питание, вода, движение. Хочу без стресса: ",
+  },
+  {
+    title: "Текст для общения",
+    prompt: "Помоги сформулировать сообщение (тон — спокойный и человеческий): ",
+  },
+  {
+    title: "Запуск гипотезы",
+    prompt: "Есть идея продукта/бота. Разложи гипотезу, минимальный прототип и первые шаги по проверке: ",
+  },
+  {
+    title: "Разгреби хаос",
+    prompt: "Сделай ревизию задач, выбери 3 ключевые и предложи порядок действий на сегодня: ",
+  },
+];
 
-let history = [SYSTEM_MESSAGE];
+const insightLines = [
+  "Где нет ясности — дай структуру. Где много дел — собери в план.",
+  "Сначала вытащи приоритеты, потом предложи 1 действие, которое можно сделать за 5 минут.",
+  "Отвечай так, будто рядом сидишь: без официоза, но с уверенностью.",
+  "Говори, что возьмёшь на себя: формулировки, подсчёты, сценарии.",
+  "Если пользователь упоминает усталость — убери давление и предложи минимальный шаг.",
+  "Всегда заканчивай вопросом-проверкой, чтобы уточнить, попал ли в цель.",
+];
+
+let currentTone = "balanced";
+const activeContexts = new Set(["autopilot"]);
+
+let history = [];
 let currentUser = null;
 let activeChatId = null;
 
@@ -57,7 +132,8 @@ const randomPhrases = [
   "Сегодня оптимизируем хотя бы одну штуку.",
   "Спроси меня что-нибудь про твой день.",
   "Помогу разгрести задачи и хаос.",
-  "Чем займёмся: делами, идеями или пиздёжом?"
+  "Чем займёмся: делами, идеями или пиздёжом?",
+  "Подхвачу рутину и предложу короткий план.",
 ];
 
 function setRandomPhrase() {
@@ -67,6 +143,119 @@ function setRandomPhrase() {
 }
 
 setRandomPhrase();
+
+refreshSystemMessage();
+renderToneButtons();
+renderContextToggles();
+renderPromptChips();
+renderInsights();
+
+function buildSystemMessage() {
+  const tone = tonePresets.find((t) => t.id === currentTone) || tonePresets[0];
+  const contexts = Array.from(activeContexts)
+    .map((id) => contextPresets.find((c) => c.id === id)?.prompt)
+    .filter(Boolean);
+
+  const contextText = contexts.length
+    ? contexts.join(" ")
+    : "Контекста нет — уточняй детали, задавай вопросы и помогай собрать данные.";
+
+  return {
+    role: "system",
+    content: `${BASE_SYSTEM_PROMPT}\nАктивные контексты: ${contextText}\nСтиль: ${tone.instruction}\nЗаканчивай ответ коротким уточняющим вопросом, чтобы двигаться дальше.`,
+  };
+}
+
+function refreshSystemMessage() {
+  const systemMessage = buildSystemMessage();
+  if (!history.length) {
+    history = [systemMessage];
+  } else {
+    history[0] = systemMessage;
+  }
+  updateSummaries();
+}
+
+function updateSummaries() {
+  const tone = tonePresets.find((t) => t.id === currentTone);
+  if (toneSummaryEl && tone) {
+    toneSummaryEl.textContent = tone.desc;
+  }
+
+  const activeLabels = Array.from(activeContexts)
+    .map((id) => contextPresets.find((c) => c.id === id)?.label)
+    .filter(Boolean);
+
+  if (contextSummaryEl) {
+    contextSummaryEl.textContent =
+      activeLabels.length > 0
+        ? `${activeLabels.join(", ")}`
+        : "Контекст не выбран";
+  }
+}
+
+function renderToneButtons() {
+  if (!toneButtonsEl) return;
+  toneButtonsEl.innerHTML = "";
+  tonePresets.forEach((tone) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = `tone-btn${tone.id === currentTone ? " active" : ""}`;
+    btn.innerHTML = `<strong>${tone.title}</strong><span>${tone.desc}</span>`;
+    btn.addEventListener("click", () => {
+      currentTone = tone.id;
+      refreshSystemMessage();
+      renderToneButtons();
+    });
+    toneButtonsEl.appendChild(btn);
+  });
+}
+
+function renderContextToggles() {
+  if (!contextTogglesEl) return;
+  contextTogglesEl.innerHTML = "";
+  contextPresets.forEach((ctx) => {
+    const btn = document.createElement("button");
+    const isActive = activeContexts.has(ctx.id);
+    btn.type = "button";
+    btn.className = `context-tag${isActive ? " active" : ""}`;
+    btn.innerHTML = `<span>${ctx.label}</span><small>${ctx.detail}</small>`;
+    btn.addEventListener("click", () => {
+      if (activeContexts.has(ctx.id)) {
+        activeContexts.delete(ctx.id);
+      } else {
+        activeContexts.add(ctx.id);
+      }
+      refreshSystemMessage();
+      renderContextToggles();
+    });
+    contextTogglesEl.appendChild(btn);
+  });
+}
+
+function renderPromptChips() {
+  if (!promptChipsEl) return;
+  promptChipsEl.innerHTML = "";
+  quickPrompts.forEach((prompt) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "prompt-chip";
+    btn.innerHTML = `<strong>${prompt.title}</strong><span>${prompt.prompt}</span>`;
+    btn.addEventListener("click", () => {
+      inputEl.value = prompt.prompt;
+      inputEl.focus();
+      handleSend();
+    });
+    promptChipsEl.appendChild(btn);
+  });
+}
+
+function renderInsights() {
+  if (!insightListEl) return;
+  const shuffled = [...insightLines].sort(() => 0.5 - Math.random());
+  const items = shuffled.slice(0, 3);
+  insightListEl.innerHTML = items.map((line) => `<li>${line}</li>`).join("");
+}
 
 watchAuth((u) => {
   currentUser = u || null;
@@ -134,7 +323,7 @@ function toggleGalenBlock(hasMessages) {
 }
 
 function resetHistory() {
-  history = [SYSTEM_MESSAGE];
+  history = [buildSystemMessage()];
 }
 
 async function renderLoadedMessages(messages) {
@@ -153,7 +342,7 @@ window.addEventListener("galen:chatChanged", async (e) => {
   resetHistory();
   const msgs = await loadMessages(currentUser, activeChatId);
   history = [
-    SYSTEM_MESSAGE,
+    buildSystemMessage(),
     ...msgs.map((m) => ({ role: m.role, content: m.content })),
   ];
   await renderLoadedMessages(msgs);

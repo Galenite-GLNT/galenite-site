@@ -66,6 +66,74 @@
       <div class="grid-line grid-line-left"></div>
       <div class="grid-line grid-line-right"></div>
 
+      <section class="ai-hero">
+        <div class="ai-hero__text">
+          <div class="ai-pill">Galen OS Core</div>
+          <h1>Личный ИИ-оператор для дел, здоровья и дома</h1>
+          <p class="ai-hero__lead">
+            Galen держит в голове ваш день, задачи, цифры и заботится о рутине. Говорите с ним как с человеком — он
+            реагирует быстро, предлагает действия и сам находит, что можно улучшить.
+          </p>
+          <div class="ai-meta" id="aiMeta">
+            <div class="ai-meta__item">
+              <span class="ai-meta__caption">Модель</span>
+              <strong>gpt-4o-mini</strong>
+            </div>
+            <div class="ai-meta__item">
+              <span class="ai-meta__caption">Режим</span>
+              <strong id="toneSummary">Баланс скорости и глубины</strong>
+            </div>
+            <div class="ai-meta__item">
+              <span class="ai-meta__caption">Контекст</span>
+              <strong id="contextSummary">AutoPilot включён</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="ai-hero__panel">
+          <div class="panel-head">
+            <div class="panel-title">Фокус Galen</div>
+            <span class="panel-label">живой интеллект</span>
+          </div>
+          <ul class="panel-list" id="insightList"></ul>
+        </div>
+      </section>
+
+      <section class="ai-controls">
+        <div class="control-card">
+          <div class="control-card__header">
+            <div>
+              <div class="control-caption">Формат ответа</div>
+              <div class="control-title">Укажи настроение, Galen адаптируется</div>
+            </div>
+            <span class="control-hint">он не будет канцелярить</span>
+          </div>
+          <div class="tone-buttons" id="toneButtons"></div>
+        </div>
+
+        <div class="control-card">
+          <div class="control-card__header">
+            <div>
+              <div class="control-caption">Контекст</div>
+              <div class="control-title">Что важно учитывать прямо сейчас</div>
+            </div>
+            <span class="control-hint">можно выбрать несколько</span>
+          </div>
+          <div class="context-tags" id="contextToggles"></div>
+        </div>
+      </section>
+
+      <section class="ai-actions">
+        <div class="actions-head">
+          <div>
+            <p class="actions-caption">Готовые сценарии</p>
+            <h2>Запусти Galen с задачей в один клик</h2>
+          </div>
+          <span class="control-hint">текст можно отредактировать перед отправкой</span>
+        </div>
+        <div class="prompt-chips" id="promptChips"></div>
+      </section>
+
       <!-- Область чата -->
       <div class="chat-shell">
         <div class="galen-block" id="galen-block">
