@@ -3,9 +3,16 @@ import { listChats, deleteChat } from "./chat-store.js";
 
 const chatListEl = document.getElementById("chatList");
 const newBtn = document.getElementById("newChatBtn");
+const confirmEl = document.getElementById("deleteConfirm");
+const confirmYesBtn = confirmEl?.querySelector(".confirm-yes");
+const confirmCancelBtn = confirmEl?.querySelector(".confirm-cancel");
+const confirmTitleEl = document.getElementById("confirmTitle");
+const confirmDescEl = document.getElementById("confirmDesc");
 
 let currentUser = null;
 let activeChatId = null;
+let pendingDeleteId = null;
+let pendingDeleteTitle = "";
 
 function makeDraftId() {
   return "draft_" + Math.random().toString(36).slice(2, 10);
@@ -14,6 +21,27 @@ function makeDraftId() {
 function setActive(id){
   activeChatId = id;
   window.dispatchEvent(new CustomEvent("galen:chatChanged", { detail: { chatId: id } }));
+}
+
+function closeDeleteConfirm(){
+  pendingDeleteId = null;
+  pendingDeleteTitle = "";
+  if(confirmEl){
+    confirmEl.classList.remove("open");
+    confirmEl.setAttribute("aria-hidden", "true");
+  }
+}
+
+async function confirmDeletion(){
+  if(!pendingDeleteId) return;
+
+  await deleteChat(currentUser, pendingDeleteId);
+  if(activeChatId === pendingDeleteId){
+    activeChatId = null;
+  }
+  window.dispatchEvent(new Event("galen:chatsShouldRefresh"));
+  await render();
+  closeDeleteConfirm();
 }
 
 async function render(){
@@ -47,12 +75,21 @@ async function render(){
     del.textContent = "✕";
     del.addEventListener("click", async (evt) => {
       evt.stopPropagation();
-      await deleteChat(currentUser, c.id);
-      if(activeChatId === c.id){
-        activeChatId = null;
+      pendingDeleteId = c.id;
+      pendingDeleteTitle = c.title || "New chat";
+
+      if(confirmTitleEl){
+        confirmTitleEl.textContent = "Удалить чат?";
       }
-      window.dispatchEvent(new Event("galen:chatsShouldRefresh"));
-      await render();
+      if(confirmDescEl){
+        confirmDescEl.textContent = `Чат «${pendingDeleteTitle}» будет удалён без возможности восстановления.`;
+      }
+
+      if(confirmEl){
+        confirmEl.classList.add("open");
+        confirmEl.setAttribute("aria-hidden", "false");
+      }
+      confirmYesBtn?.focus();
     });
 
     row.appendChild(b);
@@ -74,4 +111,17 @@ watchAuth(async (user) => {
   currentUser = user || null;
   activeChatId = null;
   await render();
+});
+
+confirmYesBtn?.addEventListener("click", confirmDeletion);
+confirmCancelBtn?.addEventListener("click", closeDeleteConfirm);
+confirmEl?.addEventListener("click", (evt) => {
+  if(evt.target === confirmEl){
+    closeDeleteConfirm();
+  }
+});
+window.addEventListener("keydown", (evt) => {
+  if(evt.key === "Escape" && confirmEl?.classList.contains("open")){
+    closeDeleteConfirm();
+  }
 });
