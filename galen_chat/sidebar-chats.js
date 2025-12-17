@@ -1,5 +1,5 @@
 import { watchAuth } from "/shared/auth-core.js";
-import { listChats } from "./chat-store.js";
+import { listChats, removeChat } from "./chat-store.js";
 
 const chatListEl = document.getElementById("chatList");
 const newBtn = document.getElementById("newChatBtn");
@@ -16,26 +16,67 @@ function setActive(id){
   window.dispatchEvent(new CustomEvent("galen:chatChanged", { detail: { chatId: id } }));
 }
 
+async function handleDeleteChat(id, title) {
+  const confirmed = window.confirm(
+    `Удалить чат "${title || "Без названия"}"? Его сообщения будут удалены.`
+  );
+
+  if (!confirmed) return;
+
+  await removeChat(currentUser, id);
+
+  if (activeChatId === id) {
+    activeChatId = null;
+  }
+
+  window.dispatchEvent(new Event("galen:chatsShouldRefresh"));
+  await render();
+}
+
 async function render(){
   if(!chatListEl) return;
 
   const chats = await listChats(currentUser);
   chatListEl.innerHTML = "";
 
-  if(!activeChatId){
-    if(chats.length){
-      setActive(chats[0].id);
-    } else {
-      setActive(makeDraftId());
-    }
+  if(!activeChatId || !chats.some(c => c.id === activeChatId)){
+    const fallbackId = chats[0]?.id || makeDraftId();
+    setActive(fallbackId);
   }
 
   chats.forEach(c => {
-    const b = document.createElement("button");
-    b.className = "chat-item" + (c.id === activeChatId ? " active" : "");
-    b.textContent = c.title || "New chat";
-    b.addEventListener("click", () => { setActive(c.id); render(); });
-    chatListEl.appendChild(b);
+    const item = document.createElement("div");
+    item.className = "chat-item" + (c.id === activeChatId ? " active" : "");
+    item.setAttribute("role", "button");
+    item.tabIndex = 0;
+
+    const title = document.createElement("span");
+    title.className = "chat-title";
+    title.textContent = c.title || "New chat";
+
+    const del = document.createElement("button");
+    del.className = "chat-delete";
+    del.type = "button";
+    del.setAttribute("aria-label", "Удалить чат");
+    del.textContent = "✕";
+
+    item.addEventListener("click", () => { setActive(c.id); render(); });
+    item.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        setActive(c.id);
+        render();
+      }
+    });
+
+    del.addEventListener("click", (e) => {
+      e.stopPropagation();
+      handleDeleteChat(c.id, c.title);
+    });
+
+    item.appendChild(title);
+    item.appendChild(del);
+    chatListEl.appendChild(item);
   });
 
 }
