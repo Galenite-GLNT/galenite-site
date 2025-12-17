@@ -9,6 +9,7 @@
 @media (max-width: 900px) {
   body {
     overflow-x: hidden;
+    font-size: 16px;
   }
 
   .layout {
@@ -21,8 +22,10 @@
     top: 0;
     left: 0;
     bottom: 0;
-    width: 82%;
-    max-width: 320px;
+    width: 86%;
+    max-width: 360px;
+    padding: 28px 24px 36px;
+    font-size: 15px;
     transform: translateX(-100%);
     transition: transform 0.3s ease;
     z-index: 1001;
@@ -54,39 +57,40 @@
   }
 
   .topbar {
-    padding: 0 16px;
-    gap: 12px;
+    padding: 0 18px;
+    gap: 14px;
+    height: 64px;
   }
 
   .sidebar-toggle {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 44px;
-    height: 44px;
-    border-radius: 14px;
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
     border: 1px solid var(--divider);
     background: #ffffff;
     color: #111827;
-    font-size: 20px;
+    font-size: 22px;
     line-height: 1;
     cursor: pointer;
     box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
   }
 
   .topbar-left {
-    font-size: 12px;
-    letter-spacing: 0.16em;
+    font-size: 13px;
+    letter-spacing: 0.2em;
   }
 
   .topbar-right {
     margin-left: auto;
-    font-size: 10px;
-    letter-spacing: 0.12em;
+    font-size: 12px;
+    letter-spacing: 0.18em;
   }
 
   .canvas {
-    padding: 16px;
+    padding: 22px 20px;
   }
 
   .chat-shell {
@@ -94,6 +98,44 @@
   }
 
   .galen-block {
-    margin-top: 32px;
+    margin-top: 48px;
+  }
+
+  .chat-messages {
+    gap: 16px;
+  }
+
+  .msg {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .msg.user {
+    padding: 14px 18px;
+    border-radius: 20px;
+  }
+
+  .msg.system {
+    font-size: 13px;
+  }
+
+  .input-bar {
+    padding: 0 18px 22px;
+  }
+
+  .input-pill {
+    padding: 8px 10px 8px 18px;
+    gap: 8px;
+  }
+
+  .input-pill input {
+    padding: 12px 0;
+    font-size: 16px;
+  }
+
+  .input-pill button {
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
   }
 }
