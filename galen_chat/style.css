@@ -23,7 +23,7 @@
 body {
   margin: 0;
   height: 100vh;
-  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: "Encode Sans Expanded", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--bg-gradient);
   color: var(--text-main);
 }
