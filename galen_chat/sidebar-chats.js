@@ -1,5 +1,5 @@
 import { watchAuth } from "/shared/auth-core.js";
-import { listChats } from "./chat-store.js";
+import { listChats, deleteChat } from "./chat-store.js";
 
 const chatListEl = document.getElementById("chatList");
 const newBtn = document.getElementById("newChatBtn");
@@ -31,11 +31,33 @@ async function render(){
   }
 
   chats.forEach(c => {
+    const row = document.createElement("div");
+    row.className = "chat-row" + (c.id === activeChatId ? " active" : "");
+
     const b = document.createElement("button");
-    b.className = "chat-item" + (c.id === activeChatId ? " active" : "");
+    b.type = "button";
+    b.className = "chat-item";
     b.textContent = c.title || "New chat";
     b.addEventListener("click", () => { setActive(c.id); render(); });
-    chatListEl.appendChild(b);
+
+    const del = document.createElement("button");
+    del.type = "button";
+    del.className = "chat-delete";
+    del.setAttribute("aria-label", "Удалить чат");
+    del.textContent = "✕";
+    del.addEventListener("click", async (evt) => {
+      evt.stopPropagation();
+      await deleteChat(currentUser, c.id);
+      if(activeChatId === c.id){
+        activeChatId = null;
+      }
+      window.dispatchEvent(new Event("galen:chatsShouldRefresh"));
+      await render();
+    });
+
+    row.appendChild(b);
+    row.appendChild(del);
+    chatListEl.appendChild(row);
   });
 
 }

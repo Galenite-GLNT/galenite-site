@@ -8,6 +8,7 @@ import {
   query,
   orderBy,
   serverTimestamp,
+  deleteDoc,
 } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
 import { db } from "/shared/firebase.js";
@@ -82,6 +83,13 @@ function localAppendMessage(chatId, role, content) {
   lsSave(data);
 }
 
+function localDeleteChat(chatId) {
+  const data = lsLoad();
+  delete data.chats[chatId];
+  data.order = data.order.filter((id) => id !== chatId);
+  lsSave(data);
+}
+
 export async function listChats(user){
   if(!user || !firestoreHealthy){
     return localListChats();
@@ -152,5 +160,24 @@ export async function appendMessage(user, chatId, role, content){
   } catch (err) {
     noteFirestoreError(err);
     localAppendMessage(chatId, role, content);
+  }
+}
+
+export async function deleteChat(user, chatId){
+  if(!user || !firestoreHealthy){
+    localDeleteChat(chatId);
+    return;
+  }
+
+  try {
+    const chatRef = doc(db, "users", user.uid, "chats", chatId);
+    const msgsRef = collection(db, "users", user.uid, "chats", chatId, "messages");
+    const msgsSnap = await getDocs(msgsRef);
+
+    await Promise.all(msgsSnap.docs.map((d) => deleteDoc(d.ref)));
+    await deleteDoc(chatRef);
+  } catch (err) {
+    noteFirestoreError(err);
+    localDeleteChat(chatId);
   }
 }

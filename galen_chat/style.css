@@ -98,8 +98,11 @@ body {
 .chats-new{ width:28px; height:28px; border-radius:10px; border:0; background:#111827; color:#fff; cursor:pointer; }
 
 .chat-list{ display:flex; flex-direction:column; gap:8px; max-height: 52vh; overflow:auto; padding-right: 6px; }
-.chat-item{ text-align:left; border:0; cursor:pointer; padding:10px 12px; border-radius:12px; background:rgba(17,24,39,.06); color:#111827; font-size:13px; }
-.chat-item.active{ background:rgba(17,24,39,.12); }
+.chat-row{ display:flex; align-items:center; gap:8px; }
+.chat-item{ flex:1; text-align:left; border:0; cursor:pointer; padding:10px 12px; border-radius:12px; background:rgba(17,24,39,.06); color:#111827; font-size:13px; }
+.chat-row.active .chat-item{ background:rgba(17,24,39,.12); }
+.chat-delete{ width:32px; height:32px; border-radius:10px; border:0; background:rgba(17,24,39,.08); cursor:pointer; color:#111827; display:flex; align-items:center; justify-content:center; font-size:14px; line-height:1; }
+.chat-delete:hover{ background:rgba(17,24,39,.14); }
 
 .sidebar-footer{ margin-top:auto; padding-top:16px; }
 .sidebar-auth-btn{ width:100%; border:0; border-radius:12px; padding:10px 12px; cursor:pointer; background:#111827; color:#fff; font-size:13px; }
