@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Galenite — Настройки аккаунта</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/account/style.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="page-header">
+        <div class="brand">
+          <a href="/">
+            <img src="/image/logo.png" alt="Galenite" class="brand-logo" />
+          </a>
+          <div class="brand-meta">
+            <p class="brand-kicker">ACCOUNT SETTINGS</p>
+            <h1 class="brand-title">Твой профиль в Galenite</h1>
+            <p class="brand-sub">Аккуратные настройки без выхода из потока.</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="ghost" id="goChat">В чат</button>
+          <button class="ghost" id="signOut">Sign out</button>
+        </div>
+      </header>
+
+      <main class="grid">
+        <section class="card" aria-labelledby="profileTitle">
+          <header class="card-header">
+            <div>
+              <p class="card-kicker">Profile</p>
+              <h2 class="card-title" id="profileTitle">Аккаунт</h2>
+            </div>
+            <span class="status" id="loadStatus">Загрузка профиля...</span>
+          </header>
+
+          <div class="field-block avatar-block">
+            <div class="avatar-preview" id="avatarPreview">
+              <span class="avatar-initials" id="avatarInitials">GL</span>
+              <img src="" alt="Avatar" id="avatarImg" class="hidden" />
+            </div>
+            <div class="avatar-controls">
+              <p class="field-label">Avatar</p>
+              <div class="avatar-actions">
+                <label class="btn" for="avatarInput">Upload</label>
+                <input type="file" id="avatarInput" accept="image/png,image/jpeg,image/webp" hidden />
+                <button class="ghost" id="removeAvatar" type="button">Remove</button>
+              </div>
+              <p class="caption" id="avatarHint">PNG/JPG/WebP, до 5 МБ, будет ужат до 512px.</p>
+              <p class="status" id="avatarStatus"></p>
+            </div>
+          </div>
+
+          <div class="field-block">
+            <label class="field-label" for="nicknameInput">Nickname</label>
+            <div class="input-row">
+              <input
+                id="nicknameInput"
+                type="text"
+                maxlength="28"
+                placeholder="Как тебя называть?"
+              />
+              <span class="badge" id="nicknameStatus">—</span>
+            </div>
+            <p class="caption">До 28 символов. Оставь пустым, если не хочешь подсказок.</p>
+          </div>
+
+          <div class="field-block">
+            <label class="field-label" for="promptInput">About prompt</label>
+            <div class="input-row">
+              <input
+                id="promptInput"
+                type="text"
+                maxlength="50"
+                placeholder="Короткая заметка, что важно помнить"
+              />
+              <span class="badge" id="promptCounter">0/50</span>
+            </div>
+            <p class="caption">До 50 символов, попадёт в системный контекст Galen.</p>
+          </div>
+
+          <footer class="card-footer">
+            <div class="save-status" id="saveStatus">Изменений нет</div>
+            <button class="btn primary" id="saveBtn" disabled>Save</button>
+          </footer>
+        </section>
+
+        <section class="card" aria-labelledby="previewTitle">
+          <header class="card-header">
+            <div>
+              <p class="card-kicker">Live preview</p>
+              <h2 class="card-title" id="previewTitle">Как Galen видит тебя</h2>
+            </div>
+            <span class="status status-muted">Автообновление</span>
+          </header>
+
+          <div class="preview">
+            <p class="preview-label">Nickname</p>
+            <p class="preview-value" id="previewNickname">—</p>
+
+            <p class="preview-label">User note</p>
+            <p class="preview-value" id="previewPrompt">—</p>
+          </div>
+
+          <div class="info-banner">
+            <p>
+              Никнейм и заметка автоматически добавляются в системный контекст
+              Galen для более персонализированных ответов.
+            </p>
+          </div>
+        </section>
+      </main>
+
+      <section class="guard" id="guard" hidden>
+        <div class="guard-card">
+          <h2>Нужна авторизация</h2>
+          <p>Войди в аккаунт, чтобы редактировать профиль.</p>
+          <div class="guard-actions">
+            <a class="btn primary" href="/auth">Перейти к входу</a>
+            <a class="ghost" href="/galen_chat">Открыть чат</a>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script type="module" src="/account/account.js"></script>
+  </body>
+</html>

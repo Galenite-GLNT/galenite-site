@@ -1,4 +1,6 @@
+import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 import { watchAuth } from "/shared/auth-core.js";
+import { db } from "/shared/firebase.js";
 import { loadMessages, appendMessage, createChat } from "./chat-store.js";
 
 const API_URL = "https://galen-chat-proxy.ilyasch2020.workers.dev";
@@ -47,9 +49,34 @@ Galenite — это модульная операционная система �
 `
 };
 
-let history = [SYSTEM_MESSAGE];
+let userProfileContext = null;
+let profileUnsub = null;
+
+function buildUserContextMessage() {
+  if (!userProfileContext) return null;
+  const { nickname, userPrompt } = userProfileContext;
+  const parts = [];
+  if (nickname) parts.push(`User nickname: ${nickname}`);
+  if (userPrompt) parts.push(`User note (<=50 chars): ${userPrompt}`);
+  if (!parts.length) return null;
+  return { role: "system", content: parts.join("\n") };
+}
+
+function getSystemMessages() {
+  const base = [SYSTEM_MESSAGE];
+  const ctx = buildUserContextMessage();
+  if (ctx) base.push(ctx);
+  return base;
+}
+
+let history = getSystemMessages();
 let currentUser = null;
 let activeChatId = null;
+
+function refreshSystemContext() {
+  const nonSystem = history.filter((m) => m.role !== "system");
+  history = [...getSystemMessages(), ...nonSystem];
+}
 
 // рандомные фразы под аватаром
 const randomPhrases = [
@@ -70,6 +97,29 @@ setRandomPhrase();
 
 watchAuth((u) => {
   currentUser = u || null;
+  activeChatId = null;
+  profileUnsub?.();
+  userProfileContext = null;
+  refreshSystemContext();
+
+  if (currentUser) {
+    const userDoc = doc(db, "users", currentUser.uid);
+    profileUnsub = onSnapshot(
+      userDoc,
+      (snap) => {
+        const data = snap.data() || {};
+        userProfileContext = {
+          nickname: data.nickname || "",
+          userPrompt: data.userPrompt || "",
+        };
+        refreshSystemContext();
+      },
+      () => {
+        userProfileContext = null;
+        refreshSystemContext();
+      }
+    );
+  }
 });
 
 function closeSidebar() {
@@ -134,7 +184,7 @@ function toggleGalenBlock(hasMessages) {
 }
 
 function resetHistory() {
-  history = [SYSTEM_MESSAGE];
+  history = getSystemMessages();
 }
 
 async function renderLoadedMessages(messages) {
@@ -153,7 +203,7 @@ window.addEventListener("galen:chatChanged", async (e) => {
   resetHistory();
   const msgs = await loadMessages(currentUser, activeChatId);
   history = [
-    SYSTEM_MESSAGE,
+    ...getSystemMessages(),
     ...msgs.map((m) => ({ role: m.role, content: m.content })),
   ];
   await renderLoadedMessages(msgs);
