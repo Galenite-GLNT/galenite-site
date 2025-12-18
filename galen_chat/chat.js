@@ -2,6 +2,7 @@ import { watchAuth } from "/shared/auth-core.js";
 import { loadMessages, appendMessage, createChat } from "./chat-store.js";
 
 const API_URL = "https://galen-chat-proxy.ilyasch2020.workers.dev";
+const RESPONSE_TIMEOUT = 55000;
 
 const chatEl = document.getElementById("chat");
 const formEl = document.getElementById("chat-form");
@@ -14,6 +15,8 @@ const sidebarBackdropEl = document.getElementById("sidebarBackdrop");
 let history = []; // ✅ больше нет system prompt на фронте
 let currentUser = null;
 let activeChatId = null;
+let activeRequest = null;
+let lastRetryMessage = null;
 
 // рандомные фразы под аватаром
 const randomPhrases = [
@@ -73,18 +76,86 @@ function addMessage(text, role) {
   return el;
 }
 
-function addLoader() {
+function createAssistantMessage(prompt) {
   const el = document.createElement("div");
-  el.className = "msg bot loading";
-  el.innerHTML = `
-    <span>Galen думает</span>
-    <span class="dots">
-      <span></span><span></span><span></span>
-    </span>
-  `;
+  el.className = "msg bot";
+
+  const content = document.createElement("div");
+  content.className = "msg-content";
+  el.appendChild(content);
+
+  const meta = document.createElement("div");
+  meta.className = "msg-meta";
+
+  const status = document.createElement("span");
+  status.className = "msg-status";
+  meta.appendChild(status);
+
+  const actions = document.createElement("div");
+  actions.className = "msg-actions";
+
+  const stopBtn = document.createElement("button");
+  stopBtn.type = "button";
+  stopBtn.className = "msg-action-btn msg-stop hidden";
+  stopBtn.textContent = "Stop";
+  actions.appendChild(stopBtn);
+
+  const retryBtn = document.createElement("button");
+  retryBtn.type = "button";
+  retryBtn.className = "msg-action-btn msg-retry hidden";
+  retryBtn.textContent = "Повторить";
+  actions.appendChild(retryBtn);
+
+  meta.appendChild(actions);
+  el.appendChild(meta);
+
   chatEl.appendChild(el);
   scrollToBottom();
-  return el;
+
+  return { el, content, status, stopBtn, retryBtn, prompt };
+}
+
+function setAssistantLoading(message) {
+  message.content.innerHTML = `
+    <div class="msg-loader">
+      <span>Galen думает</span>
+      <span class="dots">
+        <span></span><span></span><span></span>
+      </span>
+    </div>
+  `;
+  message.content.classList.add("is-loading");
+}
+
+function setAssistantContent(message, text) {
+  message.content.textContent = text;
+  message.content.classList.remove("is-loading");
+}
+
+function setAssistantStatus(message, text) {
+  message.status.textContent = text;
+}
+
+function toggleStopButton(message, show) {
+  if (!message.stopBtn) return;
+  if (show) {
+    message.stopBtn.classList.remove("hidden");
+    message.stopBtn.disabled = false;
+  } else {
+    message.stopBtn.classList.add("hidden");
+    message.stopBtn.disabled = true;
+  }
+}
+
+function toggleRetryButton(message, show) {
+  if (!message.retryBtn) return;
+  if (show) {
+    message.retryBtn.classList.remove("hidden");
+    message.retryBtn.disabled = false;
+  } else {
+    message.retryBtn.classList.add("hidden");
+    message.retryBtn.disabled = true;
+  }
 }
 
 function scrollToBottom() {
@@ -161,7 +232,7 @@ async function ensureActiveChat() {
 
 async function handleSend() {
   const value = (inputEl.value || "").trim();
-  if (!value) return;
+  if (!value || activeRequest) return;
 
   await ensureActiveChat();
 
@@ -177,39 +248,99 @@ async function handleSend() {
   inputEl.value = "";
   inputEl.focus();
 
-  const loader = addLoader();
+  if (lastRetryMessage) toggleRetryButton(lastRetryMessage, false);
+
+  const assistantMessage = createAssistantMessage(value);
+  setAssistantLoading(assistantMessage);
+  setAssistantStatus(assistantMessage, "думаю…");
+  toggleStopButton(assistantMessage, true);
+
+  processAssistantResponse(assistantMessage);
+}
+
+async function processAssistantResponse(message) {
+  const controller = new AbortController();
+  let timedOut = false;
+  let abortedByUser = false;
+
+  const timeoutId = setTimeout(() => {
+    timedOut = true;
+    controller.abort();
+  }, RESPONSE_TIMEOUT);
+
+  activeRequest = { controller, timeoutId, message };
+  toggleRetryButton(message, false);
+
   const btn = formEl.querySelector("button");
   if (btn) btn.disabled = true;
 
+  if (message.stopBtn) {
+    message.stopBtn.onclick = () => {
+      if (activeRequest?.controller === controller) {
+        abortedByUser = true;
+        controller.abort();
+      }
+    };
+  }
+
   try {
-    const reply = await askGalen(history);
-    loader.remove();
+    const reply = await askGalen(history, controller);
+
+    setAssistantContent(message, reply);
+    setAssistantStatus(message, "готово");
+    toggleStopButton(message, false);
 
     await appendMessage(currentUser, activeChatId, "assistant", reply);
     window.dispatchEvent(new Event("galen:chatsShouldRefresh"));
 
-    addMessage(reply, "bot");
     history.push({ role: "assistant", content: reply });
+    lastRetryMessage = null;
   } catch (err) {
     console.error(err);
-    loader.remove();
-    addMessage(
-      "Что-то сломалось на линии с ядром Galen. Попробуй ещё раз чуть позже.",
-      "bot"
+    toggleStopButton(message, false);
+
+    if (controller.signal.aborted) {
+      if (abortedByUser) {
+        setAssistantContent(message, "Ответ остановлен.");
+        setAssistantStatus(message, "остановлено");
+      } else if (timedOut) {
+        setAssistantContent(
+          message,
+          "Ответ занял слишком много времени. Попробуй повторить запрос."
+        );
+        setAssistantStatus(message, "ошибка");
+        enableRetry(message);
+      } else {
+        setAssistantContent(message, "Запрос прерван.");
+        setAssistantStatus(message, "остановлено");
+      }
+      return;
+    }
+
+    setAssistantContent(
+      message,
+      "Что-то сломалось на линии с ядром Galen. Попробуй ещё раз чуть позже."
     );
+    setAssistantStatus(message, "ошибка");
+    enableRetry(message);
   } finally {
+    clearTimeout(timeoutId);
+    if (activeRequest?.controller === controller) {
+      activeRequest = null;
+    }
     const btn2 = formEl.querySelector("button");
     if (btn2) btn2.disabled = false;
   }
 }
 
-async function askGalen(historyMessages) {
+async function askGalen(historyMessages, controller) {
   const response = await fetch(API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       messages: historyMessages, // ✅ только messages
     }),
+    signal: controller?.signal,
   });
 
   const text = await response.text();
@@ -230,4 +361,23 @@ async function askGalen(historyMessages) {
   }
 
   return content.trim();
+}
+
+function enableRetry(message) {
+  lastRetryMessage = message;
+  toggleRetryButton(message, true);
+
+  if (!message.retryBtn) return;
+
+  message.retryBtn.onclick = async () => {
+    if (message.retryBtn.disabled || activeRequest) return;
+
+    message.retryBtn.disabled = true;
+    toggleRetryButton(message, false);
+    setAssistantLoading(message);
+    setAssistantStatus(message, "думаю…");
+    toggleStopButton(message, true);
+
+    await processAssistantResponse(message);
+  };
 }

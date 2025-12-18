@@ -29,6 +29,10 @@ body {
   color: var(--text-main);
 }
 
+.hidden {
+  display: none !important;
+}
+
 /* ЛЕЙАУТ */
 
 .layout {
@@ -251,6 +255,68 @@ body {
   word-wrap: break-word;
   white-space: pre-wrap;
   animation: msg-pop 0.16s ease-out;
+}
+
+.msg-content {
+  white-space: pre-wrap;
+}
+
+.msg-meta {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.msg-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.msg-status {
+  color: var(--text-muted);
+}
+
+.msg-action-btn {
+  border: 1px solid var(--divider);
+  background: rgba(255, 255, 255, 0.6);
+  color: #111827;
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.msg-action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.msg-action-btn:hover:not(:disabled) {
+  background: rgba(17, 24, 39, 0.06);
+  border-color: rgba(17, 24, 39, 0.14);
+}
+
+.msg-stop {
+  font-weight: 600;
+}
+
+.msg-retry {
+  font-weight: 600;
+}
+
+.msg-loader {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.is-loading {
+  color: #111827;
 }
 
 /* USER */
