@@ -10,6 +10,14 @@
 
   --radius: 14px;
   --ease: cubic-bezier(.2,.9,.2,1);
+
+  --content-max: 460px;
+  --row-gap: 12px;
+  --icoW: 34px;
+  --gapIW: 14px;
+  --fieldH: 46px;
+  --underline-offset: 44px;
+  --underline-width: 80px;
 }
 
 *{ box-sizing:border-box; }
@@ -21,6 +29,7 @@ body{
   background: var(--bg);
   color: var(--text);
   overflow-x: hidden;
+  padding: clamp(12px, 4vw, 22px);
 }
 
 /* лёгкий “премиум” туман, без жести */
@@ -40,14 +49,14 @@ body::before{
 
 /* layout */
 .page{
-  min-height:100%;
+  min-height:100vh;
   display:flex;
   flex-direction:column;
   align-items:center;
 }
 
 .header{
-  margin-top: 34px;
+  margin-top: 10px;
   font-size: 14px;
   font-weight: 800;
   letter-spacing: .22em;
@@ -62,13 +71,13 @@ body::before{
 
 .center{
   flex:1;
-  width:100%;
+  width:min(100%, 900px);
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  padding: 36px 16px 54px;
-  gap: 16px;
+  padding: 24px 16px 42px;
+  gap: 18px;
 
   transform: translateY(18px);
   opacity: 0;
@@ -84,8 +93,8 @@ html.loaded .center{
 
 /* logo (увеличили ~в 2 раза) */
 .crystal{
-  width: 190px;
-  height: 190px;
+  width: clamp(140px, 32vw, 190px);
+  height: clamp(140px, 32vw, 190px);
   object-fit: contain;
   display:block;
   margin-bottom: 4px;
@@ -99,8 +108,11 @@ html.loaded .center{
   display:flex;
   align-items:center;
   justify-content:center;
-  gap: 14px;
-  padding-bottom: 10px;
+  gap: 18px;
+  padding: 12px 18px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.6);
+  box-shadow: 0 18px 32px rgba(15, 23, 42, 0.12);
   user-select:none;
 
   transform: translateY(8px);
@@ -115,9 +127,9 @@ html.loaded .tabs{ transform: translateY(0); opacity: 1; }
   background:transparent;
   padding: 0;
   cursor:pointer;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  letter-spacing: .16em;
+  letter-spacing: .14em;
   text-transform: uppercase;
   color: rgba(17,24,39,.52);
   transition: color .2s var(--ease), transform .2s var(--ease);
@@ -142,25 +154,30 @@ html.loaded .tabs{ transform: translateY(0); opacity: 1; }
   position:absolute;
   bottom: 0;
   height: 2px;
-  width: 64px;
+  width: var(--underline-width);
   border-radius: 999px;
   background: rgba(17,24,39,.6);
-  transform: translateX(-44px);
+  transform: translateX(calc(var(--underline-offset) * -1));
   transition: transform .22s var(--ease);
 }
 
 /* form */
 .form{
-  /* уменьшили ширину */
-  width: 380px;
-  max-width: calc(100vw - 32px);
+  width: min(var(--content-max), calc(100vw - 24px));
+  max-width: 100%;
 
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap: 12px;
+  gap: var(--row-gap);
 
-  margin-top: 2px;
+  padding: 16px 18px 20px;
+  margin-top: 6px;
+  background: rgba(255,255,255,0.65);
+  border: 1px solid rgba(17,24,39,0.04);
+  border-radius: 18px;
+  box-shadow: 0 28px 45px rgba(15,23,42,0.10);
+  backdrop-filter: blur(8px);
 
   transform: translateY(14px);
   opacity: 0;
@@ -172,21 +189,22 @@ html.loaded .form{ transform: translateY(0); opacity: 1; }
 /* ряд: иконка строго напротив поля */
 .field-row{
   width:100%;
-  display:flex;
+  max-width: min(var(--content-max), 100%);
+  display:grid;
+  grid-template-columns: var(--icoW) 1fr;
   align-items:center;
-  justify-content:center;
-  gap: 14px; /* иконка чуть левее поля */
+  column-gap: var(--gapIW);
 }
 
 /* иконка */
 .field-ico{
-  width: 34px;
-  height: 34px;
+  width: var(--icoW);
+  height: var(--icoW);
   display:flex;
   align-items:center;
   justify-content:center;
   color: rgba(17,24,39,.55);
-  transform: translateX(-4px); /* чуть левее, как просил */
+  transform: translateX(-2px);
   opacity: .9;
   transition: transform .2s var(--ease), opacity .2s var(--ease);
 }
@@ -200,8 +218,9 @@ html.loaded .form{ transform: translateY(0); opacity: 1; }
 }
 
 .field{
-  flex: 1;
-  height: 44px;
+  width: 100%;
+  height: var(--fieldH);
+  min-height: var(--fieldH);
   border: 0;
   outline: none;
   border-radius: var(--radius);
@@ -229,8 +248,8 @@ html.loaded .form{ transform: translateY(0); opacity: 1; }
 
 /* кнопка — ровно как инпуты по ширине */
 .cta{
-  width: calc(100% - 34px - 14px); /* ширина поля, без иконки и gap */
-  margin-left: calc(34px + 14px);  /* сдвигаем, чтобы выровнять по полю */
+  width: 100%;
+  max-width: min(var(--content-max), 100%);
   height: 48px;
   border:0;
   cursor:pointer;
@@ -323,71 +342,46 @@ html.loaded .form{ transform: translateY(0); opacity: 1; }
   50% { transform: translateY(-10px); }
 }
 
-/* mobile tweaks */
-@media (max-width: 440px){
-  .crystal{ width: 160px; height: 160px; }
-  .form{ width: 340px; }
-  .tab-underline{ width: 60px; }
-}
-
-/* --- ALIGN FIXES --- */
-
-/* центрируем верх */
 .header{ text-align:center; width:100%; }
 .center{ align-items:center; }
 
 /* tabs по центру */
 .tabs{ justify-content:center; }
 
-/* форма: НЕ центрируем иконки, центрируем только прямоугольники */
-.form{
-  width: 420px;
-  max-width: calc(100vw - 32px);
-  align-items: center;
+@media (max-width: 640px){
+  :root{
+    --content-max: 420px;
+    --icoW: 32px;
+    --gapIW: 12px;
+    --underline-width: 74px;
+    --underline-offset: 38px;
+  }
+
+  body{ padding: clamp(10px, 4vw, 16px); }
+  .center{ padding: 18px 12px 32px; gap: 16px; }
+  .tabs{ gap: 14px; padding-inline: 14px; }
+  .tab{ font-size: 12px; letter-spacing: .12em; }
+  .form{ padding: 14px 14px 18px; box-shadow: 0 20px 32px rgba(15,23,42,0.10); }
+  .field{ font-size: 13px; }
+  .social{ gap: 14px; }
+  .social-btn{ width: 42px; height: 42px; }
+  .social-btn img{ width: 36px; height: 36px; }
 }
 
-/* ширина прямоугольников */
-:root{
-  --rectW: 360px; /* можешь 340/380 по вкусу */
-  --icoW: 34px;
-  --gapIW: 14px;
-}
+@media (max-width: 420px){
+  :root{
+    --content-max: 360px;
+    --icoW: 30px;
+    --gapIW: 10px;
+    --fieldH: 44px;
+    --underline-width: 64px;
+    --underline-offset: 32px;
+  }
 
-.field-row{
-  width: calc(var(--rectW) + var(--icoW) + var(--gapIW));
-  display:flex;
-  align-items:center;
-  justify-content:flex-start;
-  gap: var(--gapIW);
+  body::before{ inset: -12%; filter: blur(8px); opacity: .66; }
+  .header{ letter-spacing: .18em; }
+  .form{ padding: 12px 12px 16px; gap: 10px; }
+  .field{ font-size: 12px; }
+  .hint{ font-size: 11px; }
 }
-
-/* иконка — отдельная колонка слева, НЕ участвует в центровке прямоугольников */
-.field-ico{
-  width: var(--icoW);
-  height: var(--icoW);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  transform: translateX(-2px); /* чуть левее, как ты хочешь */
-}
-
-/* вот ЭТО и есть “центр прямоугольников” */
-.field-center{
-  width: var(--rectW);
-  display:flex;
-  justify-content:center; /* на всякий */
-}
-
-/* сам инпут ровно на ширину прямоугольника */
-.field{
-  width: 100%;
-}
-
-/* кнопка ровно 1:1 с прямоугольниками и по центру */
-.cta{
-  width: var(--rectW);
-  margin-left: 0; /* убираем старый трюк со сдвигом */
-  align-self: center;
-}
-
 

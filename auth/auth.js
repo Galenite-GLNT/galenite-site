@@ -15,6 +15,11 @@ const form = document.querySelector(".form");
 
 let mode = "login"; // "login" | "register"
 
+function getUnderlineShift(){
+  const styles = getComputedStyle(document.documentElement);
+  return styles.getPropertyValue("--underline-offset")?.trim() || "44px";
+}
+
 function setHint(text = "") {
   if (!hint) return;
   hint.textContent = text;
@@ -48,7 +53,10 @@ function setMode(nextMode) {
 
   // underline
   if (underline) {
-    underline.style.transform = isLogin ? "translateX(-44px)" : "translateX(44px)";
+    const shift = getUnderlineShift();
+    underline.style.transform = isLogin
+      ? `translateX(calc(${shift} * -1))`
+      : `translateX(${shift})`;
   }
 
   setHint("");
