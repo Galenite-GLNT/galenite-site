@@ -1,15 +1,10 @@
-# Galenite static base
-
-Базовый каркас статического сайта для дальнейшей разработки.
+# Galenite site
 
 ## Структура
-- `index.html`
-- `style.css`
-- `/image`
-- `CNAME`
-
-## Запуск локально
-Открыть `index.html` в браузере.
-
-## Примечания
-Репозиторий предназначен для GitHub Pages с кастомным доменом `galenite.ru`. DNS будет настроен отдельно.
+- `index.html` — главная страница лендинга.
+- `style.css`, `style_laptop.css`, `style_mobile.css` — базовые стили под разные разрешения.
+- `image/` — общие изображения для главной страницы.
+- `auth/` — страница аутентификации (`index.html`, `style.css`, `auth.js` и каталог `images/`).
+- `galen_chat/` — интерфейс чат-приложения (HTML, CSS, JS, манифест и ассеты).
+- `shared/` — общие модули JavaScript (`auth-core.js`, `firebase.js`, `utils.js`).
+- `CNAME` — настройка кастомного домена GitHub Pages.
