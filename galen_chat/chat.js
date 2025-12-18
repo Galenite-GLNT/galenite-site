@@ -2,7 +2,6 @@ import { watchAuth } from "/shared/auth-core.js";
 import { loadMessages, appendMessage, createChat } from "./chat-store.js";
 
 const API_URL = "https://galen-chat-proxy.ilyasch2020.workers.dev";
-const MODEL = "gpt-4o-mini";
 
 const chatEl = document.getElementById("chat");
 const formEl = document.getElementById("chat-form");
@@ -12,42 +11,7 @@ const galenPhraseEl = document.getElementById("galen-phrase");
 const sidebarToggleEl = document.getElementById("sidebarToggle");
 const sidebarBackdropEl = document.getElementById("sidebarBackdrop");
 
-const SYSTEM_MESSAGE = {
-  role: "system",
-  content: `
-Ты — Galen, центральный ассистент экосистемы Galenite.
-
-Galenite — это модульная операционная система для жизни и бизнеса.
-Она подключается к финансам пользователя, привычкам, здоровью, задачам, дому, работе и коммуникациям.
-Задача Galenite — убрать хаос из жизни, автоматизировать рутину, помогать в принятии решений и создавать ощущение «жизни под управлением умной системы».
-
-Твоя роль:
-— быть спокойным, дружелюбным ассистентом, который говорит так, будто общается с пользователем лично;
-— не канцелярить, не звучать как робот, писать по-человечески, иногда с лёгким юмором;
-— объяснять Galenite как систему, если пользователь спрашивает;
-— помогать разбираться в задачах, днях, идеях, привычках, планировании;
-— давать советы мягко, без поучений.
-
-Краткие описания модулей Galenite:
-• Finance — анализ расходов, доходов, шаблоны бюджета, прогнозирование, рекомендации.
-• Health — питание, шаги, тренировки, сон, вода, режим, постепенное улучшение привычек.
-• AutoPilot — ежедневный распорядок, автоматизация дел, расписание, дедлайны, оптимизация времени.
-• HouseHub — управление домом, устройства, сценарии, напоминания, домашние процессы.
-• Kids — ассистент для детей: обучает, общается, мотивирует, помогает, но не заменяет реальное общение.
-• BotHive — система создания кастомных ИИ-ботов и бизнес-автоматизаций.
-• Chat — твой личный интерфейс с пользователем, где ты говоришь естественно, быстро и по делу.
-
-Твой тон:
-— современный, живой, без официоза;
-— можно короткие фразы, но содержательно;
-— не перегружай текст;
-— будь уверенным, но не токсичным.
-
-Если пользователь задаёт вопрос про Galenite, рассказывай уверенно и понятно, как будто ты — сердце системы.
-`
-};
-
-let history = [SYSTEM_MESSAGE];
+let history = []; // ✅ больше нет system prompt на фронте
 let currentUser = null;
 let activeChatId = null;
 
@@ -57,13 +21,12 @@ const randomPhrases = [
   "Сегодня оптимизируем хотя бы одну штуку.",
   "Спроси меня что-нибудь про твой день.",
   "Помогу разгрести задачи и хаос.",
-  "Чем займёмся: делами, идеями или пиздёжом?"
+  "Чем займёмся: делами, идеями или пиздёжом?",
 ];
 
 function setRandomPhrase() {
-  const phrase =
-    randomPhrases[Math.floor(Math.random() * randomPhrases.length)];
-  galenPhraseEl.textContent = phrase;
+  const phrase = randomPhrases[Math.floor(Math.random() * randomPhrases.length)];
+  if (galenPhraseEl) galenPhraseEl.textContent = phrase;
 }
 
 setRandomPhrase();
@@ -83,9 +46,7 @@ function toggleSidebar() {
 sidebarToggleEl?.addEventListener("click", toggleSidebar);
 sidebarBackdropEl?.addEventListener("click", closeSidebar);
 window.addEventListener("keyup", (e) => {
-  if (e.key === "Escape") {
-    closeSidebar();
-  }
+  if (e.key === "Escape") closeSidebar();
 });
 
 function addMessage(text, role) {
@@ -122,9 +83,7 @@ function toggleGalenBlock(hasMessages) {
     galenBlockEl.style.opacity = "0";
     galenBlockEl.style.transform = "translateY(-10px)";
     setTimeout(() => {
-      if (galenBlockEl) {
-        galenBlockEl.style.display = "none";
-      }
+      if (galenBlockEl) galenBlockEl.style.display = "none";
     }, 400);
   } else {
     galenBlockEl.style.display = "";
@@ -134,7 +93,7 @@ function toggleGalenBlock(hasMessages) {
 }
 
 function resetHistory() {
-  history = [SYSTEM_MESSAGE];
+  history = [];
 }
 
 async function renderLoadedMessages(messages) {
@@ -151,11 +110,12 @@ window.addEventListener("galen:chatChanged", async (e) => {
   activeChatId = e.detail.chatId;
   closeSidebar();
   resetHistory();
+
   const msgs = await loadMessages(currentUser, activeChatId);
-  history = [
-    SYSTEM_MESSAGE,
-    ...msgs.map((m) => ({ role: m.role, content: m.content })),
-  ];
+
+  // ✅ история только из реальных сообщений чата (без system)
+  history = msgs.map((m) => ({ role: m.role, content: m.content }));
+
   await renderLoadedMessages(msgs);
 });
 
@@ -176,9 +136,11 @@ async function ensureActiveChat() {
 
   const created = await createChat(currentUser);
   activeChatId = created.id;
+
   window.dispatchEvent(
     new CustomEvent("galen:chatChanged", { detail: { chatId: activeChatId } })
   );
+
   return activeChatId;
 }
 
@@ -192,19 +154,25 @@ async function handleSend() {
 
   await appendMessage(currentUser, activeChatId, "user", value);
   window.dispatchEvent(new Event("galen:chatsShouldRefresh"));
+
   addMessage(value, "user");
+
   history.push({ role: "user", content: value });
+
   inputEl.value = "";
   inputEl.focus();
 
   const loader = addLoader();
-  formEl.querySelector("button").disabled = true;
+  const btn = formEl.querySelector("button");
+  if (btn) btn.disabled = true;
 
   try {
     const reply = await askGalen(history);
     loader.remove();
+
     await appendMessage(currentUser, activeChatId, "assistant", reply);
     window.dispatchEvent(new Event("galen:chatsShouldRefresh"));
+
     addMessage(reply, "bot");
     history.push({ role: "assistant", content: reply });
   } catch (err) {
@@ -215,20 +183,17 @@ async function handleSend() {
       "bot"
     );
   } finally {
-    formEl.querySelector("button").disabled = false;
+    const btn2 = formEl.querySelector("button");
+    if (btn2) btn2.disabled = false;
   }
 }
 
 async function askGalen(historyMessages) {
   const response = await fetch(API_URL, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      model: MODEL,
-      messages: historyMessages,
-      temperature: 0.6,
+      messages: historyMessages, // ✅ только messages
     }),
   });
 
@@ -241,5 +206,13 @@ async function askGalen(historyMessages) {
   }
 
   const data = JSON.parse(text);
-  return data.choices[0].message.content.trim();
+
+  // фронт всё ещё ожидает chat/completions формат
+  const content = data?.choices?.[0]?.message?.content;
+  if (!content) {
+    console.error("Bad Galen response:", data);
+    throw new Error("BAD_GALEN_RESPONSE");
+  }
+
+  return content.trim();
 }
