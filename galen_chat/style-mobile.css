@@ -58,6 +58,10 @@
     gap: 12px;
   }
 
+  .topbar-right {
+    margin-left: auto;
+  }
+
   .sidebar-toggle {
     display: inline-flex;
     align-items: center;
@@ -95,5 +99,13 @@
 
   .galen-block {
     margin-top: 32px;
+  }
+
+  .search-bar {
+    top: auto;
+    bottom: 88px;
+    left: 16px;
+    right: 16px;
+    width: auto;
   }
 }

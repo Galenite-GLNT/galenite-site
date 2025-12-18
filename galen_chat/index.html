@@ -74,7 +74,12 @@
         ☰
       </button>
       <span class="topbar-left">GALENITE</span>
-      <span class="topbar-right">GALEN v0.3 BETA</span>
+      <div class="topbar-right">
+        <button type="button" class="search-toggle" id="searchToggle" aria-label="Поиск по чату">
+          🔍
+        </button>
+        <span class="topbar-version">GALEN v0.3 BETA</span>
+      </div>
     </header>
 
     <section class="canvas">
@@ -100,19 +105,32 @@
     <!-- ИНПУТ-СТРОКА СНИЗУ -->
     <form class="input-bar" id="chat-form">
       <div class="input-pill">
-        <input
+        <textarea
           id="message"
-          type="text"
+          rows="1"
           autocomplete="off"
           placeholder="Введите сообщение..."
-        />
+        ></textarea>
         <button type="submit" id="send" aria-label="Отправить">
           <span class="send-icon">↑</span>
         </button>
       </div>
+      <div class="input-hint" id="inputHint">Enter — отправить · Shift+Enter — перенос</div>
     </form>
   </main>
 </div>
+
+<div class="search-bar" id="searchBar" hidden>
+  <input type="text" id="searchInput" placeholder="Поиск по чату" aria-label="Поиск по чату" />
+  <div class="search-controls">
+    <button type="button" id="searchPrev" aria-label="Предыдущий результат">↑</button>
+    <button type="button" id="searchNext" aria-label="Следующий результат">↓</button>
+    <span class="search-counter" id="searchCounter">0/0</span>
+    <button type="button" id="searchClose" aria-label="Закрыть поиск">✕</button>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
 
 <script type="module" src="chat.js"></script>
 <script type="module" src="./sidebar-auth.js"></script>
