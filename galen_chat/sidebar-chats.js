@@ -39,7 +39,10 @@ async function render(){
   const chats = await listChats(currentUser);
   chatListEl.innerHTML = "";
 
-  if(!activeChatId || !chats.some(c => c.id === activeChatId)){
+  const activeChatMissing = activeChatId && !chats.some(c => c.id === activeChatId);
+
+  // Если выбран черновик, который ещё не сохранён в сторадже, оставляем его активным.
+  if (!activeChatId || (activeChatMissing && !activeChatId.startsWith("draft_"))) {
     const fallbackId = chats[0]?.id || makeDraftId();
     setActive(fallbackId);
   }
