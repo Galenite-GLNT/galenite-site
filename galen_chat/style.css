@@ -339,6 +339,10 @@ body {
   position: relative;
 }
 
+.msg.user.is-editing {
+  padding-bottom: 12px;
+}
+
 .msg-edit-btn {
   position: absolute;
   top: 8px;
@@ -361,6 +365,49 @@ body {
 .msg-edit-btn:hover,
 .msg-edit-btn:focus-visible {
   color: #111827;
+}
+
+.msg-edit-area {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.msg-edit-area textarea {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  padding: 10px 12px;
+  font: inherit;
+  resize: vertical;
+  min-height: 72px;
+  background: #f9fafb;
+}
+
+.msg-edit-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.msg-edit-actions button {
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  padding: 8px 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.msg-edit-cancel {
+  color: #6b7280;
+}
+
+.msg-edit-save {
+  background: #0b0f19;
+  color: #ffffff;
+  border-color: #0b0f19;
 }
 
 .ghost-btn {

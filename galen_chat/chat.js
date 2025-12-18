@@ -1,5 +1,10 @@
 import { watchAuth } from "/shared/auth-core.js";
-import { loadMessages, appendMessage, createChat } from "./chat-store.js";
+import {
+  loadMessages,
+  appendMessage,
+  createChat,
+  replaceMessages,
+} from "./chat-store.js";
 
 const API_URL = "https://galen-chat-proxy.ilyasch2020.workers.dev";
 const RESPONSE_TIMEOUT = 55000;
@@ -13,12 +18,16 @@ const galenPhraseEl = document.getElementById("galen-phrase");
 const sidebarToggleEl = document.getElementById("sidebarToggle");
 const sidebarBackdropEl = document.getElementById("sidebarBackdrop");
 
+const userMessages = [];
+let editingState = null;
+
 let history = []; // ✅ больше нет system prompt на фронте
 let currentUser = null;
 let activeChatId = null;
 let activeRequest = null;
 let lastRetryMessage = null;
 let lastUserMessage = "";
+let lastAssistantMessage = null;
 
 // рандомные фразы под аватаром
 const randomPhrases = [
@@ -86,14 +95,16 @@ function addMessage(text, role) {
     editBtn.textContent = "✎";
     editBtn.addEventListener("click", (e) => {
       e.stopPropagation();
-      inputEl.value = content.textContent || "";
-      inputEl.focus();
+      startInlineEdit(el, content.textContent || "");
     });
     el.appendChild(editBtn);
+
+    userMessages.push(el);
   }
 
   chatEl.appendChild(el);
   scrollToBottom();
+  updateEditButtonsState();
   return el;
 }
 
@@ -129,7 +140,9 @@ function createAssistantMessage(prompt) {
   chatEl.appendChild(el);
   scrollToBottom();
 
-  return { el, content, stopBtn, retryBtn, prompt };
+  const messageObj = { el, content, stopBtn, retryBtn, prompt };
+  lastAssistantMessage = messageObj;
+  return messageObj;
 }
 
 function setAssistantLoading(message) {
@@ -191,12 +204,139 @@ function toggleGalenBlock(hasMessages) {
   }
 }
 
+function getLastUserIndex() {
+  for (let i = history.length - 1; i >= 0; i--) {
+    if (history[i].role === "user") return i;
+  }
+  return -1;
+}
+
+function refreshLastUserMessage() {
+  const idx = getLastUserIndex();
+  lastUserMessage = idx >= 0 ? history[idx].content : "";
+  updateRepeatButtonState();
+}
+
+function updateEditButtonsState() {
+  userMessages.forEach((el, idx) => {
+    const btn = el.querySelector(".msg-edit-btn");
+    if (!btn) return;
+    const canEdit = idx === userMessages.length - 1 && !activeRequest;
+    btn.disabled = !canEdit;
+    btn.classList.toggle("hidden", !canEdit);
+  });
+}
+
+function cancelInlineEdit() {
+  if (!editingState) return;
+  const { el, contentEl, editorEl } = editingState;
+  contentEl.classList.remove("hidden");
+  editorEl.remove();
+  el.classList.remove("is-editing");
+  editingState = null;
+}
+
+async function applyInlineEdit() {
+  if (!editingState) return;
+  const { el, contentEl, textareaEl, originalText } = editingState;
+  const newText = (textareaEl.value || "").trim();
+  cancelInlineEdit();
+
+  if (!newText || newText === originalText) return;
+
+  const userIdx = getLastUserIndex();
+  if (userIdx === -1) return;
+
+  contentEl.textContent = newText;
+  history[userIdx].content = newText;
+  history = history.slice(0, userIdx + 1);
+  removeLastAssistantBubble();
+  refreshLastUserMessage();
+
+  await persistHistory();
+
+  const assistantMessage = createAssistantMessage(newText);
+  setAssistantLoading(assistantMessage);
+  toggleStopButton(assistantMessage, true);
+
+  processAssistantResponse(assistantMessage);
+}
+
+function startInlineEdit(el, currentText) {
+  if (activeRequest) return;
+  if (userMessages[userMessages.length - 1] !== el) return;
+  cancelInlineEdit();
+
+  const contentEl = el.querySelector(".msg-content");
+  if (!contentEl) return;
+
+  const editorEl = document.createElement("div");
+  editorEl.className = "msg-edit-area";
+
+  const textareaEl = document.createElement("textarea");
+  textareaEl.value = currentText;
+  textareaEl.rows = 3;
+
+  const actionsEl = document.createElement("div");
+  actionsEl.className = "msg-edit-actions";
+
+  const cancelBtn = document.createElement("button");
+  cancelBtn.type = "button";
+  cancelBtn.className = "msg-edit-cancel";
+  cancelBtn.textContent = "Отмена";
+  cancelBtn.onclick = cancelInlineEdit;
+
+  const saveBtn = document.createElement("button");
+  saveBtn.type = "button";
+  saveBtn.className = "msg-edit-save";
+  saveBtn.textContent = "Отправить";
+  saveBtn.onclick = applyInlineEdit;
+
+  actionsEl.appendChild(cancelBtn);
+  actionsEl.appendChild(saveBtn);
+
+  editorEl.appendChild(textareaEl);
+  editorEl.appendChild(actionsEl);
+
+  el.classList.add("is-editing");
+  contentEl.classList.add("hidden");
+  el.appendChild(editorEl);
+
+  editingState = { el, contentEl, editorEl, textareaEl, originalText: currentText };
+
+  setTimeout(() => textareaEl.focus(), 50);
+}
+
+function removeLastAssistantBubble() {
+  const bots = Array.from(chatEl.querySelectorAll(".msg.bot"));
+  const lastEl = bots[bots.length - 1];
+  if (lastEl) {
+    lastEl.remove();
+  }
+
+  if (history[history.length - 1]?.role === "assistant") {
+    history.pop();
+  }
+
+  if (lastRetryMessage && lastRetryMessage.el === lastEl) {
+    lastRetryMessage = null;
+  }
+  lastAssistantMessage = null;
+}
+
+async function persistHistory() {
+  if (!activeChatId) return;
+  await replaceMessages(currentUser, activeChatId, history);
+  window.dispatchEvent(new Event("galen:chatsShouldRefresh"));
+}
+
 function resetHistory() {
   history = [];
 }
 
 async function renderLoadedMessages(messages) {
   chatEl.innerHTML = "";
+  userMessages.length = 0;
   toggleGalenBlock(messages.length > 0);
 
   messages.forEach((m) => {
@@ -204,9 +344,8 @@ async function renderLoadedMessages(messages) {
     addMessage(m.content, roleClass);
   });
 
-  const lastUser = [...messages].reverse().find((m) => m.role === "user");
-  lastUserMessage = lastUser?.content || "";
-  updateRepeatButtonState();
+  refreshLastUserMessage();
+  updateEditButtonsState();
 }
 
 window.addEventListener("galen:chatChanged", async (e) => {
@@ -251,6 +390,8 @@ async function handleSend() {
   const value = (inputEl.value || "").trim();
   if (!value || activeRequest) return;
 
+  cancelInlineEdit();
+
   await ensureActiveChat();
 
   toggleGalenBlock(true);
@@ -260,10 +401,9 @@ async function handleSend() {
 
   addMessage(value, "user");
 
-  lastUserMessage = value;
-  updateRepeatButtonState();
-
   history.push({ role: "user", content: value });
+
+  refreshLastUserMessage();
 
   inputEl.value = "";
   inputEl.focus();
@@ -289,6 +429,7 @@ async function processAssistantResponse(message) {
 
   activeRequest = { controller, timeoutId, message };
   toggleRetryButton(message, false);
+  updateEditButtonsState();
 
   const submitBtn = formEl.querySelector("button[type='submit']");
   if (submitBtn) submitBtn.disabled = true;
@@ -346,6 +487,7 @@ async function processAssistantResponse(message) {
     const btn2 = formEl.querySelector("button[type='submit']");
     if (btn2) btn2.disabled = false;
     updateRepeatButtonState();
+    updateEditButtonsState();
   }
 }
 
@@ -397,13 +539,31 @@ function enableRetry(message) {
   };
 }
 
+async function regenerateLastResponse() {
+  if (!lastUserMessage || activeRequest) return;
+
+  cancelInlineEdit();
+
+  const userIdx = getLastUserIndex();
+  if (userIdx === -1) return;
+
+  history = history.slice(0, userIdx + 1);
+  removeLastAssistantBubble();
+
+  await persistHistory();
+
+  const assistantMessage = createAssistantMessage(lastUserMessage);
+  setAssistantLoading(assistantMessage);
+  toggleStopButton(assistantMessage, true);
+
+  processAssistantResponse(assistantMessage);
+}
+
 function updateRepeatButtonState() {
   if (!repeatLastBtn) return;
   repeatLastBtn.disabled = !lastUserMessage || !!activeRequest;
 }
 
 repeatLastBtn?.addEventListener("click", async () => {
-  if (!lastUserMessage || activeRequest) return;
-  inputEl.value = lastUserMessage;
-  await handleSend();
+  await regenerateLastResponse();
 });

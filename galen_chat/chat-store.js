@@ -3,6 +3,7 @@ import {
   addDoc,
   doc,
   setDoc,
+  deleteDoc,
   getDocs,
   getDoc,
   query,
@@ -83,6 +84,18 @@ function localAppendMessage(chatId, role, content) {
   lsSave(data);
 }
 
+function localReplaceMessages(chatId, messages) {
+  const data = lsLoad();
+  if (!data.chats[chatId]) {
+    data.chats[chatId] = { title: "New chat", messages: [], createdAt: now(), updatedAt: now() };
+    data.order = [chatId, ...data.order.filter((x) => x !== chatId)];
+  }
+
+  data.chats[chatId].messages = messages.map((m) => ({ ...m, createdAt: now() }));
+  data.chats[chatId].updatedAt = now();
+  lsSave(data);
+}
+
 function localRemoveChat(chatId) {
   const data = lsLoad();
   delete data.chats[chatId];
@@ -160,6 +173,33 @@ export async function appendMessage(user, chatId, role, content){
   } catch (err) {
     noteFirestoreError(err);
     localAppendMessage(chatId, role, content);
+  }
+}
+
+export async function replaceMessages(user, chatId, messages){
+  if(!user || !firestoreHealthy){
+    localReplaceMessages(chatId, messages);
+    return;
+  }
+
+  try {
+    const msgsRef = collection(db, "users", user.uid, "chats", chatId, "messages");
+    const snap = await getDocs(msgsRef);
+    await Promise.all(snap.docs.map((d) => deleteDoc(d.ref)));
+
+    for (const m of messages) {
+      await addDoc(msgsRef, {
+        role: m.role,
+        content: m.content,
+        createdAt: serverTimestamp(),
+      });
+    }
+
+    const chatRef = doc(db, "users", user.uid, "chats", chatId);
+    await setDoc(chatRef, { updatedAt: serverTimestamp() }, { merge:true });
+  } catch (err) {
+    noteFirestoreError(err);
+    localReplaceMessages(chatId, messages);
   }
 }
 
