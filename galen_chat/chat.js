@@ -2,7 +2,6 @@ import { watchAuth } from "/shared/auth-core.js";
 import { loadMessages, appendMessage, createChat } from "./chat-store.js";
 
 const API_URL = "https://galen-chat-proxy.ilyasch2020.workers.dev";
-const MODEL = "gpt-4o-mini";
 
 const chatEl = document.getElementById("chat");
 const formEl = document.getElementById("chat-form");
@@ -12,42 +11,7 @@ const galenPhraseEl = document.getElementById("galen-phrase");
 const sidebarToggleEl = document.getElementById("sidebarToggle");
 const sidebarBackdropEl = document.getElementById("sidebarBackdrop");
 
-const SYSTEM_MESSAGE = {
-  role: "system",
-  content: `
-Ты — Galen, центральный ассистент экосистемы Galenite.
-
-Galenite — это модульная операционная система для жизни и бизнеса.
-Она подключается к финансам пользователя, привычкам, здоровью, задачам, дому, работе и коммуникациям.
-Задача Galenite — убрать хаос из жизни, автоматизировать рутину, помогать в принятии решений и создавать ощущение «жизни под управлением умной системы».
-
-Твоя роль:
-— быть спокойным, дружелюбным ассистентом, который говорит так, будто общается с пользователем лично;
-— не канцелярить, не звучать как робот, писать по-человечески, иногда с лёгким юмором;
-— объяснять Galenite как систему, если пользователь спрашивает;
-— помогать разбираться в задачах, днях, идеях, привычках, планировании;
-— давать советы мягко, без поучений.
-
-Краткие описания модулей Galenite:
-• Finance — анализ расходов, доходов, шаблоны бюджета, прогнозирование, рекомендации.
-• Health — питание, шаги, тренировки, сон, вода, режим, постепенное улучшение привычек.
-• AutoPilot — ежедневный распорядок, автоматизация дел, расписание, дедлайны, оптимизация времени.
-• HouseHub — управление домом, устройства, сценарии, напоминания, домашние процессы.
-• Kids — ассистент для детей: обучает, общается, мотивирует, помогает, но не заменяет реальное общение.
-• BotHive — система создания кастомных ИИ-ботов и бизнес-автоматизаций.
-• Chat — твой личный интерфейс с пользователем, где ты говоришь естественно, быстро и по делу.
-
-Твой тон:
-— современный, живой, без официоза;
-— можно короткие фразы, но содержательно;
-— не перегружай текст;
-— будь уверенным, но не токсичным.
-
-Если пользователь задаёт вопрос про Galenite, рассказывай уверенно и понятно, как будто ты — сердце системы.
-`
-};
-
-let history = [SYSTEM_MESSAGE];
+let history = [];
 let currentUser = null;
 let activeChatId = null;
 
@@ -134,7 +98,7 @@ function toggleGalenBlock(hasMessages) {
 }
 
 function resetHistory() {
-  history = [SYSTEM_MESSAGE];
+  history = [];
 }
 
 async function renderLoadedMessages(messages) {
@@ -152,10 +116,7 @@ window.addEventListener("galen:chatChanged", async (e) => {
   closeSidebar();
   resetHistory();
   const msgs = await loadMessages(currentUser, activeChatId);
-  history = [
-    SYSTEM_MESSAGE,
-    ...msgs.map((m) => ({ role: m.role, content: m.content })),
-  ];
+  history = msgs.map((m) => ({ role: m.role, content: m.content }));
   await renderLoadedMessages(msgs);
 });
 
@@ -226,9 +187,7 @@ async function askGalen(historyMessages) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: MODEL,
       messages: historyMessages,
-      temperature: 0.6,
     }),
   });
 
@@ -241,5 +200,5 @@ async function askGalen(historyMessages) {
   }
 
   const data = JSON.parse(text);
-  return data.choices[0].message.content.trim();
+  return (data.text || "").trim();
 }
