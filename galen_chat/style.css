@@ -276,10 +276,6 @@ body {
   margin-left: auto;
 }
 
-.msg-status {
-  color: var(--text-muted);
-}
-
 .msg-action-btn {
   border: 1px solid var(--divider);
   background: rgba(255, 255, 255, 0.6);
@@ -337,6 +333,54 @@ body {
   background: transparent;
   color: #0b0f19;
   padding: 2px 0;
+}
+
+.msg.user {
+  position: relative;
+}
+
+.msg-edit-btn {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  border: 0;
+  background: transparent;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 2px;
+  font-size: 13px;
+  opacity: 0;
+  transition: opacity 0.12s ease, color 0.12s ease;
+}
+
+.msg.user:hover .msg-edit-btn,
+.msg.user:focus-within .msg-edit-btn {
+  opacity: 1;
+}
+
+.msg-edit-btn:hover,
+.msg-edit-btn:focus-visible {
+  color: #111827;
+}
+
+.ghost-btn {
+  border: 0;
+  background: transparent;
+  color: #6b7280;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  width: 38px;
+  margin-right: 6px;
+}
+
+.ghost-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 /* SYSTEM */
@@ -408,7 +452,7 @@ body {
   color: #9ca3af;
 }
 
-.input-pill button {
+.input-pill .send-btn {
   border: none;
   cursor: pointer;
   width: 44px;
@@ -423,12 +467,12 @@ body {
   transition: transform 0.16s ease, box-shadow 0.16s ease;
 }
 
-.input-pill button:hover {
+.input-pill .send-btn:hover {
   transform: translateX(2px) translateY(-1px);
   box-shadow: 0 10px 25px rgba(15, 23, 42, 0.35);
 }
 
-.input-pill button:disabled {
+.input-pill .send-btn:disabled {
   opacity: 0.4;
   cursor: default;
   box-shadow: none;

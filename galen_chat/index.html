@@ -100,13 +100,14 @@
     <!-- ИНПУТ-СТРОКА СНИЗУ -->
     <form class="input-bar" id="chat-form">
       <div class="input-pill">
+        <button type="button" id="repeatLast" aria-label="Повторить прошлое сообщение" class="ghost-btn">⟳</button>
         <input
           id="message"
           type="text"
           autocomplete="off"
           placeholder="Введите сообщение..."
         />
-        <button type="submit" id="send" aria-label="Отправить">
+        <button type="submit" id="send" aria-label="Отправить" class="send-btn">
           <span class="send-icon">↑</span>
         </button>
       </div>

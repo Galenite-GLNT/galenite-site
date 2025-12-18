@@ -7,6 +7,7 @@ const RESPONSE_TIMEOUT = 55000;
 const chatEl = document.getElementById("chat");
 const formEl = document.getElementById("chat-form");
 const inputEl = document.getElementById("message");
+const repeatLastBtn = document.getElementById("repeatLast");
 const galenBlockEl = document.getElementById("galen-block");
 const galenPhraseEl = document.getElementById("galen-phrase");
 const sidebarToggleEl = document.getElementById("sidebarToggle");
@@ -17,6 +18,7 @@ let currentUser = null;
 let activeChatId = null;
 let activeRequest = null;
 let lastRetryMessage = null;
+let lastUserMessage = "";
 
 // рандомные фразы под аватаром
 const randomPhrases = [
@@ -48,6 +50,7 @@ function setRandomPhrase() {
 }
 
 setRandomPhrase();
+updateRepeatButtonState();
 
 watchAuth((u) => {
   currentUser = u || null;
@@ -70,7 +73,25 @@ window.addEventListener("keyup", (e) => {
 function addMessage(text, role) {
   const el = document.createElement("div");
   el.className = `msg ${role}`;
-  el.textContent = text;
+
+  const content = document.createElement("div");
+  content.className = "msg-content";
+  content.textContent = text;
+  el.appendChild(content);
+
+  if (role === "user") {
+    const editBtn = document.createElement("button");
+    editBtn.type = "button";
+    editBtn.className = "msg-edit-btn";
+    editBtn.textContent = "✎";
+    editBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      inputEl.value = content.textContent || "";
+      inputEl.focus();
+    });
+    el.appendChild(editBtn);
+  }
+
   chatEl.appendChild(el);
   scrollToBottom();
   return el;
@@ -86,10 +107,6 @@ function createAssistantMessage(prompt) {
 
   const meta = document.createElement("div");
   meta.className = "msg-meta";
-
-  const status = document.createElement("span");
-  status.className = "msg-status";
-  meta.appendChild(status);
 
   const actions = document.createElement("div");
   actions.className = "msg-actions";
@@ -112,7 +129,7 @@ function createAssistantMessage(prompt) {
   chatEl.appendChild(el);
   scrollToBottom();
 
-  return { el, content, status, stopBtn, retryBtn, prompt };
+  return { el, content, stopBtn, retryBtn, prompt };
 }
 
 function setAssistantLoading(message) {
@@ -130,10 +147,6 @@ function setAssistantLoading(message) {
 function setAssistantContent(message, text) {
   message.content.textContent = text;
   message.content.classList.remove("is-loading");
-}
-
-function setAssistantStatus(message, text) {
-  message.status.textContent = text;
 }
 
 function toggleStopButton(message, show) {
@@ -190,6 +203,10 @@ async function renderLoadedMessages(messages) {
     const roleClass = m.role === "assistant" ? "bot" : m.role;
     addMessage(m.content, roleClass);
   });
+
+  const lastUser = [...messages].reverse().find((m) => m.role === "user");
+  lastUserMessage = lastUser?.content || "";
+  updateRepeatButtonState();
 }
 
 window.addEventListener("galen:chatChanged", async (e) => {
@@ -243,6 +260,9 @@ async function handleSend() {
 
   addMessage(value, "user");
 
+  lastUserMessage = value;
+  updateRepeatButtonState();
+
   history.push({ role: "user", content: value });
 
   inputEl.value = "";
@@ -252,7 +272,6 @@ async function handleSend() {
 
   const assistantMessage = createAssistantMessage(value);
   setAssistantLoading(assistantMessage);
-  setAssistantStatus(assistantMessage, "думаю…");
   toggleStopButton(assistantMessage, true);
 
   processAssistantResponse(assistantMessage);
@@ -271,8 +290,9 @@ async function processAssistantResponse(message) {
   activeRequest = { controller, timeoutId, message };
   toggleRetryButton(message, false);
 
-  const btn = formEl.querySelector("button");
-  if (btn) btn.disabled = true;
+  const submitBtn = formEl.querySelector("button[type='submit']");
+  if (submitBtn) submitBtn.disabled = true;
+  updateRepeatButtonState();
 
   if (message.stopBtn) {
     message.stopBtn.onclick = () => {
@@ -287,7 +307,6 @@ async function processAssistantResponse(message) {
     const reply = await askGalen(history, controller);
 
     setAssistantContent(message, reply);
-    setAssistantStatus(message, "готово");
     toggleStopButton(message, false);
 
     await appendMessage(currentUser, activeChatId, "assistant", reply);
@@ -302,17 +321,14 @@ async function processAssistantResponse(message) {
     if (controller.signal.aborted) {
       if (abortedByUser) {
         setAssistantContent(message, "Ответ остановлен.");
-        setAssistantStatus(message, "остановлено");
       } else if (timedOut) {
         setAssistantContent(
           message,
           "Ответ занял слишком много времени. Попробуй повторить запрос."
         );
-        setAssistantStatus(message, "ошибка");
         enableRetry(message);
       } else {
         setAssistantContent(message, "Запрос прерван.");
-        setAssistantStatus(message, "остановлено");
       }
       return;
     }
@@ -321,15 +337,15 @@ async function processAssistantResponse(message) {
       message,
       "Что-то сломалось на линии с ядром Galen. Попробуй ещё раз чуть позже."
     );
-    setAssistantStatus(message, "ошибка");
     enableRetry(message);
   } finally {
     clearTimeout(timeoutId);
     if (activeRequest?.controller === controller) {
       activeRequest = null;
     }
-    const btn2 = formEl.querySelector("button");
+    const btn2 = formEl.querySelector("button[type='submit']");
     if (btn2) btn2.disabled = false;
+    updateRepeatButtonState();
   }
 }
 
@@ -375,9 +391,19 @@ function enableRetry(message) {
     message.retryBtn.disabled = true;
     toggleRetryButton(message, false);
     setAssistantLoading(message);
-    setAssistantStatus(message, "думаю…");
     toggleStopButton(message, true);
 
     await processAssistantResponse(message);
   };
 }
+
+function updateRepeatButtonState() {
+  if (!repeatLastBtn) return;
+  repeatLastBtn.disabled = !lastUserMessage || !!activeRequest;
+}
+
+repeatLastBtn?.addEventListener("click", async () => {
+  if (!lastUserMessage || activeRequest) return;
+  inputEl.value = lastUserMessage;
+  await handleSend();
+});
