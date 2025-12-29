@@ -1,19 +1,42 @@
 import { watchAuth } from "/shared/auth-core.js";
-import { loadMessages, appendMessage, createChat } from "./chat-store.js";
+import {
+  listMessages,
+  addMessage,
+  createChat,
+  getChat,
+} from "/shared/chat/chatService.js";
+import {
+  ensureUserProfile,
+  getUserProfile,
+} from "/shared/profile/profileService.js";
+import {
+  extractPdfText,
+  formatBytes,
+  readFileAsDataUrl,
+  validateAttachment,
+} from "/shared/chat/attachmentService.js";
 
 const API_URL = "https://galen-chat-proxy.ilyasch2020.workers.dev";
 
 const chatEl = document.getElementById("chat");
 const formEl = document.getElementById("chat-form");
 const inputEl = document.getElementById("message");
+const sendBtnEl = document.getElementById("send");
+const attachmentInputEl = document.getElementById("attachmentInput");
+const attachmentListEl = document.getElementById("attachmentList");
+const attachmentBtnEl = document.getElementById("attachmentBtn");
+const chatNoticeEl = document.getElementById("chatNotice");
 const galenBlockEl = document.getElementById("galen-block");
 const galenPhraseEl = document.getElementById("galen-phrase");
 const sidebarToggleEl = document.getElementById("sidebarToggle");
 const sidebarBackdropEl = document.getElementById("sidebarBackdrop");
 
-let history = []; // ✅ больше нет system prompt на фронте
+let history = [];
 let currentUser = null;
+let currentProfile = null;
 let activeChatId = null;
+let pendingAttachments = [];
+let noticeTimer = null;
 
 // рандомные фразы под аватаром
 const randomPhrases = [
@@ -46,8 +69,14 @@ function setRandomPhrase() {
 
 setRandomPhrase();
 
-watchAuth((u) => {
+watchAuth(async (u) => {
   currentUser = u || null;
+  currentProfile = currentUser ? await ensureUserProfile(currentUser) : null;
+});
+
+window.addEventListener("galen:profileUpdated", async () => {
+  if (!currentUser?.uid) return;
+  currentProfile = await getUserProfile(currentUser.uid);
 });
 
 function closeSidebar() {
@@ -64,10 +93,46 @@ window.addEventListener("keyup", (e) => {
   if (e.key === "Escape") closeSidebar();
 });
 
-function addMessage(text, role) {
+function showNotice(message) {
+  if (!chatNoticeEl) return;
+  chatNoticeEl.textContent = message;
+  chatNoticeEl.classList.add("show");
+  if (noticeTimer) window.clearTimeout(noticeTimer);
+  noticeTimer = window.setTimeout(() => {
+    chatNoticeEl.classList.remove("show");
+  }, 4200);
+}
+
+function renderAttachmentChip(attachment) {
   const el = document.createElement("div");
-  el.className = `msg ${role}`;
-  el.textContent = text;
+  el.className = "attachment-chip";
+  el.innerHTML = `
+    <span class="attachment-type">${attachment.type === "image" ? "🖼" : "📄"}</span>
+    <span class="attachment-name">${attachment.name}</span>
+    <span class="attachment-size">${formatBytes(attachment.size)}</span>
+  `;
+  return el;
+}
+
+function renderMessage(message) {
+  const el = document.createElement("div");
+  const roleClass = message.role === "assistant" ? "bot" : message.role;
+  el.className = `msg ${roleClass}`;
+
+  const contentEl = document.createElement("div");
+  contentEl.className = "msg-content";
+  contentEl.textContent = message.content;
+  el.appendChild(contentEl);
+
+  if (message.attachments?.length) {
+    const attachmentsEl = document.createElement("div");
+    attachmentsEl.className = "msg-attachments";
+    message.attachments.forEach((attachment) => {
+      attachmentsEl.appendChild(renderAttachmentChip(attachment));
+    });
+    el.appendChild(attachmentsEl);
+  }
+
   chatEl.appendChild(el);
   scrollToBottom();
   return el;
@@ -116,8 +181,7 @@ async function renderLoadedMessages(messages) {
   toggleGalenBlock(messages.length > 0);
 
   messages.forEach((m) => {
-    const roleClass = m.role === "assistant" ? "bot" : m.role;
-    addMessage(m.content, roleClass);
+    renderMessage(m);
   });
 }
 
@@ -126,10 +190,12 @@ window.addEventListener("galen:chatChanged", async (e) => {
   closeSidebar();
   resetHistory();
 
-  const msgs = await loadMessages(currentUser, activeChatId);
-
-  // ✅ история только из реальных сообщений чата (без system)
-  history = msgs.map((m) => ({ role: m.role, content: m.content }));
+  const msgs = await listMessages(activeChatId);
+  history = msgs.map((m) => ({
+    role: m.role,
+    content: m.content,
+    attachments: m.attachments || [],
+  }));
 
   await renderLoadedMessages(msgs);
 });
@@ -147,10 +213,10 @@ inputEl?.addEventListener("keydown", (e) => {
 });
 
 async function ensureActiveChat() {
-  if (activeChatId) return activeChatId;
+  if (activeChatId && !activeChatId.startsWith("draft_")) return activeChatId;
 
-  const created = await createChat(currentUser);
-  activeChatId = created.id;
+  const created = await createChat(currentUser?.uid);
+  activeChatId = created.chatId;
 
   window.dispatchEvent(
     new CustomEvent("galen:chatChanged", { detail: { chatId: activeChatId } })
@@ -159,56 +225,246 @@ async function ensureActiveChat() {
   return activeChatId;
 }
 
+function sanitizeAttachment(attachment) {
+  return {
+    id: attachment.id,
+    type: attachment.type,
+    name: attachment.name,
+    mime: attachment.mime,
+    size: attachment.size,
+    dataUrl: attachment.type === "image" ? attachment.dataUrl : undefined,
+    pdfText: attachment.pdfText || "",
+    pageCount: attachment.pageCount || null,
+    createdAt: attachment.createdAt,
+  };
+}
+
+function buildAttachmentContext(attachments) {
+  if (!attachments?.length) return "";
+
+  const images = attachments.filter((item) => item.type === "image");
+  const pdfs = attachments.filter((item) => item.type === "pdf");
+  const parts = [];
+
+  if (images.length) {
+    parts.push(
+      `Изображений: ${images.length} (${images.map((img) => img.name).join(", ")})`
+    );
+  }
+
+  if (pdfs.length) {
+    parts.push(
+      `PDF: ${pdfs
+        .map(
+          (pdf) =>
+            `${pdf.name}${pdf.pageCount ? `, ${pdf.pageCount} стр.` : ""}`
+        )
+        .join("; ")}`
+    );
+
+    const pdfTexts = pdfs
+      .map((pdf) => pdf.pdfText)
+      .filter(Boolean)
+      .join("\n\n");
+    if (pdfTexts) {
+      parts.push(`Текст из PDF:\n${pdfTexts}`);
+    } else {
+      parts.push("Текст из PDF не извлечён, отправляем файл как вложение.");
+    }
+  }
+
+  return parts.length ? `\n\n${parts.join("\n")}` : "";
+}
+
+async function prepareRequestAttachments(attachments) {
+  const result = [];
+  for (const attachment of attachments) {
+    if (attachment.type === "image") {
+      result.push({
+        id: attachment.id,
+        type: attachment.type,
+        name: attachment.name,
+        mime: attachment.mime,
+        size: attachment.size,
+        dataUrl: attachment.dataUrl,
+      });
+    } else if (attachment.type === "pdf") {
+      const payload = {
+        id: attachment.id,
+        type: attachment.type,
+        name: attachment.name,
+        mime: attachment.mime,
+        size: attachment.size,
+        pdfText: attachment.pdfText || "",
+        pageCount: attachment.pageCount || null,
+      };
+      if (!attachment.pdfText && attachment.file) {
+        payload.dataUrl = await readFileAsDataUrl(attachment.file);
+      }
+      result.push(payload);
+    }
+  }
+  return result;
+}
+
+function renderAttachmentList() {
+  if (!attachmentListEl) return;
+  attachmentListEl.innerHTML = "";
+  pendingAttachments.forEach((attachment) => {
+    const chip = document.createElement("div");
+    chip.className = "pending-attachment";
+    chip.innerHTML = `
+      <span class="attachment-type">${attachment.type === "image" ? "🖼" : "📄"}</span>
+      <span class="attachment-name">${attachment.name}</span>
+      <span class="attachment-size">${formatBytes(attachment.size)}</span>
+      <button type="button" class="attachment-remove" aria-label="Удалить">✕</button>
+    `;
+    chip.querySelector(".attachment-remove").addEventListener("click", () => {
+      pendingAttachments = pendingAttachments.filter((item) => item.id !== attachment.id);
+      renderAttachmentList();
+    });
+    attachmentListEl.appendChild(chip);
+  });
+  attachmentListEl.classList.toggle("visible", pendingAttachments.length > 0);
+}
+
+async function handleFiles(files) {
+  const list = Array.from(files || []);
+  for (const file of list) {
+    const validation = validateAttachment(file);
+    if (!validation.ok) {
+      showNotice(validation.error);
+      continue;
+    }
+
+    if (validation.type === "image") {
+      const dataUrl = await readFileAsDataUrl(file);
+      pendingAttachments.push({
+        id: `att_${Math.random().toString(36).slice(2, 10)}`,
+        type: "image",
+        name: file.name,
+        mime: file.type,
+        size: file.size,
+        dataUrl,
+        createdAt: Date.now(),
+        file,
+      });
+    } else if (validation.type === "pdf") {
+      const pdf = await extractPdfText(file);
+      if (pdf.error) {
+        showNotice("Не удалось извлечь текст из PDF. Отправим как вложение.");
+      }
+      pendingAttachments.push({
+        id: `att_${Math.random().toString(36).slice(2, 10)}`,
+        type: "pdf",
+        name: file.name,
+        mime: file.type,
+        size: file.size,
+        pdfText: pdf.text || "",
+        pageCount: pdf.pageCount || null,
+        createdAt: Date.now(),
+        file,
+      });
+    }
+  }
+  renderAttachmentList();
+}
+
+attachmentBtnEl?.addEventListener("click", () => {
+  attachmentInputEl?.click();
+});
+
+attachmentInputEl?.addEventListener("change", (event) => {
+  handleFiles(event.target.files);
+  event.target.value = "";
+});
+
 async function handleSend() {
   const value = (inputEl.value || "").trim();
-  if (!value) return;
+  if (!value && pendingAttachments.length === 0) return;
 
   await ensureActiveChat();
 
   toggleGalenBlock(true);
 
-  await appendMessage(currentUser, activeChatId, "user", value);
+  const userContent = value || "Отправляю вложения.";
+  const userMessage = {
+    role: "user",
+    content: userContent,
+    attachments: pendingAttachments.map(sanitizeAttachment),
+  };
+
+  await addMessage(activeChatId, userMessage);
   window.dispatchEvent(new Event("galen:chatsShouldRefresh"));
 
-  addMessage(value, "user");
+  renderMessage(userMessage);
 
-  history.push({ role: "user", content: value });
+  history.push(userMessage);
 
   inputEl.value = "";
   inputEl.focus();
 
   const loader = addLoader();
-  const btn = formEl.querySelector("button");
-  if (btn) btn.disabled = true;
+  if (sendBtnEl) sendBtnEl.disabled = true;
 
   try {
-    const reply = await askGalen(history);
+    const requestAttachments = await prepareRequestAttachments(pendingAttachments);
+    pendingAttachments = [];
+    renderAttachmentList();
+
+    const reply = await askGalen(history, requestAttachments);
     loader.remove();
 
-    await appendMessage(currentUser, activeChatId, "assistant", reply);
+    const assistantMessage = {
+      role: "assistant",
+      content: reply,
+      attachments: [],
+    };
+    await addMessage(activeChatId, assistantMessage);
     window.dispatchEvent(new Event("galen:chatsShouldRefresh"));
 
-    addMessage(reply, "bot");
-    history.push({ role: "assistant", content: reply });
+    renderMessage(assistantMessage);
+    history.push(assistantMessage);
   } catch (err) {
     console.error(err);
     loader.remove();
-    addMessage(
-      "Что-то сломалось на линии с ядром Galen. Попробуй ещё раз чуть позже.",
-      "bot"
-    );
+    renderMessage({
+      role: "assistant",
+      content:
+        "Что-то сломалось на линии с ядром Galen. Попробуй ещё раз чуть позже.",
+      attachments: [],
+    });
   } finally {
-    const btn2 = formEl.querySelector("button");
-    if (btn2) btn2.disabled = false;
+    if (sendBtnEl) sendBtnEl.disabled = false;
   }
 }
 
-async function askGalen(historyMessages) {
+async function askGalen(historyMessages, attachments) {
+  const chat = await getChat(activeChatId);
+  const profile = currentProfile || (currentUser ? await getUserProfile(currentUser.uid) : null);
+  const systemMessage = {
+    role: "system",
+    content: `Профиль пользователя: uid=${currentUser?.uid || "guest"}, имя=${
+      profile?.displayName || currentUser?.displayName || "User"
+    }, bio=${profile?.bio || "не указано"}.\nЧат: id=${
+      chat?.chatId || activeChatId
+    }, title=${chat?.title || "New chat"}.`,
+  };
+
+  const preparedMessages = historyMessages.map((message) => {
+    const context = message.role === "user" ? buildAttachmentContext(message.attachments) : "";
+    return {
+      role: message.role,
+      content: `${message.content}${context}`.trim(),
+    };
+  });
+
   const response = await fetch(API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      messages: historyMessages, // ✅ только messages
+      messages: [systemMessage, ...preparedMessages],
+      attachments,
     }),
   });
 

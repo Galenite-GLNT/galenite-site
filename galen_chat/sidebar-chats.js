@@ -1,5 +1,5 @@
 import { watchAuth } from "/shared/auth-core.js";
-import { listChats, removeChat } from "./chat-store.js";
+import { listChats, deleteChat } from "/shared/chat/chatService.js";
 
 const chatListEl = document.getElementById("chatList");
 const newBtn = document.getElementById("newChatBtn");
@@ -23,7 +23,7 @@ async function handleDeleteChat(id, title) {
 
   if (!confirmed) return;
 
-  await removeChat(currentUser, id);
+  await deleteChat(id);
 
   if (activeChatId === id) {
     activeChatId = null;
@@ -36,20 +36,22 @@ async function handleDeleteChat(id, title) {
 async function render(){
   if(!chatListEl) return;
 
-  const chats = await listChats(currentUser);
+  const chats = await listChats(currentUser?.uid);
   chatListEl.innerHTML = "";
 
-  const activeChatMissing = activeChatId && !chats.some(c => c.id === activeChatId);
+  const activeChatMissing =
+    activeChatId && !chats.some((c) => c.chatId === activeChatId);
 
   // Если выбран черновик, который ещё не сохранён в сторадже, оставляем его активным.
   if (!activeChatId || (activeChatMissing && !activeChatId.startsWith("draft_"))) {
-    const fallbackId = chats[0]?.id || makeDraftId();
+    const fallbackId = chats[0]?.chatId || makeDraftId();
     setActive(fallbackId);
   }
 
-  chats.forEach(c => {
+  chats.forEach((c) => {
     const item = document.createElement("div");
-    item.className = "chat-item" + (c.id === activeChatId ? " active" : "");
+    item.className =
+      "chat-item" + (c.chatId === activeChatId ? " active" : "");
     item.setAttribute("role", "button");
     item.tabIndex = 0;
 
@@ -63,18 +65,21 @@ async function render(){
     del.setAttribute("aria-label", "Удалить чат");
     del.textContent = "✕";
 
-    item.addEventListener("click", () => { setActive(c.id); render(); });
+    item.addEventListener("click", () => {
+      setActive(c.chatId);
+      render();
+    });
     item.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
-        setActive(c.id);
+        setActive(c.chatId);
         render();
       }
     });
 
     del.addEventListener("click", (e) => {
       e.stopPropagation();
-      handleDeleteChat(c.id, c.title);
+      handleDeleteChat(c.chatId, c.title);
     });
 
     item.appendChild(title);
