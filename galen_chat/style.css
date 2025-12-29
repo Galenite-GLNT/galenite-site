@@ -225,6 +225,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  padding-top: 24px;
   padding-bottom: 32px;
   position: relative;
   overflow-y: auto;
@@ -232,16 +233,16 @@ body {
   min-height: 0;
   mask-image: linear-gradient(
     to bottom,
-    transparent 0%,
-    rgba(0, 0, 0, 1) 12%,
-    rgba(0, 0, 0, 1) 88%,
+    transparent 0px,
+    rgba(0, 0, 0, 1) 24px,
+    rgba(0, 0, 0, 1) calc(100% - 24px),
     transparent 100%
   );
   -webkit-mask-image: linear-gradient(
     to bottom,
-    transparent 0%,
-    rgba(0, 0, 0, 1) 12%,
-    rgba(0, 0, 0, 1) 88%,
+    transparent 0px,
+    rgba(0, 0, 0, 1) 24px,
+    rgba(0, 0, 0, 1) calc(100% - 24px),
     transparent 100%
   );
   scrollbar-width: none;
