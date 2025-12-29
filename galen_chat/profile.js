@@ -6,11 +6,6 @@ import {
 } from "/shared/profile/profileService.js";
 import { readFileAsDataUrl } from "/shared/chat/attachmentService.js";
 
-const viewChatsBtn = document.getElementById("viewChatsBtn");
-const viewProfileBtn = document.getElementById("viewProfileBtn");
-const chatViewEl = document.getElementById("chatView");
-const profileViewEl = document.getElementById("profileView");
-
 const avatarPreviewEl = document.getElementById("profileAvatarPreview");
 const avatarInputEl = document.getElementById("profileAvatarInput");
 const avatarBtnEl = document.getElementById("profileAvatarBtn");
@@ -18,18 +13,25 @@ const nameInputEl = document.getElementById("profileName");
 const bioInputEl = document.getElementById("profileBio");
 const saveBtnEl = document.getElementById("profileSaveBtn");
 const noticeEl = document.getElementById("profileNotice");
+const sidebarToggleEl = document.getElementById("sidebarToggle");
+const sidebarBackdropEl = document.getElementById("sidebarBackdrop");
 
 let currentUser = null;
 let avatarDataUrl = "";
 
-function setView(view) {
-  const isProfile = view === "profile";
-  document.body.classList.toggle("view-profile", isProfile);
-  viewProfileBtn?.classList.toggle("active", isProfile);
-  viewChatsBtn?.classList.toggle("active", !isProfile);
-  profileViewEl?.classList.toggle("visible", isProfile);
-  chatViewEl?.classList.toggle("hidden", isProfile);
+function closeSidebar() {
+  document.body.classList.remove("sidebar-open");
 }
+
+function toggleSidebar() {
+  document.body.classList.toggle("sidebar-open");
+}
+
+sidebarToggleEl?.addEventListener("click", toggleSidebar);
+sidebarBackdropEl?.addEventListener("click", closeSidebar);
+window.addEventListener("keyup", (e) => {
+  if (e.key === "Escape") closeSidebar();
+});
 
 function setNotice(message) {
   if (!noticeEl) return;
@@ -68,9 +70,6 @@ async function loadProfile() {
   saveBtnEl.disabled = false;
 }
 
-viewChatsBtn?.addEventListener("click", () => setView("chat"));
-viewProfileBtn?.addEventListener("click", () => setView("profile"));
-
 avatarBtnEl?.addEventListener("click", () => avatarInputEl?.click());
 
 avatarInputEl?.addEventListener("change", async (event) => {
@@ -106,5 +105,3 @@ watchAuth(async (user) => {
   currentUser = user || null;
   await loadProfile();
 });
-
-setView("chat");

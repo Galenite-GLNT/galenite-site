@@ -53,8 +53,8 @@
 
     <div class="sidebar-chats">
       <div class="sidebar-nav">
-        <button class="sidebar-nav-btn active" id="viewChatsBtn" type="button">Chats</button>
-        <button class="sidebar-nav-btn" id="viewProfileBtn" type="button">Профиль</button>
+        <span class="sidebar-nav-btn active" aria-current="page">Chats</span>
+        <a class="sidebar-nav-btn sidebar-nav-link" href="/galen_chat/profile.html">Профиль</a>
       </div>
       <div class="chats-head">
         <div class="chats-title">Chats</div>
@@ -101,38 +101,6 @@
       </div>
     </section>
 
-    <section class="profile-view" id="profileView">
-      <div class="profile-card">
-        <div class="profile-header">Профиль</div>
-        <div class="profile-body">
-          <div class="profile-avatar">
-            <div class="avatar-preview" id="profileAvatarPreview">?</div>
-            <input
-              type="file"
-              id="profileAvatarInput"
-              accept="image/png,image/jpeg,image/webp"
-              hidden
-            />
-            <button type="button" class="profile-upload" id="profileAvatarBtn">Загрузить фото</button>
-          </div>
-          <div class="profile-fields">
-            <label class="profile-label">
-              Имя
-              <input type="text" id="profileName" placeholder="Ваше имя" />
-            </label>
-            <label class="profile-label">
-              О себе
-              <textarea id="profileBio" rows="4" placeholder="Коротко о себе"></textarea>
-            </label>
-          </div>
-        </div>
-        <div class="profile-actions">
-          <button type="button" class="profile-save" id="profileSaveBtn">Сохранить</button>
-          <div class="profile-notice" id="profileNotice"></div>
-        </div>
-      </div>
-    </section>
-
     <!-- ИНПУТ-СТРОКА СНИЗУ -->
     <form class="input-bar" id="chat-form">
       <div class="attachment-list" id="attachmentList"></div>
@@ -165,6 +133,5 @@
 <script type="module" src="chat.js"></script>
 <script type="module" src="./sidebar-auth.js"></script>
 <script type="module" src="./sidebar-chats.js"></script>
-<script type="module" src="./profile.js"></script>
 </body>
 </html>

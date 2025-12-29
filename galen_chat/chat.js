@@ -239,8 +239,9 @@ function sanitizeAttachment(attachment) {
   };
 }
 
-function buildAttachmentContext(attachments) {
-  if (!attachments?.length) return "";
+function buildUserText(message) {
+  const attachments = message.attachments || [];
+  if (!attachments.length) return message.content || "";
 
   const images = attachments.filter((item) => item.type === "image");
   const pdfs = attachments.filter((item) => item.type === "pdf");
@@ -248,7 +249,7 @@ function buildAttachmentContext(attachments) {
 
   if (images.length) {
     parts.push(
-      `Изображений: ${images.length} (${images.map((img) => img.name).join(", ")})`
+      `Изображения: ${images.map((img) => img.name).join(", ")}`
     );
   }
 
@@ -273,7 +274,36 @@ function buildAttachmentContext(attachments) {
     }
   }
 
-  return parts.length ? `\n\n${parts.join("\n")}` : "";
+  const baseText = message.content?.trim() || "Сообщение с вложениями.";
+  return parts.length ? `${baseText}\n\n${parts.join("\n")}` : baseText;
+}
+
+function buildApiMessages(historyMessages) {
+  return historyMessages.map((message) => {
+    if (message.role !== "user") {
+      return { role: message.role, content: message.content };
+    }
+
+    const text = buildUserText(message);
+    const images = (message.attachments || []).filter(
+      (item) => item.type === "image" && item.dataUrl
+    );
+
+    if (images.length) {
+      return {
+        role: "user",
+        content: [
+          { type: "text", text },
+          ...images.map((img) => ({
+            type: "image_url",
+            image_url: { url: img.dataUrl },
+          })),
+        ],
+      };
+    }
+
+    return { role: "user", content: text };
+  });
 }
 
 async function prepareRequestAttachments(attachments) {
@@ -451,13 +481,7 @@ async function askGalen(historyMessages, attachments) {
     }, title=${chat?.title || "New chat"}.`,
   };
 
-  const preparedMessages = historyMessages.map((message) => {
-    const context = message.role === "user" ? buildAttachmentContext(message.attachments) : "";
-    return {
-      role: message.role,
-      content: `${message.content}${context}`.trim(),
-    };
-  });
+  const preparedMessages = buildApiMessages(historyMessages);
 
   const response = await fetch(API_URL, {
     method: "POST",

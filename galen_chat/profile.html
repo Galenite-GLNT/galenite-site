@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Galen Chat — Профиль</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="apple-touch-icon" href="icon-galen-180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-galen-192.png">
+  <link rel="manifest" href="manifest-galen.json">
+  <meta name="theme-color" content="#000000">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style-mobile.css">
+</head>
+<body>
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="sidebar-logo">
+        <img class="logo-img" src="images/logo.png" alt="Galenite logo">
+        <span>GALENITE</span>
+      </div>
+
+      <div class="sidebar-beta">
+        <div class="beta-label">THIS IS BETA VERSION</div>
+        <p>История чатов сохраняется локально или в облаке после авторизации</p>
+      </div>
+    </div>
+
+    <div class="sidebar-chats">
+      <div class="sidebar-nav">
+        <a class="sidebar-nav-btn sidebar-nav-link" href="/galen_chat/">Chats</a>
+        <span class="sidebar-nav-btn active" aria-current="page">Профиль</span>
+      </div>
+      <div class="chats-head">
+        <div class="chats-title">Chats</div>
+        <button id="newChatBtn" class="chats-new" type="button">+</button>
+      </div>
+      <div id="chatList" class="chat-list"></div>
+    </div>
+
+    <div class="sidebar-footer" id="sidebarFooter"></div>
+
+    <div class="sidebar-bottom">
+      <span class="sidebar-caption">GALEN v0.3 BETA</span>
+    </div>
+  </aside>
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <main class="main">
+    <header class="topbar">
+      <button type="button" class="sidebar-toggle" id="sidebarToggle" aria-label="Открыть меню">
+        ☰
+      </button>
+      <span class="topbar-left">GALENITE</span>
+      <span class="topbar-right">GALEN v0.3 BETA</span>
+    </header>
+
+    <section class="profile-view profile-page">
+      <div class="profile-card">
+        <div class="profile-header">Профиль</div>
+        <div class="profile-body">
+          <div class="profile-avatar">
+            <div class="avatar-preview" id="profileAvatarPreview">?</div>
+            <input
+              type="file"
+              id="profileAvatarInput"
+              accept="image/png,image/jpeg,image/webp"
+              hidden
+            />
+            <button type="button" class="profile-upload" id="profileAvatarBtn">Загрузить фото</button>
+          </div>
+          <div class="profile-fields">
+            <label class="profile-label">
+              Имя
+              <input type="text" id="profileName" placeholder="Ваше имя" />
+            </label>
+            <label class="profile-label">
+              О себе
+              <textarea id="profileBio" rows="4" placeholder="Коротко о себе"></textarea>
+            </label>
+          </div>
+        </div>
+        <div class="profile-actions">
+          <button type="button" class="profile-save" id="profileSaveBtn">Сохранить</button>
+          <div class="profile-notice" id="profileNotice"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script type="module" src="./sidebar-auth.js"></script>
+<script type="module" src="./sidebar-chats.js"></script>
+<script type="module" src="./profile.js"></script>
+</body>
+</html>
