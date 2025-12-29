@@ -472,11 +472,18 @@ async function handleSend() {
 async function askGalen(historyMessages, attachments) {
   const chat = await getChat(activeChatId);
   const profile = currentProfile || (currentUser ? await getUserProfile(currentUser.uid) : null);
+  const avatar =
+    profile?.avatarDataUrl ||
+    profile?.avatarUrl ||
+    currentUser?.photoURL ||
+    "не указан";
   const systemMessage = {
     role: "system",
     content: `Профиль пользователя: uid=${currentUser?.uid || "guest"}, имя=${
       profile?.displayName || currentUser?.displayName || "User"
-    }, bio=${profile?.bio || "не указано"}.\nЧат: id=${
+    }, email=${currentUser?.email || "не указан"}, bio=${
+      profile?.bio || "не указано"
+    }, avatar=${avatar}.\nЧат: id=${
       chat?.chatId || activeChatId
     }, title=${chat?.title || "New chat"}.`,
   };

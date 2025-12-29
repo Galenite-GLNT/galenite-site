@@ -4,7 +4,7 @@ import { FirebaseAdapter } from "./firebaseAdapter.js";
 let storageAdapter = null;
 
 export function initStorageAdapter(config = {}) {
-  const { type = "local", firebaseConfig = null } = config;
+  const { type = "firebase", firebaseConfig = null } = config;
 
   if (type === "firebase") {
     storageAdapter = new FirebaseAdapter(firebaseConfig);

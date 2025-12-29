@@ -1,8 +1,10 @@
 import { watchAuth } from "/shared/auth-core.js";
-import { listChats, deleteChat } from "/shared/chat/chatService.js";
+import { listChats, deleteChat, createChat } from "/shared/chat/chatService.js";
 
 const chatListEl = document.getElementById("chatList");
 const newBtn = document.getElementById("newChatBtn");
+const isChatPage = Boolean(document.getElementById("chat"));
+const initialChatId = new URLSearchParams(window.location.search).get("chatId");
 
 let currentUser = null;
 let activeChatId = null;
@@ -12,6 +14,10 @@ function makeDraftId() {
 }
 
 function setActive(id){
+  if (!isChatPage) {
+    window.location.href = `/galen_chat/?chatId=${id}`;
+    return;
+  }
   activeChatId = id;
   window.dispatchEvent(new CustomEvent("galen:chatChanged", { detail: { chatId: id } }));
 }
@@ -43,7 +49,10 @@ async function render(){
     activeChatId && !chats.some((c) => c.chatId === activeChatId);
 
   // Если выбран черновик, который ещё не сохранён в сторадже, оставляем его активным.
-  if (!activeChatId || (activeChatMissing && !activeChatId.startsWith("draft_"))) {
+  if (initialChatId && chats.some((c) => c.chatId === initialChatId)) {
+    activeChatId = initialChatId;
+    setActive(initialChatId);
+  } else if (!activeChatId || (activeChatMissing && !activeChatId.startsWith("draft_"))) {
     const fallbackId = chats[0]?.chatId || makeDraftId();
     setActive(fallbackId);
   }
@@ -90,6 +99,13 @@ async function render(){
 }
 
 newBtn?.addEventListener("click", async () => {
+  if (!isChatPage) {
+    const created = await createChat(currentUser?.uid);
+    if (created?.chatId) {
+      window.location.href = `/galen_chat/?chatId=${created.chatId}`;
+    }
+    return;
+  }
   const draftId = makeDraftId();
   setActive(draftId);
   render();
