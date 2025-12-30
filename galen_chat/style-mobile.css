@@ -96,4 +96,16 @@
   .galen-block {
     margin-top: 32px;
   }
+
+  .profile-view {
+    padding: 20px;
+  }
+
+  .profile-body {
+    grid-template-columns: 1fr;
+  }
+
+  .attachment-list {
+    margin-bottom: 10px;
+  }
 }

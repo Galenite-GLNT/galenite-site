@@ -52,6 +52,10 @@
     </div>
 
     <div class="sidebar-chats">
+      <div class="sidebar-nav">
+        <span class="sidebar-nav-btn active" aria-current="page">Chats</span>
+        <a class="sidebar-nav-btn sidebar-nav-link" href="/galen_chat/profile.html">Профиль</a>
+      </div>
       <div class="chats-head">
         <div class="chats-title">Chats</div>
         <button id="newChatBtn" class="chats-new">+</button>
@@ -77,7 +81,7 @@
       <span class="topbar-right">GALEN v0.3 BETA</span>
     </header>
 
-    <section class="canvas">
+    <section class="canvas chat-view" id="chatView">
       <!-- Вертикальные пунктирные линии -->
       <div class="grid-line grid-line-left"></div>
       <div class="grid-line grid-line-right"></div>
@@ -99,7 +103,18 @@
 
     <!-- ИНПУТ-СТРОКА СНИЗУ -->
     <form class="input-bar" id="chat-form">
+      <div class="attachment-list" id="attachmentList"></div>
       <div class="input-pill">
+        <button type="button" class="attach-btn" id="attachmentBtn" aria-label="Прикрепить">
+          📎
+        </button>
+        <input
+          type="file"
+          id="attachmentInput"
+          multiple
+          accept="image/png,image/jpeg,image/webp,application/pdf"
+          hidden
+        />
         <input
           id="message"
           type="text"
@@ -110,6 +125,7 @@
           <span class="send-icon">↑</span>
         </button>
       </div>
+      <div class="chat-notice" id="chatNotice"></div>
     </form>
   </main>
 </div>
