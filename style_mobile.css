@@ -1,6 +1,6 @@
 /* ===== MOBILE STYLE FOR GALENITE ===== */
 
-.header { padding: 10px 0 8px; background: rgba(10, 12, 18, 0.95); }
+.header { padding: 10px 0 8px; }
 
 .header-inner,
 .hero-inner,
@@ -12,14 +12,14 @@
   padding-right: 14px;
 }
 
-.logo-img { width: 28px; }
 .logo-block { margin-bottom: 8px; }
+.logo-img { width: 28px; }
 
 .nav {
   max-width: 100%;
+  padding: 10px 12px;
   font-size: 8px;
   letter-spacing: .12em;
-  padding: 10px 12px;
 }
 
 .nav-group { gap: 10px; }
@@ -29,7 +29,7 @@
 .block-tech,
 .block-modules,
 .block-contacts {
-  padding-top: 26px;
+  padding-top: 28px;
   padding-bottom: 40px;
 }
 
@@ -42,30 +42,21 @@
   gap: 12px;
 }
 
-.hero-title { font-size: 33px; }
+.hero-title { font-size: 34px; }
 .hero-subtitle { font-size: 14px; margin-bottom: 16px; }
-
-.hero-metrics {
-  grid-template-columns: 1fr;
-  gap: 8px;
-  margin-bottom: 18px;
-}
-
+.hero-metrics { grid-template-columns: 1fr; margin-bottom: 18px; }
 .hero-metric-value { font-size: 19px; }
 
 .hero-actions { flex-direction: column; }
 .btn { width: 100%; }
-
-.hero-crystal { padding: 22px; }
+.hero-crystal { padding: 24px; }
 
 .goal-card,
 .tech-chat,
 .tech-phone,
 .tech-block,
 .module-item,
-.contacts-right {
-  border-radius: 16px;
-}
+.contacts-right { border-radius: 14px; }
 
 .goal-card { padding: 22px; }
 .goal-title { font-size: 28px; }
@@ -82,4 +73,4 @@
 .contacts-left { display: none; }
 .contacts-right { flex-direction: column; text-align: center; padding: 20px; }
 .contacts-qr { width: 136px; }
-.contacts-line { font-size: 15px; }
+.contacts-line { font-size: 16px; }
