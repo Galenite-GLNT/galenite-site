@@ -6,32 +6,16 @@
 .tech-inner,
 .modules-inner,
 .contacts-inner {
-  padding-left: 22px;
-  padding-right: 22px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
-.hero-title {
-  font-size: clamp(38px, 4.2vw, 62px);
-}
+.hero-title { font-size: clamp(38px, 4.2vw, 62px); }
+.hero-subtitle { font-size: 16px; }
+.hero-metrics { max-width: 540px; }
 
-.hero-subtitle,
-.modules-subtitle {
-  font-size: 16px;
-}
+.goal-title { font-size: 32px; }
+.modules-title { font-size: 36px; }
 
-.hero-metrics {
-  max-width: 520px;
-}
-
-.goal-title,
-.modules-title {
-  font-size: 36px;
-}
-
-.tech-title {
-  font-size: 26px;
-}
-
-.contacts-line {
-  font-size: 20px;
-}
+.tech-title { font-size: 24px; }
+.contacts-line { font-size: 19px; }

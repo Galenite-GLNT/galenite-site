@@ -1,9 +1,6 @@
 /* ===== MOBILE STYLE FOR GALENITE ===== */
 
-.header {
-  padding: 10px 0 8px;
-  background: rgba(245, 247, 251, 0.96);
-}
+.header { padding: 10px 0 8px; background: rgba(10, 12, 18, 0.95); }
 
 .header-inner,
 .hero-inner,
@@ -11,54 +8,42 @@
 .tech-inner,
 .modules-inner,
 .contacts-inner {
-  padding-left: 16px;
-  padding-right: 16px;
+  padding-left: 14px;
+  padding-right: 14px;
 }
 
-.logo-block {
-  margin-bottom: 10px;
-}
-
-.logo-img {
-  width: 28px;
-}
+.logo-img { width: 28px; }
+.logo-block { margin-bottom: 8px; }
 
 .nav {
   max-width: 100%;
-  font-size: 9px;
-  letter-spacing: 0.14em;
+  font-size: 8px;
+  letter-spacing: .12em;
   padding: 10px 12px;
 }
 
-.nav-group {
-  gap: 10px;
-}
+.nav-group { gap: 10px; }
 
 .block-hero,
 .block-goal,
 .block-tech,
 .block-modules,
 .block-contacts {
-  padding-top: 28px;
-  padding-bottom: 36px;
+  padding-top: 26px;
+  padding-bottom: 40px;
 }
 
 .hero-inner,
 .goal-inner,
 .tech-inner,
-.contacts-inner {
+.contacts-inner,
+.modules-grid {
   grid-template-columns: 1fr;
-  gap: 18px;
+  gap: 12px;
 }
 
-.hero-title {
-  font-size: 32px;
-}
-
-.hero-subtitle {
-  font-size: 15px;
-  margin-bottom: 18px;
-}
+.hero-title { font-size: 33px; }
+.hero-subtitle { font-size: 14px; margin-bottom: 16px; }
 
 .hero-metrics {
   grid-template-columns: 1fr;
@@ -66,85 +51,35 @@
   margin-bottom: 18px;
 }
 
-.hero-metric-value {
-  font-size: 18px;
-}
+.hero-metric-value { font-size: 19px; }
 
-.hero-actions {
-  flex-direction: column;
-}
+.hero-actions { flex-direction: column; }
+.btn { width: 100%; }
 
-.btn {
-  width: 100%;
-}
+.hero-crystal { padding: 22px; }
 
-.hero-crystal {
-  width: min(280px, 90%);
-  padding: 26px;
-}
-
-.goal-card {
-  padding: 22px;
-}
-
-.goal-title {
-  font-size: 28px;
-}
-
-.goal-text,
-.tech-text,
-.modules-subtitle,
-.module-text {
-  font-size: 14px;
-}
-
-.tech-inner {
-  gap: 14px;
-}
-
+.goal-card,
 .tech-chat,
 .tech-phone,
 .tech-block,
-.contacts-left,
-.contacts-right,
-.module-item {
+.module-item,
+.contacts-right {
   border-radius: 16px;
 }
 
-.tech-title {
-  font-size: 22px;
-}
+.goal-card { padding: 22px; }
+.goal-title { font-size: 28px; }
+.goal-text,
+.tech-text,
+.modules-subtitle,
+.module-text { font-size: 14px; }
 
-.modules-title {
-  font-size: 30px;
-}
+.tech-title { font-size: 22px; }
+.modules-title { font-size: 30px; }
+.module-icon { width: 60px; }
+.module-title { font-size: 18px; }
 
-.modules-grid {
-  grid-template-columns: 1fr;
-}
-
-.module-icon {
-  width: 62px;
-}
-
-.module-title {
-  font-size: 18px;
-}
-
-.contacts-left {
-  display: none;
-}
-
-.contacts-right {
-  flex-direction: column;
-  text-align: center;
-  padding: 22px;
-}
-
-.contacts-qr {
-  width: 140px;
-}
-
-.contacts-line {
-  font-size: 16px;
-}
+.contacts-left { display: none; }
+.contacts-right { flex-direction: column; text-align: center; padding: 20px; }
+.contacts-qr { width: 136px; }
+.contacts-line { font-size: 15px; }
