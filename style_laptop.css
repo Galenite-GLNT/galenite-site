@@ -8,6 +8,7 @@
 
 .header-inner {
   max-width: 1000px;
+  padding: 0 14px;
 }
 
 .hero-inner {
@@ -77,4 +78,22 @@
 
 .contacts-line {
   font-size: 22px;
+}
+
+
+.hero-metrics {
+  max-width: 500px;
+  gap: 10px;
+}
+
+.hero-metric {
+  padding: 10px 12px;
+}
+
+.hero-metric-value {
+  font-size: 16px;
+}
+
+.hero-metric-label {
+  font-size: 10px;
 }

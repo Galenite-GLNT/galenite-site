@@ -17,8 +17,11 @@ html {
 
 body {
   font-family: "Inter", sans-serif;
-  color: #000;
-  background: #dde2ee;
+  color: #0f172a;
+  background:
+    radial-gradient(circle at 8% 10%, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0) 42%),
+    radial-gradient(circle at 92% 0%, rgba(180,205,255,0.42) 0%, rgba(180,205,255,0) 46%),
+    linear-gradient(160deg, #eef2ff 0%, #dfe7f5 45%, #d7deed 100%);
 }
 
 /* HEADER */
@@ -29,7 +32,7 @@ body {
   padding-top: 24px;
   padding-bottom: 8px;
   text-align: center;
-  background: rgba(221, 226, 238, 0.7);
+  background: rgba(237, 242, 253, 0.72);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   transition: background 0.25s ease, box-shadow 0.25s ease, padding 0.25s ease;
@@ -38,13 +41,14 @@ body {
 .header-scrolled {
   padding-top: 14px;
   padding-bottom: 6px;
-  background: rgba(221, 226, 238, 0.92);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  background: rgba(237, 242, 253, 0.94);
+  box-shadow: 0 12px 34px rgba(15, 23, 42, 0.12);
 }
 
 .header-inner {
-  max-width: 1100px;
+  max-width: 1120px;
   margin: 0 auto;
+  padding: 0 18px;
 }
 
 .logo-block {
@@ -54,20 +58,25 @@ body {
 .logo-img {
   width: 32px;
   height: auto;
-  filter: drop-shadow(0 8px 14px rgba(0,0,0,0.25));
+  filter: drop-shadow(0 10px 18px rgba(30, 41, 59, 0.22));
 }
 
 /* NAVIGATION */
 .nav {
   position: relative;
   margin: 8px auto 0 auto;
-  max-width: 650px;
+  max-width: 690px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 11px;
-  letter-spacing: 0.25em;
+  letter-spacing: 0.23em;
   text-transform: uppercase;
+  background: rgba(255,255,255,0.52);
+  border: 1px solid rgba(255,255,255,0.7);
+  border-radius: 999px;
+  padding: 11px 24px;
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.1);
 }
 
 .nav-group {
@@ -84,7 +93,7 @@ body {
 
 .nav-link {
   text-decoration: none;
-  color: rgba(0,0,0,0.55);
+  color: rgba(15, 23, 42, 0.6);
   transition: color 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
 }
 
@@ -177,11 +186,43 @@ body {
 }
 
 .hero-subtitle {
-  max-width: 420px;
+  max-width: 460px;
   font-size: 16px;
-  line-height: 1.6;
-  opacity: 0.85;
+  line-height: 1.65;
+  opacity: 0.88;
+  margin-bottom: 20px;
+}
+
+.hero-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
   margin-bottom: 26px;
+  max-width: 540px;
+}
+
+.hero-metric {
+  background: rgba(255,255,255,0.42);
+  border: 1px solid rgba(255,255,255,0.72);
+  border-radius: 16px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  box-shadow: 0 10px 24px rgba(30, 41, 59, 0.08);
+}
+
+.hero-metric-value {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.hero-metric-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(15, 23, 42, 0.72);
 }
 
 .hero-actions {
@@ -204,20 +245,20 @@ body {
 }
 
 .btn-primary {
-  background: #000;
+  background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
   color: #fff;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.45);
+  box-shadow: 0 18px 44px rgba(29, 78, 216, 0.34);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 22px 60px rgba(0,0,0,0.55);
+  box-shadow: 0 22px 58px rgba(37, 99, 235, 0.45);
 }
 
 .btn-ghost {
-  background: rgba(255,255,255,0.12);
-  color: #000;
-  border: 1px solid rgba(0,0,0,0.15);
+  background: rgba(255,255,255,0.52);
+  color: #0f172a;
+  border: 1px solid rgba(15, 23, 42, 0.12);
 }
 
 .btn-ghost:hover {
@@ -262,10 +303,11 @@ body {
 
 .goal-card {
   flex: 1.1;
-  background: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.45);
+  border: 1px solid rgba(255,255,255,0.78);
   border-radius: 28px;
   padding: 28px 30px 30px;
-  box-shadow: 0 26px 60px rgba(0,0,0,0.18);
+  box-shadow: 0 26px 56px rgba(15, 23, 42, 0.14);
   backdrop-filter: blur(20px);
 }
 
@@ -442,15 +484,17 @@ body {
   display: flex;
   align-items: flex-start;
   gap: 22px;
-  padding: 14px 18px;
+  padding: 18px 18px;
   border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.55);
+  background: rgba(255,255,255,0.26);
   transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
 }
 
 .module-item:hover {
   transform: translateY(-6px);
   background: rgba(255,255,255,0.18);
-  box-shadow: 0 24px 50px rgba(0,0,0,0.16);
+  box-shadow: 0 22px 44px rgba(15, 23, 42, 0.14);
 }
 
 .module-icon-wrap {
@@ -485,7 +529,7 @@ body {
 .block-contacts {
   position: relative;
   padding: 40px 0;
-  background: #dde2ee; /* без block-5.png, только реальные элементы */
+  background: linear-gradient(180deg, rgba(221, 230, 246, 0.6) 0%, rgba(202, 214, 237, 0.7) 100%);
 }
 
 .contacts-inner {

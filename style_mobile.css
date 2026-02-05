@@ -7,7 +7,7 @@
 .header {
   padding-top: 10px;
   padding-bottom: 6px;
-  background: rgba(221, 226, 238, 0.96);
+  background: rgba(237, 242, 253, 0.96);
 }
 
 .logo-img {
@@ -64,6 +64,25 @@
 .hero-subtitle {
   font-size: 14px;
   max-width: none;
+}
+
+.hero-metrics {
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.hero-metric {
+  padding: 10px 12px;
+  border-radius: 12px;
+}
+
+.hero-metric-value {
+  font-size: 16px;
+}
+
+.hero-metric-label {
+  font-size: 10px;
 }
 
 .hero-actions {
