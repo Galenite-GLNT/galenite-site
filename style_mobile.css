@@ -1,69 +1,63 @@
 /* ===== MOBILE STYLE FOR GALENITE ===== */
-/* Подключен в head как:
-   <link rel="stylesheet" href="style_mobile.css" media="(max-width: 900px)">
-*/
 
-/* HEADER */
 .header {
-  padding-top: 10px;
-  padding-bottom: 6px;
-  background: rgba(237, 242, 253, 0.96);
+  padding: 10px 0 8px;
+  background: rgba(245, 247, 251, 0.96);
+}
+
+.header-inner,
+.hero-inner,
+.goal-inner,
+.tech-inner,
+.modules-inner,
+.contacts-inner {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.logo-block {
+  margin-bottom: 10px;
 }
 
 .logo-img {
   width: 28px;
 }
 
-/* NAV */
 .nav {
+  max-width: 100%;
   font-size: 9px;
-  letter-spacing: 0.18em;
-  padding: 0 16px;
+  letter-spacing: 0.14em;
+  padding: 10px 12px;
 }
 
 .nav-group {
   gap: 10px;
 }
 
-/* БЛОКИ — высота по контенту */
-.block {
-  aspect-ratio: unset;
-  padding: 32px 0;
-  flex-direction: column;
+.block-hero,
+.block-goal,
+.block-tech,
+.block-modules,
+.block-contacts {
+  padding-top: 28px;
+  padding-bottom: 36px;
 }
 
-/* HERO */
-.block-hero {
-  padding: 32px 0 40px;
-}
-
-.block-hero::before {
-  background-size: 220% auto;
-  opacity: 0.7;
-}
-
-.hero-inner {
-  flex-direction: column;
-  gap: 28px;
-  padding: 32px 18px 40px;
-}
-
-.hero-text {
-  text-align: left;
-}
-
-.hero-kicker {
-  font-size: 9px;
-  letter-spacing: 0.2em;
+.hero-inner,
+.goal-inner,
+.tech-inner,
+.contacts-inner {
+  grid-template-columns: 1fr;
+  gap: 18px;
 }
 
 .hero-title {
-  font-size: 28px;
+  font-size: 32px;
 }
 
 .hero-subtitle {
-  font-size: 14px;
-  max-width: none;
+  font-size: 15px;
+  margin-bottom: 18px;
 }
 
 .hero-metrics {
@@ -72,182 +66,69 @@
   margin-bottom: 18px;
 }
 
-.hero-metric {
-  padding: 10px 12px;
-  border-radius: 12px;
-}
-
 .hero-metric-value {
-  font-size: 16px;
-}
-
-.hero-metric-label {
-  font-size: 10px;
+  font-size: 18px;
 }
 
 .hero-actions {
   flex-direction: column;
-  align-items: stretch;
 }
 
 .btn {
   width: 100%;
-  justify-content: center;
-}
-
-.hero-visual {
-  width: 100%;
-  justify-content: center;
 }
 
 .hero-crystal {
-  width: 220px;
-  margin-top: 8px;
-}
-
-/* BLOCK 2 (GOAL) */
-.block-goal {
-  padding: 24px 0 38px;
-}
-
-.goal-inner {
-  flex-direction: column-reverse;
-  align-items: center;
-  gap: 22px;
-  padding: 0 16px;
+  width: min(280px, 90%);
+  padding: 26px;
 }
 
 .goal-card {
-  width: 100%;
-  padding: 22px 18px 22px;
+  padding: 22px;
 }
 
 .goal-title {
-  font-size: 22px;
+  font-size: 28px;
 }
 
-.goal-text {
+.goal-text,
+.tech-text,
+.modules-subtitle,
+.module-text {
   font-size: 14px;
 }
 
-.goal-finance-icon {
-  width: 170px;
-}
-
-/* BLOCK 3 (TECH) — чат / телефон / текст в колонку */
-.block-tech {
-  padding: 30px 0 40px;
-}
-
 .tech-inner {
-  position: static;
-  width: 100%;
-  height: auto;
-  padding: 0 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 18px;
+  gap: 14px;
 }
 
 .tech-chat,
 .tech-phone,
-.tech-content {
-  position: static;
-  transform: none;
-  margin: 0;
-  width: 100%;
-}
-
-.tech-chat {
-  max-width: 420px;
-}
-
-.tech-chat-img {
-  animation: none;
-}
-
-/* телефон лежит горизонтально как разделитель */
-.tech-phone {
-  display: flex;
-  justify-content: center;
-}
-
-.tech-phone-img {
-  height: 220px;
-  width: auto;
-  animation: none;
-  transform: rotate(90deg);
-  transform-origin: center center;
-}
-
-.tech-content {
-  max-width: 480px;
+.tech-block,
+.contacts-left,
+.contacts-right,
+.module-item {
+  border-radius: 16px;
 }
 
 .tech-title {
   font-size: 22px;
 }
 
-.tech-text {
-  font-size: 14px;
-}
-
-/* BLOCK 4 (MODULES) */
-.block-modules {
-  padding: 30px 0 40px;
-}
-
-.modules-inner {
-  padding: 0 16px;
-}
-
-.modules-header {
-  margin-bottom: 24px;
-}
-
 .modules-title {
-  font-size: 24px;
-}
-
-.modules-subtitle {
-  font-size: 14px;
+  font-size: 30px;
 }
 
 .modules-grid {
   grid-template-columns: 1fr;
-  column-gap: 0;
-  row-gap: 22px;
-}
-
-.module-item {
-  padding: 12px 12px;
-  gap: 14px;
 }
 
 .module-icon {
-  width: 64px;
+  width: 62px;
 }
 
 .module-title {
-  font-size: 20px;
-}
-
-.module-text {
-  font-size: 14px;
-}
-
-/* BLOCK 5 (CONTACTS) — без фоновой картинки, только текст + QR */
-.block-contacts {
-  padding: 32px 16px 40px;
-  background: none;
-}
-
-.contacts-inner {
-  padding: 0;
-  flex-direction: column;
-  gap: 18px;
-  align-items: center;
+  font-size: 18px;
 }
 
 .contacts-left {
@@ -256,18 +137,14 @@
 
 .contacts-right {
   flex-direction: column;
-  gap: 16px;
+  text-align: center;
+  padding: 22px;
 }
 
 .contacts-qr {
-  width: 150px;
-}
-
-.contacts-text {
-  align-items: center;
-  text-align: center;
+  width: 140px;
 }
 
 .contacts-line {
-  font-size: 18px;
+  font-size: 16px;
 }
