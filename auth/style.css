@@ -1,393 +1,55 @@
 :root{
-  --bg: #DDE2EE;
-  --text: #111827;
-
-  --pillA: #F3F6FC;
-  --pillB: #E9EFF8;
-
-  --shadow-soft: 0 16px 28px rgba(15, 23, 42, 0.14);
-  --shadow-strong: 0 22px 44px rgba(15, 23, 42, 0.22);
-
-  --radius: 14px;
-  --ease: cubic-bezier(.2,.9,.2,1);
+  --bg:#060606;
+  --card:#121212;
+  --line:rgba(255,255,255,.14);
+  --text:#f5f5f5;
+  --muted:#b7b7b7;
+  --focus:rgba(255,255,255,.2);
+  --ease:cubic-bezier(.2,.9,.2,1);
 }
-
-*{ box-sizing:border-box; }
-html,body{ height:100%; }
-
+*{box-sizing:border-box}
+html,body{height:100%}
 body{
   margin:0;
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  overflow-x: hidden;
+  font-family:Inter,system-ui,sans-serif;
+  background:radial-gradient(900px 500px at 50% 0,rgba(255,255,255,.08),transparent 60%),var(--bg);
+  color:var(--text);
 }
-
-/* лёгкий “премиум” туман, без жести */
-body::before{
-  content:"";
-  position: fixed;
-  inset: -20%;
-  pointer-events:none;
-  background:
-    radial-gradient(60% 40% at 50% 20%, rgba(255,255,255,.55), transparent 60%),
-    radial-gradient(50% 35% at 30% 70%, rgba(255,255,255,.35), transparent 60%),
-    radial-gradient(50% 35% at 70% 75%, rgba(255,255,255,.28), transparent 60%);
-  filter: blur(10px);
-  opacity: .75;
-  transform: translateZ(0);
-}
-
-/* layout */
-.page{
-  min-height:100%;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-}
-
-.header{
-  margin-top: 34px;
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: .22em;
-  text-transform: uppercase;
-  opacity: .95;
-
-  /* анимация */
-  transform: translateY(-10px);
-  opacity: 0;
-  transition: transform .7s var(--ease), opacity .7s var(--ease);
-}
-
+body::before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.04) 52%,transparent 64%);animation:sweep 12s linear infinite}
+.page{min-height:100%;display:flex;flex-direction:column;align-items:center;padding:26px 16px}
+.header{font-size:13px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:#d3d3d3}
 .center{
-  flex:1;
-  width:100%;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  padding: 36px 16px 54px;
-  gap: 16px;
-
-  transform: translateY(18px);
-  opacity: 0;
-  transition: transform .85s var(--ease), opacity .85s var(--ease);
+  width:min(510px,100%);
+  margin:auto;
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+  padding:24px 0 32px;
+  background:linear-gradient(180deg,#161616,#101010);
+  border:1px solid var(--line);
+  border-radius:28px;
+  box-shadow:0 26px 70px rgba(0,0,0,.55);
 }
-
-/* when loaded */
-html.loaded .header,
-html.loaded .center{
-  transform: translateY(0);
-  opacity: 1;
-}
-
-/* logo (увеличили ~в 2 раза) */
-.crystal{
-  width: 190px;
-  height: 190px;
-  object-fit: contain;
-  display:block;
-  margin-bottom: 4px;
-  filter: drop-shadow(0 18px 38px rgba(15, 23, 42, 0.25));
-  animation: float 6.5s ease-in-out infinite;
-}
-
-/* tabs */
-.tabs{
-  position: relative;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap: 14px;
-  padding-bottom: 10px;
-  user-select:none;
-
-  transform: translateY(8px);
-  opacity: 0;
-  transition: transform .8s var(--ease), opacity .8s var(--ease);
-  transition-delay: .08s;
-}
-html.loaded .tabs{ transform: translateY(0); opacity: 1; }
-
-.tab{
-  border:0;
-  background:transparent;
-  padding: 0;
-  cursor:pointer;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: .16em;
-  text-transform: uppercase;
-  color: rgba(17,24,39,.52);
-  transition: color .2s var(--ease), transform .2s var(--ease);
-}
-
-.tab:hover{
-  transform: translateY(-1px);
-  color: rgba(17,24,39,.72);
-}
-
-.tab.active{
-  color: rgba(17,24,39,.88);
-}
-
-.tab-sep{
-  width: 1px;
-  height: 14px;
-  background: rgba(17,24,39,.22);
-}
-
-.tab-underline{
-  position:absolute;
-  bottom: 0;
-  height: 2px;
-  width: 64px;
-  border-radius: 999px;
-  background: rgba(17,24,39,.6);
-  transform: translateX(-44px);
-  transition: transform .22s var(--ease);
-}
-
-/* form */
-.form{
-  /* уменьшили ширину */
-  width: 380px;
-  max-width: calc(100vw - 32px);
-
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap: 12px;
-
-  margin-top: 2px;
-
-  transform: translateY(14px);
-  opacity: 0;
-  transition: transform .9s var(--ease), opacity .9s var(--ease);
-  transition-delay: .14s;
-}
-html.loaded .form{ transform: translateY(0); opacity: 1; }
-
-/* ряд: иконка строго напротив поля */
-.field-row{
-  width:100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap: 14px; /* иконка чуть левее поля */
-}
-
-/* иконка */
-.field-ico{
-  width: 34px;
-  height: 34px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color: rgba(17,24,39,.55);
-  transform: translateX(-4px); /* чуть левее, как просил */
-  opacity: .9;
-  transition: transform .2s var(--ease), opacity .2s var(--ease);
-}
-
-.field-ico svg{ width: 22px; height: 22px; }
-
-.field-row:focus-within .field-ico{
-  opacity: 1;
-  transform: translateX(-6px) scale(1.03);
-  color: rgba(17,24,39,.78);
-}
-
-.field{
-  flex: 1;
-  height: 44px;
-  border: 0;
-  outline: none;
-  border-radius: var(--radius);
-  background: linear-gradient(180deg, var(--pillA) 0%, var(--pillB) 100%);
-  padding: 0 16px;
-  font-size: 14px;
-  color: rgba(17,24,39,.86);
-  box-shadow: var(--shadow-soft);
-  transition: box-shadow .22s var(--ease), transform .22s var(--ease);
-}
-
-.field::placeholder{
-  color: rgba(17,24,39,.42);
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  font-size: 12px;
-}
-
-.field:focus{
-  transform: translateY(-1px);
-  box-shadow:
-    0 22px 44px rgba(15, 23, 42, 0.18),
-    0 0 0 3px rgba(17,24,39,0.10);
-}
-
-/* кнопка — ровно как инпуты по ширине */
-.cta{
-  width: calc(100% - 34px - 14px); /* ширина поля, без иконки и gap */
-  margin-left: calc(34px + 14px);  /* сдвигаем, чтобы выровнять по полю */
-  height: 48px;
-  border:0;
-  cursor:pointer;
-  border-radius: 12px;
-  background: #111111;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  box-shadow: var(--shadow-strong);
-  transition: transform .18s var(--ease), box-shadow .18s var(--ease), opacity .18s var(--ease);
-  margin-top: 6px;
-  position: relative;
-  overflow: hidden;
-}
-
-/* “световой свайп” по кнопке */
-.cta::after{
-  content:"";
-  position:absolute;
-  top: -40%;
-  left: -60%;
-  width: 60%;
-  height: 180%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
-  transform: rotate(18deg);
-  transition: left .55s var(--ease);
-}
-
-.cta:hover{
-  transform: translateY(-1px);
-  box-shadow: 0 26px 52px rgba(15,23,42,0.26);
-}
-.cta:hover::after{ left: 120%; }
-
-.cta:active{
-  transform: translateY(0px);
-  opacity: .95;
-}
-
-/* social */
-.social{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap: 18px;
-  margin-top: 10px;
-}
-
-.social-btn{
-  width: 44px;
-  height: 44px;
-  border-radius: 999px;
-  border: 0;
-  cursor: pointer;
-  background: transparent;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  transition: transform .18s var(--ease), opacity .18s var(--ease), filter .18s var(--ease);
-}
-
-.social-btn img{
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
-  display:block;
-  filter: drop-shadow(0 10px 20px rgba(15,23,42,0.10));
-}
-
-.social-btn:hover{
-  transform: translateY(-2px) scale(1.04);
-}
-.social-btn:active{
-  transform: translateY(0px) scale(.98);
-}
-
-.hint{
-  min-height: 18px;
-  font-size: 12px;
-  color: rgba(17,24,39,.55);
-  margin-top: 2px;
-  text-align:center;
-}
-
-/* animation: float */
-@keyframes float{
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-/* mobile tweaks */
-@media (max-width: 440px){
-  .crystal{ width: 160px; height: 160px; }
-  .form{ width: 340px; }
-  .tab-underline{ width: 60px; }
-}
-
-/* --- ALIGN FIXES --- */
-
-/* центрируем верх */
-.header{ text-align:center; width:100%; }
-.center{ align-items:center; }
-
-/* tabs по центру */
-.tabs{ justify-content:center; }
-
-/* форма: НЕ центрируем иконки, центрируем только прямоугольники */
-.form{
-  width: 420px;
-  max-width: calc(100vw - 32px);
-  align-items: center;
-}
-
-/* ширина прямоугольников */
-:root{
-  --rectW: 360px; /* можешь 340/380 по вкусу */
-  --icoW: 34px;
-  --gapIW: 14px;
-}
-
-.field-row{
-  width: calc(var(--rectW) + var(--icoW) + var(--gapIW));
-  display:flex;
-  align-items:center;
-  justify-content:flex-start;
-  gap: var(--gapIW);
-}
-
-/* иконка — отдельная колонка слева, НЕ участвует в центровке прямоугольников */
-.field-ico{
-  width: var(--icoW);
-  height: var(--icoW);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  transform: translateX(-2px); /* чуть левее, как ты хочешь */
-}
-
-/* вот ЭТО и есть “центр прямоугольников” */
-.field-center{
-  width: var(--rectW);
-  display:flex;
-  justify-content:center; /* на всякий */
-}
-
-/* сам инпут ровно на ширину прямоугольника */
-.field{
-  width: 100%;
-}
-
-/* кнопка ровно 1:1 с прямоугольниками и по центру */
-.cta{
-  width: var(--rectW);
-  margin-left: 0; /* убираем старый трюк со сдвигом */
-  align-self: center;
-}
-
-
+.crystal{width:168px;height:168px;object-fit:contain;filter:grayscale(1) brightness(1.2) drop-shadow(0 0 22px rgba(255,255,255,.12));animation:float 7s ease-in-out infinite}
+.tabs{position:relative;display:flex;align-items:center;gap:14px;padding-bottom:8px}
+.tab{border:0;background:transparent;cursor:pointer;font-size:13px;letter-spacing:.16em;color:#b2b2b2}
+.tab.active{color:#fff}
+.tab-sep{width:1px;height:14px;background:rgba(255,255,255,.28)}
+.tab-underline{position:absolute;bottom:0;height:2px;width:60px;border-radius:999px;background:#fff;transform:translateX(-42px);transition:.22s var(--ease)}
+.form{width:min(390px,calc(100vw - 50px));display:flex;flex-direction:column;align-items:center;gap:12px}
+.field-row{width:100%;display:flex;align-items:center;gap:12px}
+.field-ico{width:34px;height:34px;display:grid;place-items:center;color:#a8a8a8}
+.field-ico svg{width:22px;height:22px}
+.field-center{flex:1}
+.field{width:100%;height:46px;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:#0b0b0b;color:var(--text);padding:0 15px;outline:none;transition:.2s}
+.field:focus{border-color:rgba(255,255,255,.45);box-shadow:0 0 0 3px var(--focus)}
+.field::placeholder{color:#8f8f8f;letter-spacing:.1em;font-size:11px;text-transform:uppercase}
+.cta{width:calc(100% - 46px);margin-left:46px;height:48px;border:1px solid #fff;border-radius:12px;cursor:pointer;background:#fff;color:#090909;font-weight:700;letter-spacing:.14em;text-transform:uppercase;box-shadow:0 10px 28px rgba(255,255,255,.14);transition:.2s}
+.cta:hover{transform:translateY(-2px)}
+.social{display:flex;gap:16px;margin-top:8px}
+.social-btn{width:42px;height:42px;border-radius:999px;border:1px solid rgba(255,255,255,.2);background:#0d0d0d;cursor:pointer}
+.social-btn img{width:30px;height:30px;filter:grayscale(1) brightness(1.2)}
+.hint{min-height:18px;color:#adadad;font-size:12px}
+html.loaded .header,html.loaded .center,html.loaded .tabs,html.loaded .form{opacity:1;transform:none}
+.header,.center,.tabs,.form{opacity:0;transform:translateY(8px);transition:.7s var(--ease)}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes sweep{0%{transform:translateX(-35%)}100%{transform:translateX(35%)}}
+@media (max-width:440px){.center{border-radius:20px;padding:18px 0 26px}.crystal{width:134px;height:134px}.cta{width:100%;margin-left:0}.field-row{gap:8px}}
