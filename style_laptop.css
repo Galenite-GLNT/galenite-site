@@ -1,11 +1,11 @@
-.header-inner,.hero-inner,.goal-inner,.showcase-inner,.tech-inner,.modules-inner,.contacts-inner{max-width:1020px}
-.hero-title{font-size:clamp(40px,4.6vw,62px)}
-.hero-crystal{width:240px}
-.showcase-sticky{top:96px;height:58vh}
+.header-inner,.hero-inner,.showcase-inner,.goal-inner,.tech-inner,.modules-inner,.contacts-inner{max-width:1020px}
+.hero-title{font-size:clamp(38px,4.6vw,62px)}
+.hero-crystal{width:245px}
+.showcase-sticky{top:98px;height:58vh}
 .goal-title{font-size:30px}
 .tech-title{font-size:28px}
 .modules-grid{gap:18px}
 .module-title{font-size:21px}
-.contacts-title{font-size:35px}
+.contacts-title{font-size:36px}
 .contacts-phone{height:320px}
 .contacts-line{font-size:20px}

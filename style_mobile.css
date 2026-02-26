@@ -1,19 +1,22 @@
 .header{padding:10px 0}
 .header-inner{padding:0 14px}
 .theme-toggle{position:static;margin:8px auto 0;display:block}
-.nav{font-size:9px;letter-spacing:.13em;max-width:100%;padding:0 6px}.nav-group{gap:8px}
+.nav{font-size:9px;letter-spacing:.13em;max-width:100%;padding:0 6px}
+.nav-group{gap:8px}
 
-.block{min-height:auto;padding:32px 0}
-.hero-inner,.goal-inner,.showcase-inner,.tech-inner,.modules-inner,.contacts-inner{padding:22px 14px}
+.block{min-height:auto;padding:30px 0}
+.hero-inner,.showcase-inner,.goal-inner,.tech-inner,.modules-inner,.contacts-inner{padding:22px 14px}
 .hero-inner,.goal-inner,.contacts-inner{display:flex;flex-direction:column;gap:18px}
+
 .hero-title{font-size:30px}
 .hero-subtitle,.goal-text,.tech-text,.modules-subtitle,.module-text,.contacts-copy{font-size:14px}
-.hero-actions{flex-direction:column;align-items:stretch}.btn{text-align:center}
+.hero-actions{flex-direction:column;align-items:stretch}
+.btn{text-align:center}
 .hero-crystal{width:170px}
 
-.block-showcase{min-height:105vh}
+.block-showcase{min-height:100vh}
 .showcase-title{font-size:24px}
-.showcase-sticky{top:88px;height:42vh}
+.showcase-sticky{top:86px;height:40vh}
 .showcase-frame{width:100%;border-radius:18px}
 .video-placeholder{font-size:11px;letter-spacing:.16em}
 
@@ -25,7 +28,8 @@
 
 .modules-grid{grid-template-columns:1fr;gap:14px}
 .module-item{padding:16px;border-radius:16px}
-.module-icon{width:62px}.module-title{font-size:20px}
+.module-icon{width:62px}
+.module-title{font-size:20px}
 
 .cursor-zone{cursor:auto}
 .cursor-orb{display:none}
