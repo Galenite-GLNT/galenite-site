@@ -1,10 +1,21 @@
-.header-inner,.hero-inner,.goal-inner,.tech-inner,.modules-inner,.contacts-inner{max-width:1000px}
-.hero-title{font-size:clamp(38px,4.6vw,62px)}
-.hero-crystal{width:235px}
-.goal-title{font-size:30px}
-.tech-title{font-size:28px}
-.tech-phone-img{max-height:540px}
-.modules-grid{gap:18px}
-.module-title{font-size:21px}
-.contacts-phone{height:430px}
-.contacts-line{font-size:20px}
+.header-inner,
+.hero-inner,
+.goal-inner,
+.tech-inner,
+.modules-inner,
+.contacts-inner {
+  max-width: 1000px;
+}
+
+.hero-title { font-size: clamp(38px, 4.6vw, 62px); }
+.hero-crystal { width: 236px; }
+
+.goal-title { font-size: 30px; }
+.tech-title { font-size: 28px; }
+.tech-phone-img { max-height: 540px; }
+
+.modules-grid { gap: 18px; }
+.module-title { font-size: 21px; }
+
+.contacts-phone { height: 430px; }
+.contacts-line { font-size: 20px; }

@@ -1,21 +1,67 @@
-.header{padding:10px 0;background:rgba(8,8,8,.95)}
-.nav{font-size:9px;letter-spacing:.14em;max-width:100%;padding:0 8px}
-.nav-group{gap:10px}
-.block{min-height:auto;padding:36px 0}
-.block::after{inset:3% 3%;border-radius:20px}
-.hero-inner,.goal-inner,.tech-inner,.modules-inner,.contacts-inner{padding:24px 16px}
-.hero-inner,.goal-inner,.contacts-inner{display:flex;flex-direction:column}
-.hero-title{font-size:30px}
-.hero-subtitle,.goal-text,.tech-text,.modules-subtitle,.module-text{font-size:14px}
-.hero-actions{flex-direction:column;align-items:stretch}.btn{text-align:center}
-.hero-crystal{width:188px}
-.goal-title,.modules-title,.tech-title{font-size:24px}
-.goal-finance-icon{width:170px}
-.tech-inner{display:flex;flex-direction:column;gap:16px}
-.tech-phone-img{max-height:240px}
-.modules-grid{grid-template-columns:1fr}
-.module-icon{width:64px}.module-title{font-size:20px}
-.contacts-left{display:none}
-.contacts-right{width:100%;flex-direction:column;align-items:center;text-align:center}
-.contacts-qr{width:140px}
-.contacts-line{font-size:18px}
+.header { padding: 10px 0; background: rgba(8,8,8,.96); }
+.nav {
+  max-width: 100%;
+  padding: 0 8px;
+  font-size: 9px;
+  letter-spacing: .14em;
+}
+.nav-group { gap: 10px; }
+
+.block {
+  min-height: auto;
+  padding: 36px 0;
+}
+.block::after {
+  inset: 3% 3%;
+  border-radius: 20px;
+}
+
+.hero-inner,
+.goal-inner,
+.tech-inner,
+.modules-inner,
+.contacts-inner { padding: 24px 16px; }
+
+.hero-inner,
+.goal-inner,
+.contacts-inner {
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-title { font-size: 30px; }
+.hero-subtitle,
+.goal-text,
+.tech-text,
+.modules-subtitle,
+.module-text { font-size: 14px; }
+
+.hero-actions { flex-direction: column; align-items: stretch; }
+.btn { text-align: center; }
+.hero-crystal { width: 188px; }
+
+.goal-title,
+.modules-title,
+.tech-title { font-size: 24px; }
+.goal-finance-icon { width: 170px; }
+
+.tech-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.tech-phone-img { max-height: 240px; }
+
+.modules-grid { grid-template-columns: 1fr; }
+.module-icon { width: 64px; }
+.module-title { font-size: 20px; }
+
+.contacts-left { display: none; }
+.contacts-right {
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.contacts-qr { width: 140px; }
+.contacts-line { font-size: 18px; }
