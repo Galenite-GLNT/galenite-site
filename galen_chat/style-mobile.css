@@ -1,13 +1,16 @@
-.sidebar-toggle{display:none}.sidebar-backdrop{display:none}
+.sidebar-toggle{display:none}
+.sidebar-backdrop{display:none}
 @media (max-width:900px){
   body{overflow-x:hidden}
   .layout{position:relative}
-  .sidebar{display:flex;position:fixed;top:0;left:0;bottom:0;width:84%;max-width:320px;transform:translateX(-100%);transition:transform .28s ease;z-index:1001;box-shadow:16px 0 40px rgba(0,0,0,.45)}
+  .sidebar{display:flex;position:fixed;top:0;left:0;bottom:0;width:84%;max-width:320px;transform:translateX(-100%);transition:transform .28s ease;z-index:1001;box-shadow:16px 0 40px rgba(0,0,0,.55)}
   body.sidebar-open .sidebar{transform:translateX(0)}
-  .sidebar-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000}
+  .sidebar-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.56);z-index:1000}
   body.sidebar-open .sidebar-backdrop{display:block}
   .topbar{padding:0 14px;gap:12px}
-  .sidebar-toggle{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;border:1px solid rgba(149,169,236,.35);background:rgba(14,18,33,.8);color:#dce6ff;cursor:pointer}
+  .sidebar-toggle{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:#111;color:#f0f0f0;cursor:pointer}
   .topbar-right{margin-left:auto;font-size:10px;letter-spacing:.12em}
-  .canvas{padding:14px}.chat-shell{align-items:stretch}.input-bar{padding:0 14px 16px}
+  .canvas{padding:14px}
+  .chat-shell{align-items:stretch}
+  .input-bar{padding:0 14px 16px}
 }
