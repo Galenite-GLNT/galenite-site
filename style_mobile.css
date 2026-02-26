@@ -1,17 +1,39 @@
 .header{padding:10px 0}
-.header-inner{padding:0 16px}
+.header-inner{padding:0 14px}
 .theme-toggle{position:static;margin:8px auto 0;display:block}
-.nav{font-size:9px;letter-spacing:.14em;max-width:100%;padding:0 8px}.nav-group{gap:10px}
-.block{min-height:auto;padding:34px 0}.block::after{inset:3% 3%;border-radius:20px}
-.hero-inner,.goal-inner,.showcase-inner,.tech-inner,.modules-inner,.contacts-inner{padding:24px 16px}
-.hero-inner,.goal-inner,.contacts-inner{display:flex;flex-direction:column}
-.hero-title{font-size:30px}.hero-subtitle,.goal-text,.tech-text,.modules-subtitle,.module-text,.contacts-copy{font-size:14px}
+.nav{font-size:9px;letter-spacing:.13em;max-width:100%;padding:0 6px}.nav-group{gap:8px}
+
+.block{min-height:auto;padding:32px 0}
+.hero-inner,.goal-inner,.showcase-inner,.tech-inner,.modules-inner,.contacts-inner{padding:22px 14px}
+.hero-inner,.goal-inner,.contacts-inner{display:flex;flex-direction:column;gap:18px}
+.hero-title{font-size:30px}
+.hero-subtitle,.goal-text,.tech-text,.modules-subtitle,.module-text,.contacts-copy{font-size:14px}
 .hero-actions{flex-direction:column;align-items:stretch}.btn{text-align:center}
-.hero-crystal{width:180px}
-.block-showcase{min-height:110vh}.showcase-title{font-size:24px}.showcase-sticky{top:94px;height:44vh}
-.goal-title,.modules-title,.tech-title{font-size:24px}.goal-finance-icon{width:170px}
-.tech-inner{display:flex;flex-direction:column;gap:16px}.tech-phone-img{max-height:240px}
-.modules-grid{grid-template-columns:1fr}.module-icon{width:64px}.module-title{font-size:20px}
-.cursor-zone{cursor:auto}.cursor-orb{display:none}
-.contacts-inner{display:flex}.contacts-card{padding:22px}.contacts-title{font-size:28px}.contacts-line{font-size:18px}
-.contacts-visual{width:100%;flex-direction:column}.contacts-phone{height:260px}.contacts-qr{width:120px}
+.hero-crystal{width:170px}
+
+.block-showcase{min-height:105vh}
+.showcase-title{font-size:24px}
+.showcase-sticky{top:88px;height:42vh}
+.showcase-frame{width:100%;border-radius:18px}
+.video-placeholder{font-size:11px;letter-spacing:.16em}
+
+.goal-title,.modules-title,.tech-title{font-size:24px}
+.goal-finance-icon{width:160px}
+
+.tech-inner{display:flex;flex-direction:column;gap:14px}
+.tech-phone-img{max-height:220px}
+
+.modules-grid{grid-template-columns:1fr;gap:14px}
+.module-item{padding:16px;border-radius:16px}
+.module-icon{width:62px}.module-title{font-size:20px}
+
+.cursor-zone{cursor:auto}
+.cursor-orb{display:none}
+
+.contacts-inner{display:flex;flex-direction:column}
+.contacts-card,.contacts-visual{border-radius:18px;padding:18px}
+.contacts-title{font-size:28px}
+.contacts-line{font-size:17px}
+.contacts-visual{width:100%;flex-direction:column;gap:14px}
+.contacts-phone{height:240px}
+.contacts-qr{width:116px}
