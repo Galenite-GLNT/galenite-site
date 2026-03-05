@@ -1,8 +1,10 @@
 @media (max-width: 980px){
   :root{ --sidebarW: 280px; }
   .grid{ grid-template-columns: 1fr; }
+  .settings-grid{ grid-template-columns: 1fr; }
   .kpis{ grid-template-columns: 1fr; }
   .split{ grid-template-columns: 1fr; }
+  .ring{ width:160px; height:160px; }
 }
 
 @media (max-width: 760px){

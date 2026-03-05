@@ -7,8 +7,6 @@ import { renderWater } from "./components/view-water.js";
 import { renderSleep } from "./components/view-sleep.js";
 import { renderSettings } from "./components/view-settings.js";
 
-const API_BASE = (window.GLNT_API_BASE || "https://fatsecret.ilyasch2020.workers.dev").replace(/\/$/,"");
-
 const ICONS = {
   menu: "./assets/icons/menu.svg",
   dashboard: "./assets/icons/dashboard.svg",
@@ -157,9 +155,9 @@ function setActiveStates(){
 
 function getView(id){
   switch(id){
-    case "food": return renderFood(state, ICONS, onUpdate, API_BASE);
-    case "water": return renderWater(state, ICONS, onUpdate);
-    case "sleep": return renderSleep(state, ICONS, onUpdate);
+    case "food": return renderFood(state, ICONS);
+    case "water": return renderWater(state, ICONS);
+    case "sleep": return renderSleep(state, ICONS);
     case "settings": return renderSettings(state, ICONS, onUpdate);
     default: return renderDashboard(state, ICONS);
   }
