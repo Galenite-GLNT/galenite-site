@@ -1,5 +1,8 @@
+import { apiFetch } from '/shared/config.js';
+
 export async function getCurrentUser() {
-  const resp = await fetch('/api/auth/me');
+  const resp = await apiFetch('/api/auth/me');
+  if (!resp.ok) return null;
   const data = await resp.json();
   return data.user || null;
 }
@@ -8,17 +11,16 @@ export function watchAuth(callback) {
   let active = true;
   async function tick() {
     if (!active) return;
-    const user = await getCurrentUser();
-    callback(user);
+    callback(await getCurrentUser());
   }
   tick();
-  const i = setInterval(tick, 15000);
+  const intervalId = setInterval(tick, 15000);
   return () => {
     active = false;
-    clearInterval(i);
+    clearInterval(intervalId);
   };
 }
 
 export async function logout() {
-  await fetch('/api/auth/logout', { method: 'POST' });
+  await apiFetch('/api/auth/logout', { method: 'POST' });
 }

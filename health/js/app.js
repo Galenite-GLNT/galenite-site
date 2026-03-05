@@ -1,3 +1,5 @@
+import { apiFetch } from '/shared/config.js';
+
 const goals = { calories: 2200, water: 2500, sleep: 8 };
 const cards = document.getElementById('cards');
 const statusLine = document.getElementById('statusLine');
@@ -6,97 +8,168 @@ const coach = document.getElementById('coach');
 const modal = document.getElementById('modal');
 const modalContent = document.getElementById('modalContent');
 
+const LOGS_KEY = 'glnt.health.logs.v1';
+
+function loadLogs() {
+  try {
+    return JSON.parse(localStorage.getItem(LOGS_KEY) || '{"water":[],"sleep":[],"weight":[],"calories":[]}');
+  } catch {
+    return { water: [], sleep: [], weight: [], calories: [] };
+  }
+}
+
+function saveLogs(logs) {
+  localStorage.setItem(LOGS_KEY, JSON.stringify(logs));
+}
+
+function todayIso() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function sameDay(iso) {
+  return String(iso || '').slice(0, 10) === todayIso();
+}
+
+function computeSummary(logs) {
+  const calories = logs.calories.filter((x) => sameDay(x.datetime)).reduce((acc, x) => acc + Number(x.kcal || 0), 0);
+  const water = logs.water.filter((x) => sameDay(x.datetime)).reduce((acc, x) => acc + Number(x.ml || 0), 0);
+  const sleepToday = logs.sleep.filter((x) => sameDay(x.datetime)).at(-1);
+  const sleepTrend = logs.sleep.slice(-7).map((x) => Number((Number(x.minutes || 0) / 60).toFixed(1)));
+  const weightTrend = logs.weight.slice(-14).map((x) => Number(x.kg || 0));
+  return {
+    calories,
+    water,
+    sleepHours: Number(((sleepToday?.minutes || 0) / 60).toFixed(1)),
+    sleepTrend,
+    weight: logs.weight.at(-1)?.kg || 0,
+    weightTrend,
+  };
+}
+
 todayLine.textContent = new Date().toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' });
 
 document.getElementById('logoutBtn').onclick = async () => {
-  await fetch('/api/auth/logout', { method: 'POST' });
-  window.location.href = '/auth/?return=/health/';
+  await apiFetch('/api/auth/logout', { method: 'POST' });
+  window.location.href = '/auth/';
 };
 document.getElementById('closeModal').onclick = () => modal.classList.add('hidden');
-
-async function api(path, options = {}) {
-  const r = await fetch(path, { headers: { 'Content-Type': 'application/json' }, ...options });
-  if (!r.ok) throw new Error('API');
-  return r.json();
-}
 
 function ring(percent, text) {
   return `<div class="ring" style="--p:${Math.min(100, percent)}%"><span>${text}</span></div>`;
 }
 
 function bars(data) {
-  const max = Math.max(1, ...data);
-  return `<div class="bars">${data.map((v) => `<div class="bar" style="height:${(v / max) * 100}%"></div>`).join('')}</div>`;
+  const list = data.length ? data : [5, 6, 7, 6, 8, 7, 7];
+  const max = Math.max(1, ...list);
+  return `<div class="bars">${list.map((v) => `<div class="bar" style="height:${(v / max) * 100}%"></div>`).join('')}</div>`;
 }
 
 function sparkline(data) {
-  if (!data.length) return '';
-  const max = Math.max(...data), min = Math.min(...data);
+  if (!data.length) return '<div class="muted">Добавьте вес</div>';
+  const max = Math.max(...data);
+  const min = Math.min(...data);
   const points = data.map((v, i) => `${(i / (data.length - 1 || 1)) * 100},${50 - ((v - min) / (max - min || 1)) * 40}`).join(' ');
   return `<svg class="spark" viewBox="0 0 100 50"><polyline fill="none" stroke="#111827" stroke-width="2" points="${points}"/></svg>`;
 }
 
-function openModal(type, summary) {
+async function searchFood(query) {
+  const response = await apiFetch(`/api/food/search?q=${encodeURIComponent(query)}`);
+  if (!response.ok) return [];
+  const data = await response.json();
+  return data.items || [];
+}
+
+function openModal(type, logs) {
   modal.classList.remove('hidden');
+
   if (type === 'water') {
     modalContent.innerHTML = `<h2>Вода</h2><input id='waterMl' type='number' placeholder='мл'><button class='primary' id='saveWater'>Добавить</button>`;
-    document.getElementById('saveWater').onclick = async () => {
-      await api('/api/health/water', { method: 'POST', body: JSON.stringify({ ml: Number(document.getElementById('waterMl').value) }) });
-      modal.classList.add('hidden'); refresh();
+    document.getElementById('saveWater').onclick = () => {
+      logs.water.push({ datetime: new Date().toISOString(), ml: Number(document.getElementById('waterMl').value || 0) });
+      saveLogs(logs);
+      modal.classList.add('hidden');
+      refresh();
     };
   }
+
   if (type === 'sleep') {
     modalContent.innerHTML = `<h2>Сон</h2><input id='sleepHours' type='number' step='0.1' placeholder='часы'><button class='primary' id='saveSleep'>Добавить</button>`;
-    document.getElementById('saveSleep').onclick = async () => {
-      await api('/api/health/sleep', { method: 'POST', body: JSON.stringify({ duration_minutes: Number(document.getElementById('sleepHours').value) * 60 }) });
-      modal.classList.add('hidden'); refresh();
+    document.getElementById('saveSleep').onclick = () => {
+      logs.sleep.push({ datetime: new Date().toISOString(), minutes: Number(document.getElementById('sleepHours').value || 0) * 60 });
+      saveLogs(logs);
+      modal.classList.add('hidden');
+      refresh();
     };
   }
+
   if (type === 'weight') {
     modalContent.innerHTML = `<h2>Вес</h2><input id='weightKg' type='number' step='0.1' placeholder='кг'><button class='primary' id='saveWeight'>Добавить</button>`;
-    document.getElementById('saveWeight').onclick = async () => {
-      await api('/api/health/weight', { method: 'POST', body: JSON.stringify({ kg: Number(document.getElementById('weightKg').value) }) });
-      modal.classList.add('hidden'); refresh();
+    document.getElementById('saveWeight').onclick = () => {
+      logs.weight.push({ datetime: new Date().toISOString(), kg: Number(document.getElementById('weightKg').value || 0) });
+      saveLogs(logs);
+      modal.classList.add('hidden');
+      refresh();
     };
   }
+
   if (type === 'calories') {
-    modalContent.innerHTML = `<h2>Питание по штрихкоду</h2><input id='barcode' placeholder='штрихкод'><input id='grams' type='number' value='100'><div id='productName' class='muted'></div><button class='primary' id='findProduct'>Найти</button><button class='primary' id='saveFood'>Добавить в дневник</button>`;
-    let product = null;
-    document.getElementById('findProduct').onclick = async () => {
-      const data = await api('/api/products/barcode?value=' + encodeURIComponent(document.getElementById('barcode').value));
-      product = data.product;
-      document.getElementById('productName').textContent = `${product.name} (${product.kcal_100g} ккал/100г)`;
+    modalContent.innerHTML = `
+      <h2>Калории</h2>
+      <input id='foodQuery' placeholder='например, apple'>
+      <button class='primary' id='findFood'>Искать в OpenFoodFacts</button>
+      <select id='foodList'></select>
+      <input id='grams' type='number' value='100' placeholder='граммы'>
+      <button class='primary' id='saveFood'>Добавить</button>
+    `;
+
+    let items = [];
+    document.getElementById('findFood').onclick = async () => {
+      items = await searchFood(document.getElementById('foodQuery').value || 'apple');
+      const list = document.getElementById('foodList');
+      list.innerHTML = items.map((item, idx) => `<option value="${idx}">${item.name} (${item.calories_100g} ккал/100г)</option>`).join('');
     };
-    document.getElementById('saveFood').onclick = async () => {
-      if (!product) return;
+
+    document.getElementById('saveFood').onclick = () => {
+      const idx = Number(document.getElementById('foodList').value || 0);
+      const item = items[idx];
+      if (!item) return;
       const grams = Number(document.getElementById('grams').value || 100);
-      const factor = grams / 100;
-      await api('/api/health/meal-item', { method: 'POST', body: JSON.stringify({ product_id: product.id, grams, kcal: product.kcal_100g * factor, p: product.protein_100g * factor, f: product.fat_100g * factor, c: product.carbs_100g * factor }) });
-      modal.classList.add('hidden'); refresh();
+      logs.calories.push({
+        datetime: new Date().toISOString(),
+        name: item.name,
+        grams,
+        kcal: (Number(item.calories_100g || 0) * grams) / 100,
+      });
+      saveLogs(logs);
+      modal.classList.add('hidden');
+      refresh();
     };
   }
 }
 
 async function refresh() {
-  const me = await api('/api/auth/me');
-  if (!me.user) {
+  const meResponse = await apiFetch('/api/auth/me', { method: 'GET' });
+  if (!meResponse.ok) {
     window.location.href = '/auth/?return=/health/';
     return;
   }
-  const summary = await api('/api/health/summary');
+
+  const logs = loadLogs();
+  const summary = computeSummary(logs);
   statusLine.textContent = `Ты на ${Math.round((summary.water / goals.water) * 100)}% от цели по воде`;
 
   cards.innerHTML = `
     <article class='card' data-type='calories'><h3>Calories</h3><div class='metric'>${Math.round(summary.calories)} <span class='muted'>kcal</span></div>${ring((summary.calories / goals.calories) * 100, `${Math.round((summary.calories / goals.calories) * 100)}%`)}</article>
     <article class='card' data-type='water'><h3>Water</h3><div class='metric'>${Math.round(summary.water)} <span class='muted'>ml</span></div>${ring((summary.water / goals.water) * 100, `${Math.round((summary.water / goals.water) * 100)}%`)}</article>
-    <article class='card' data-type='sleep'><h3>Sleep</h3><div class='metric'>${summary.sleepHours.toFixed(1)} <span class='muted'>hours</span></div>${bars(summary.sleepTrend.length ? summary.sleepTrend : [4,5,6,7,6,8,7])}</article>
+    <article class='card' data-type='sleep'><h3>Sleep</h3><div class='metric'>${summary.sleepHours.toFixed(1)} <span class='muted'>hours</span></div>${bars(summary.sleepTrend)}</article>
     <article class='card' data-type='weight'><h3>Weight</h3><div class='metric'>${summary.weight ? Number(summary.weight).toFixed(1) : '—'} <span class='muted'>kg</span></div>${sparkline(summary.weightTrend)}</article>
   `;
 
-  cards.querySelectorAll('.card').forEach((el) => el.onclick = () => openModal(el.dataset.type, summary));
+  cards.querySelectorAll('.card').forEach((el) => {
+    el.onclick = () => openModal(el.dataset.type, logs);
+  });
 
-  const advice = await api('/api/ai/health-coach', { method: 'POST', body: JSON.stringify({ metrics: summary, goals }) });
-  coach.innerHTML = `<h3>AI Coach</h3><p>${advice.advice}</p>`;
+  coach.innerHTML = `<h3>AI Coach</h3><p>Скоро будет персональный AI коуч. Пока держи фокус: вода, белок и стабильный сон.</p>`;
 }
 
 refresh();

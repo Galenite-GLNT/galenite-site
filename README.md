@@ -1,28 +1,57 @@
-# Galenite site
+# Galenite site (Static Frontend + Cloudflare Worker API)
 
-## Короткий аудит текущего проекта
-- Фреймворк: без framework, статический HTML/CSS/JS сайт с отдельными директориями `auth/`, `health/`, `galen_chat/`.
-- Маршрут `/health`: файл `health/index.html`, логика в `health/js/*`.
-- БД/ORM: до рефактора отсутствовали (локальный `localStorage`), теперь добавлен SQLite через `node:sqlite`.
-- Auth (до): Firebase Email/Password + Google. Auth (после): только Telegram Login Widget + server-side session.
+## Архитектура
+- **Frontend**: статические страницы (`/auth`, `/health`, `/galen_chat`) без хранения секретов.
+- **Backend API**: Cloudflare Worker (`worker/index.js`).
+- **Auth**: только Telegram Login Widget + серверная cookie-сессия (`HttpOnly`).
 
-## Запуск
-1. Скопируйте `.env.example` в `.env` и заполните Telegram/AI/DATABASE параметры.
-2. Запустите:
-   ```bash
-   npm start
-   ```
-3. Откройте `http://localhost:3000/auth/` и войдите через Telegram.
-4. После авторизации доступен `http://localhost:3000/health/`.
+## Worker API endpoints
+- `GET /api/ping`
+- `GET /api/food/search?q=apple`
+- `POST /api/auth/telegram`
+- `GET /api/auth/me`
+- `POST /api/auth/logout`
 
-## Что реализовано
-- Telegram-only auth на backend, валидация `hash` по официальному алгоритму и проверка freshness `auth_date`.
-- Сессии с HttpOnly cookie (`SameSite=Lax`, `Secure` в production).
-- Новая `/health` страница: 2x2 dashboard (Calories, Water, Sleep, Weight), detail modal, bottom nav, AI Coach блок.
-- База данных и миграции: users, products, meals/meal_items, water_logs, sleep_logs, weight_logs, sessions.
-- ProductLookupService MVP: поиск по barcode через Open Food Facts с локальным кэшем.
+## Cloudflare Worker variables/secrets
+Задаются в **Worker Settings → Variables and Secrets**:
 
-## Тесты
+Plaintext variables:
+- `OPENFOODFACTS_BASE_URL=https://world.openfoodfacts.net`
+- `PRODUCTS_PROVIDER=openfoodfacts`
+- `TELEGRAM_AUTH_MAX_AGE_SECONDS=604800`
+- `TELEGRAM_BOT_USERNAME=glnt_auth_bot`
+- `ALLOWED_ORIGINS=https://your-site.example,https://your-worker.workers.dev`
+
+Secrets:
+- `SESSION_SECRET`
+- `TELEGRAM_BOT_TOKEN`
+
+> В клиентском коде нет `TELEGRAM_BOT_TOKEN` и `SESSION_SECRET`.
+
+## Telegram auth verification
+Worker валидирует payload по официальной схеме:
+1. Собирает `data_check_string` из всех полей, кроме `hash`.
+2. Сортирует ключи.
+3. `secret_key = SHA256(bot_token)`.
+4. `calc_hash = HMAC_SHA256(data_check_string, secret_key)` в hex.
+5. Time-constant сравнение `calc_hash` и `hash`.
+6. Проверка freshness `auth_date` (`now - auth_date <= TELEGRAM_AUTH_MAX_AGE_SECONDS`).
+
+## Frontend config
+На страницах `auth/index.html` и `health/index.html` можно задать:
+```html
+<script>window.__API_BASE__ = "https://your-worker.workers.dev";</script>
+```
+Если не задано, используется текущий origin.
+
+## Локальная проверка
 ```bash
 npm test
 ```
+
+## Чек-лист ручной проверки
+1. `/api/ping` отвечает `{ ok: true }`.
+2. `/auth` -> Telegram login -> редирект на `/health`.
+3. `/health` без логина редиректит на `/auth`.
+4. `/api/food/search?q=apple` возвращает `items`.
+5. Logout чистит cookie-сессию и доступ к `/health` теряется.
