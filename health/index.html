@@ -1,40 +1,74 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
-
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
 <title>Galenite Health</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="./css/styles.css">
-
+<link rel="stylesheet" href="./css/styles-mobile.css">
 </head>
 
 <body>
 
-<div class="app">
+<div class="bg"></div>
 
-<header class="header">
+<div id="app" class="app">
 
-<h1>Galenite Health</h1>
+<aside id="sidebar" class="sidebar">
 
-<div class="search">
+<div class="brand">
 
-<input
-id="foodSearch"
-placeholder="Поиск еды..."
-type="text"
-/>
+<div class="brand__mark">
+<img src="./assets/icons/dashboard.svg">
+</div>
 
-<button id="searchBtn">
-Поиск
+<div class="brand__title">
+<b>GALENITE</b>
+<span>Health module</span>
+</div>
+
+</div>
+
+<nav class="nav"></nav>
+
+<div class="sidebar__footer">
+<span class="pill"><b>Local</b> storage</span>
+</div>
+
+</aside>
+
+
+<main class="main">
+
+<header class="topbar">
+
+<div class="topbar__left">
+
+<button id="btnMenu" class="iconbtn">
+<img src="./assets/icons/menu.svg">
+</button>
+
+<div>
+<h1 id="pageTitle" class="h1">Dashboard</h1>
+<div id="pageSub" class="subtitle">—</div>
+</div>
+
+</div>
+
+<div class="actions">
+
+<button id="btnExport" class="btn">
+Export
+</button>
+
+<button id="btnReset" class="btn">
+Reset
 </button>
 
 </div>
@@ -42,22 +76,21 @@ type="text"
 </header>
 
 
-<section class="results" id="results">
+<div id="main"></div>
 
-</section>
-
-
-<section class="diary">
-
-<h2>Сегодня</h2>
-
-<div id="diaryList"></div>
-
-</section>
+</main>
 
 </div>
 
-<script src="./js/app.js"></script>
+
+<nav id="hotbar" class="hotbar"></nav>
+
+
+<script>
+window.GLNT_API_BASE="https://fatsecret.ilyasch2020.workers.dev"
+</script>
+
+<script type="module" src="./js/app.js"></script>
 
 </body>
 </html>
