@@ -5,6 +5,10 @@ const widget = document.getElementById('telegramWidget');
 const hint = document.getElementById('hint');
 const TELEGRAM_BOT_USERNAME = 'glnt_auth_bot';
 
+requestAnimationFrame(() => {
+  document.documentElement.classList.add('loaded');
+});
+
 function setHint(text = '') {
   if (hint) hint.textContent = text;
 }
