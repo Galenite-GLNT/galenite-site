@@ -1,5 +1,5 @@
 import { getQueryParam } from '/shared/utils.js';
-import { apiFetch } from '/shared/config.js';
+import { API_BASE, apiFetch } from '/shared/config.js';
 
 const widget = document.getElementById('telegramWidget');
 const hint = document.getElementById('hint');
@@ -34,18 +34,22 @@ function redirectToTarget() {
 
 window.onTelegramAuth = async function onTelegramAuth(user) {
   try {
-    const response = await apiFetch('/api/auth/telegram', {
+    const response = await fetch(`${API_BASE}/api/auth/telegram`, {
       method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify(user),
     });
 
     if (!response.ok) {
+      console.error('Telegram login failed', response.status);
       setHint('Не удалось авторизоваться через Telegram.');
       return;
     }
 
     redirectToTarget();
-  } catch {
+  } catch (error) {
+    console.error(error);
     setHint('Ошибка сети при авторизации Telegram.');
   }
 };
@@ -57,7 +61,6 @@ async function init() {
     const meResponse = await apiFetch('/api/auth/me', { method: 'GET' });
     if (meResponse.ok) {
       redirectToTarget();
-      return;
     }
   } catch {
     setHint('API временно недоступен. Попробуйте снова.');

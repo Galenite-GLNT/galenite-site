@@ -1,13 +1,10 @@
-const DEV_WORKER_API_BASE = 'https://galenite.ilyasch2020.workers.dev';
+const DEFAULT_API_BASE_URL = 'https://galenite.ilyasch2020.workers.dev';
 
-function resolveApiBase() {
-  if (window.__API_BASE__) return String(window.__API_BASE__).replace(/\/$/, '');
-  const host = window.location.hostname;
-  if (host === 'localhost' || host === '127.0.0.1') return DEV_WORKER_API_BASE;
-  return '';
+if (!window.API_BASE_URL) {
+  window.API_BASE_URL = DEFAULT_API_BASE_URL;
 }
 
-export const API_BASE = resolveApiBase();
+export const API_BASE = String(window.API_BASE_URL || DEFAULT_API_BASE_URL).replace(/\/$/, '');
 
 export function apiUrl(path) {
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
