@@ -24,7 +24,7 @@ const ICONS = {
 };
 
 const ROUTES = [
-  { id:"dashboard", label:"Dashboard", icon: ICONS.dashboard, mobile:false },
+  { id:"dashboard", label:"Обзор", icon: ICONS.dashboard, mobile:false },
   { id:"food", label:"Еда", icon: ICONS.food, mobile:true },
   { id:"sleep", label:"Сон", icon: ICONS.sleep, mobile:true },
   { id:"water", label:"Вода", icon: ICONS.water, mobile:true },
@@ -44,22 +44,7 @@ let route = getInitialRoute();
 function setRoute(id){
   route = id;
   history.replaceState(null, "", `#${id}`);
-  window.addEventListener("glnt:food:changed", ()=>{
-  const sum = state.nutrition.entries.reduce((acc,e)=>{
-    acc.kcal += Number(e.kcal)||0;
-    acc.protein += Number(e.protein)||0;
-    acc.fat += Number(e.fat)||0;
-    acc.carbs += Number(e.carbs)||0;
-    return acc;
-  }, {kcal:0, protein:0, fat:0, carbs:0});
-  state.nutrition.kcal = sum.kcal;
-  state.nutrition.protein = sum.protein;
-  state.nutrition.fat = sum.fat;
-  state.nutrition.carbs = sum.carbs;
-  onUpdate(state);
-});
-
-render();
+  render();
 }
 
 function onUpdate(next){
@@ -119,19 +104,23 @@ function renderTopbar(){
     a.download = `glnt-health-${state.day}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    toast("ok","Экспорт","Скачал JSON со стейтом.");
+    toast("ok","Экспорт","Файл с данными сохранён.");
   };
 
   document.getElementById("btnReset").onclick = ()=>{
     localStorage.removeItem("glnt.health.v4");
     state = loadState();
-    toast("warn","Сброс","Очистил локальные данные.");
-    window.addEventListener("glnt:food:changed", ()=>{
+    toast("warn","Сброс","Локальные данные очищены.");
+    render();
+  };
+}
+
+function syncNutritionFromEntries(){
   const sum = state.nutrition.entries.reduce((acc,e)=>{
-    acc.kcal += Number(e.kcal)||0;
-    acc.protein += Number(e.protein)||0;
-    acc.fat += Number(e.fat)||0;
-    acc.carbs += Number(e.carbs)||0;
+    acc.kcal += Number(e.kcal) || 0;
+    acc.protein += Number(e.protein) || 0;
+    acc.fat += Number(e.fat) || 0;
+    acc.carbs += Number(e.carbs) || 0;
     return acc;
   }, {kcal:0, protein:0, fat:0, carbs:0});
   state.nutrition.kcal = sum.kcal;
@@ -139,10 +128,6 @@ function renderTopbar(){
   state.nutrition.fat = sum.fat;
   state.nutrition.carbs = sum.carbs;
   onUpdate(state);
-});
-
-render();
-  };
 }
 
 function renderHotbar(){
@@ -193,19 +178,6 @@ window.addEventListener("keydown", (e)=>{
   if(e.key === "Escape") sidebar.classList.remove("is-open");
 });
 
-window.addEventListener("glnt:food:changed", ()=>{
-  const sum = state.nutrition.entries.reduce((acc,e)=>{
-    acc.kcal += Number(e.kcal)||0;
-    acc.protein += Number(e.protein)||0;
-    acc.fat += Number(e.fat)||0;
-    acc.carbs += Number(e.carbs)||0;
-    return acc;
-  }, {kcal:0, protein:0, fat:0, carbs:0});
-  state.nutrition.kcal = sum.kcal;
-  state.nutrition.protein = sum.protein;
-  state.nutrition.fat = sum.fat;
-  state.nutrition.carbs = sum.carbs;
-  onUpdate(state);
-});
+window.addEventListener("glnt:food:changed", syncNutritionFromEntries);
 
 render();

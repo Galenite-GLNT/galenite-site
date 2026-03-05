@@ -6,14 +6,14 @@ export function renderWater(state, icons, onUpdate){
     el("div", { class:"card" }, [
       el("div", { class:"card__head" }, [
         el("div", {}, [
-          el("h3", { class:"card__title" }, ["Water"]),
-          el("div", { class:"card__hint" }, ["Стаканы, цель, быстрые кнопки"]),
+          el("h3", { class:"card__title" }, ["Вода"]),
+          el("div", { class:"card__hint" }, ["Выпитое за день и быстрые действия"]),
         ])
       ]),
       el("div", { class:"kpis" }, [
         kpi("Выпито", icons.water, `${fmt(state.water.ml)}`, "ml", `цель: ${state.goals.water} ml`),
         kpi("Осталось", icons.water, `${fmt(Math.max(0, state.goals.water - state.water.ml))}`, "ml", "до цели"),
-        kpi("Стаканов", icons.water, `${fmt(Math.round((state.water.ml||0)/250))}`, "x", "по 250ml"),
+        kpi("Стаканы", icons.water, `${fmt(Math.round((state.water.ml||0)/250))}`, "шт", "по 250 мл"),
       ]),
       el("div", { style:"margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;" }, [
         btn("+250 мл", ()=>add(250)),
@@ -25,12 +25,12 @@ export function renderWater(state, icons, onUpdate){
     el("div", { class:"card" }, [
       el("div", { class:"card__head" }, [
         el("div", {}, [
-          el("h3", { class:"card__title" }, ["Targets"]),
-          el("div", { class:"card__hint" }, ["Настрой цель воды"]),
+          el("h3", { class:"card__title" }, ["Цель по воде"]),
+          el("div", { class:"card__hint" }, ["Можно менять под тренировочные дни"]),
         ])
       ]),
       el("div", { class:"field" }, [
-        el("div", { class:"label" }, ["Цель (ml)"]),
+        el("div", { class:"label" }, ["Цель (мл)"]),
         el("input", { class:"input", type:"number", value: state.goals.water, "data-id":"target" })
       ]),
       el("div", { style:"margin-top:12px" }, [
@@ -49,17 +49,17 @@ export function renderWater(state, icons, onUpdate){
   function reset(){
     state.water.ml = 0;
     onUpdate(state);
-    toast("warn","Вода","Сбросил на 0.");
+    toast("warn","Вода","Обнулили счётчик воды.");
   }
   function saveTarget(){
     const t = Number(get("target").value);
     if(!Number.isFinite(t) || t<250){
-      toast("warn","Цель странная","Поставь хотя бы 250ml.");
+      toast("warn","Проверь значение","Минимум 250 мл.");
       return;
     }
     state.goals.water = round(t);
     onUpdate(state);
-    toast("ok","Цель обновлена", `${state.goals.water} ml`);
+    toast("ok","Новая цель сохранена", `${state.goals.water} ml`);
   }
 
   return root;

@@ -24,10 +24,10 @@ export function renderFood(state, icons, onUpdate, apiBase){
     el("div", { class:"card" }, [
       el("div", { class:"card__head" }, [
         el("div", {}, [
-          el("h3", { class:"card__title" }, ["Nutrition"]),
-          el("div", { class:"card__hint" }, ["Поиск и добавление КБЖУ через OpenFoodFacts"]),
+          el("h3", { class:"card__title" }, ["Питание"]),
+          el("div", { class:"card__hint" }, ["Поиск продуктов и добавление в дневник"]),
         ]),
-        el("span", { class:"pill" }, [el("b", {}, ["OFF"]), " search"]),
+        el("span", { class:"pill" }, [el("b", {}, ["OpenFoodFacts"]), " API"]),
       ]),
 
       el("div", { class:"row" }, [
@@ -36,15 +36,15 @@ export function renderFood(state, icons, onUpdate, apiBase){
           el("input", { class:"input", placeholder:"Например: banana / творог / йогурт", "data-id":"q" }),
         ]),
         el("div", { class:"field", style:"max-width:160px" }, [
-          el("div", { class:"label" }, ["Кол-во (шт)"]),
+          el("div", { class:"label" }, ["Сколько результатов"]),
           el("input", { class:"input", type:"number", value:"8", min:"1", max:"30", "data-id":"limit" }),
         ]),
       ]),
 
       el("div", { style:"margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;" }, [
         el("button", { class:"btn btn--accent", onclick: ()=>search() }, ["Искать"]),
-        el("button", { class:"btn", onclick: ()=>searchExample() }, ["Пример: banana"]),
-        el("span", { class:"pill" }, [el("b", {}, ["Barcode"]), " optional"]),
+        el("button", { class:"btn", onclick: ()=>searchExample() }, ["Быстрый запрос"]),
+        el("span", { class:"pill" }, [el("b", {}, ["Штрихкод"]), " необязательно"]),
       ]),
 
       el("div", { class:"row", style:"margin-top:12px" }, [
@@ -59,8 +59,8 @@ export function renderFood(state, icons, onUpdate, apiBase){
       ]),
 
       el("div", { style:"margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;" }, [
-        el("button", { class:"btn", onclick: ()=>fetchBarcode() }, ["Найти по штрихкоду"]),
-        el("button", { class:"btn", onclick: ()=>quickAddManual() }, ["+ вручную КБЖУ"]),
+        el("button", { class:"btn", onclick: ()=>fetchBarcode() }, ["Искать по штрихкоду"]),
+        el("button", { class:"btn", onclick: ()=>quickAddManual() }, ["Добавить вручную"]),
       ]),
 
       el("div", { class:"card__hint", style:"margin-top:10px" }, [
@@ -75,13 +75,13 @@ export function renderFood(state, icons, onUpdate, apiBase){
     el("div", { class:"card" }, [
       el("div", { class:"card__head" }, [
         el("div", {}, [
-          el("h3", { class:"card__title" }, ["Today total"]),
+          el("h3", { class:"card__title" }, ["Итог за день"]),
           el("div", { class:"card__hint" }, ["Сумма по дню"]),
         ])
       ]),
       totals(state, icons),
       el("div", { style:"margin-top:12px" }, [
-        el("h3", { class:"card__title" }, ["Entries"]),
+        el("h3", { class:"card__title" }, ["Добавленные продукты"]),
         el("div", { class:"card__hint" }, [state.nutrition.entries.length ? "Нажми, чтобы удалить" : "Пока пусто"]),
       ]),
       el("div", { style:"margin-top:10px; display:flex; flex-direction:column; gap:8px;" , "data-id":"entries" }, [
@@ -221,7 +221,7 @@ export function renderFood(state, icons, onUpdate, apiBase){
         el("button", { class:"btn", onclick: ()=>{
           copyText(`${name} | 100g: ${fmt(n.kcal)}kcal P${fmt(n.protein)} F${fmt(n.fat)} C${fmt(n.carbs)}`);
           toast("ok","Скопировано","В буфер.");
-        } }, ["Copy"]),
+        } }, ["Копировать"]),
       ])
     ]);
 

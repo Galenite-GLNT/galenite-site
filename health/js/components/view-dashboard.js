@@ -9,7 +9,7 @@ export function renderDashboard(state, icons){
     el("div", { class:"card" }, [
       el("div", { class:"card__head" }, [
         el("div", {}, [
-          el("h3", { class:"card__title" }, ["Today snapshot"]),
+          el("h3", { class:"card__title" }, ["Сводка за день"]),
           el("div", { class:"card__hint" }, [`${state.day}`])
         ]),
         el("span", { class:"pill" }, [
@@ -27,8 +27,8 @@ export function renderDashboard(state, icons){
     el("div", { class:"card" }, [
       el("div", { class:"card__head" }, [
         el("div", {}, [
-          el("h3", { class:"card__title" }, ["Macros"]),
-          el("div", { class:"card__hint" }, ["Белки / Жиры / Углеводы"]),
+          el("h3", { class:"card__title" }, ["Макронутриенты"]),
+          el("div", { class:"card__hint" }, ["Баланс по целям"]),
         ])
       ]),
       el("div", { class:"split" }, [

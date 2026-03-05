@@ -6,7 +6,7 @@ export function renderSleep(state, icons, onUpdate){
     el("div", { class:"card" }, [
       el("div", { class:"card__head" }, [
         el("div", {}, [
-          el("h3", { class:"card__title" }, ["Sleep"]),
+          el("h3", { class:"card__title" }, ["Сон"]),
           el("div", { class:"card__hint" }, ["Часы, качество, заметка"]),
         ])
       ]),
@@ -29,15 +29,15 @@ export function renderSleep(state, icons, onUpdate){
 
       el("div", { style:"margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;" }, [
         el("button", { class:"btn btn--accent", onclick: ()=>save() }, ["Сохранить"]),
-        el("button", { class:"btn", onclick: ()=>preset(8,4) }, ["Пример: норм"]),
+        el("button", { class:"btn", onclick: ()=>preset(8,4) }, ["Шаблон: 8 часов"]),
       ])
     ]),
 
     el("div", { class:"card" }, [
       el("div", { class:"card__head" }, [
         el("div", {}, [
-          el("h3", { class:"card__title" }, ["Status"]),
-          el("div", { class:"card__hint" }, ["Сравнение с целью"]),
+          el("h3", { class:"card__title" }, ["Статус"]),
+          el("div", { class:"card__hint" }, ["Фактические данные за сегодня"]),
         ])
       ]),
       status(state, icons)

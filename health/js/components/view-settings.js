@@ -6,7 +6,7 @@ export function renderSettings(state, icons, onUpdate){
     el("div", { class:"card" }, [
       el("div", { class:"card__head" }, [
         el("div", {}, [
-          el("h3", { class:"card__title" }, ["Goals"]),
+          el("h3", { class:"card__title" }, ["Цели"]),
           el("div", { class:"card__hint" }, ["КБЖУ / сон / вода"]),
         ])
       ]),
@@ -14,15 +14,15 @@ export function renderSettings(state, icons, onUpdate){
       goalsForm(state),
       el("div", { style:"margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;" }, [
         el("button", { class:"btn btn--accent", onclick: ()=>save() }, ["Сохранить цели"]),
-        el("button", { class:"btn", onclick: ()=>reset() }, ["Сбросить на дефолт"]),
+        el("button", { class:"btn", onclick: ()=>reset() }, ["Вернуть базовые значения"]),
       ])
     ]),
 
     el("div", { class:"card" }, [
       el("div", { class:"card__head" }, [
         el("div", {}, [
-          el("h3", { class:"card__title" }, ["Integrations"]),
-          el("div", { class:"card__hint" }, ["Telegram / FatSecret"]),
+          el("h3", { class:"card__title" }, ["Интеграции"]),
+          el("div", { class:"card__hint" }, ["API и подключения"]),
         ])
       ]),
       el("div", { class:"card__hint" }, [
@@ -50,7 +50,7 @@ export function renderSettings(state, icons, onUpdate){
   function reset(){
     state.goals = { kcal: 2200, protein: 140, fat: 70, carbs: 240, sleep: 8, water: 2000 };
     onUpdate(state);
-    toast("warn","Сброс","Вернул дефолтные цели.");
+    toast("warn","Возврат","Базовые цели восстановлены.");
   }
 
   return root;
