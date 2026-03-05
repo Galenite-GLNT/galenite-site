@@ -1,12 +1,14 @@
-export const API_BASE = (window.__API_BASE__ || '').replace(/\/$/, '');
+const FALLBACK_API_BASE = 'https://galenite.ilyasch2020.workers.dev';
+
+export const API_BASE = (window.__API_BASE__ || FALLBACK_API_BASE).replace(/\/$/, '');
 
 export function apiUrl(path) {
-  if (!path.startsWith('/')) return `${API_BASE}/${path}`;
-  return `${API_BASE}${path}`;
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  return `${API_BASE}${normalizedPath}`;
 }
 
 export async function apiFetch(path, options = {}) {
-  const response = await fetch(apiUrl(path), {
+  return fetch(apiUrl(path), {
     credentials: 'include',
     ...options,
     headers: {
@@ -14,5 +16,4 @@ export async function apiFetch(path, options = {}) {
       ...(options.headers || {}),
     },
   });
-  return response;
 }

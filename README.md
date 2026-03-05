@@ -20,7 +20,7 @@ Plaintext variables:
 - `PRODUCTS_PROVIDER=openfoodfacts`
 - `TELEGRAM_AUTH_MAX_AGE_SECONDS=604800`
 - `TELEGRAM_BOT_USERNAME=glnt_auth_bot`
-- `ALLOWED_ORIGINS=https://your-site.example,https://your-worker.workers.dev`
+- `ALLOWED_ORIGINS=https://galenite.ilyasch2020.workers.dev`
 
 Secrets:
 - `SESSION_SECRET`
@@ -40,7 +40,7 @@ Worker валидирует payload по официальной схеме:
 ## Frontend config
 На страницах `auth/index.html` и `health/index.html` можно задать:
 ```html
-<script>window.__API_BASE__ = "https://your-worker.workers.dev";</script>
+<script>window.__API_BASE__ = "https://galenite.ilyasch2020.workers.dev";</script>
 ```
 Если не задано, используется текущий origin.
 
