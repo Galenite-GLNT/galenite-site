@@ -148,7 +148,14 @@ function openModal(type, logs) {
 }
 
 async function refresh() {
-  const meResponse = await apiFetch('/api/auth/me', { method: 'GET' });
+  let meResponse;
+  try {
+    meResponse = await apiFetch('/api/auth/me', { method: 'GET' });
+  } catch {
+    window.location.href = '/auth/?return=/health/';
+    return;
+  }
+
   if (!meResponse.ok) {
     window.location.href = '/auth/?return=/health/';
     return;

@@ -1,10 +1,14 @@
 import { apiFetch } from '/shared/config.js';
 
 export async function getCurrentUser() {
-  const resp = await apiFetch('/api/auth/me');
-  if (!resp.ok) return null;
-  const data = await resp.json();
-  return data.user || null;
+  try {
+    const resp = await apiFetch('/api/auth/me');
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    return data.user || null;
+  } catch {
+    return null;
+  }
 }
 
 export function watchAuth(callback) {
@@ -22,5 +26,9 @@ export function watchAuth(callback) {
 }
 
 export async function logout() {
-  await apiFetch('/api/auth/logout', { method: 'POST' });
+  try {
+    await apiFetch('/api/auth/logout', { method: 'POST' });
+  } catch {
+    // ignore network failures on logout action
+  }
 }
