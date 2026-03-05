@@ -13,7 +13,36 @@ const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
 
 const todayISO = () => new Date().toISOString().slice(0,10);
 const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+const safeJSON = (s, fallback) => { try{ return JSON.parse(s); }catch(_){ return fallback; } };
 const fmt = (n) => new Intl.NumberFormat('ru-RU').format(n);
+
+const toastMount = () => {
+  let t = document.querySelector('.toast');
+  if(!t){
+    t = document.createElement('div');
+    t.className = 'toast';
+    document.body.appendChild(t);
+  }
+  return t;
+};
+const toast = (title, msg, type='info') => {
+  const t = toastMount();
+  const el = document.createElement('div');
+  el.className = 'toast__item';
+  const dot = document.createElement('i');
+  if(type==='ok') dot.style.background = 'var(--good)';
+  if(type==='warn') dot.style.background = 'var(--warn)';
+  if(type==='bad') dot.style.background = 'var(--bad)';
+  el.appendChild(dot);
+  const p = document.createElement('p');
+  p.innerHTML = `<b>${escapeHtml(title)}</b><br/>${escapeHtml(msg)}`;
+  el.appendChild(p);
+  t.appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transform='translateY(6px)'; }, 4200);
+  setTimeout(()=>{ el.remove(); }, 4800);
+};
+const escapeHtml = (s) => String(s).replace(/[&<>"']/g, (c)=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+
 
 const ICONS = {
   search: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg>`,
@@ -788,8 +817,8 @@ function openMealModal(){
       const title = $('#m_title', root).value.trim();
       const time = $('#m_time', root).value.trim() || '—';
       const kcal = Number($('#m_kcal', root).value||0);
-      if(!title) throw new Error('Название пустое');
-      if(!kcal || kcal<0) throw new Error('Калории не ок');
+      if(!title){ toast('Не ок', 'Название приёма пищи пустое', 'warn'); return; }
+      if(kcal==='' || Number.isNaN(Number(kcal)) || Number(kcal)<0){ toast('Не ок', 'Калории должны быть числом ≥ 0', 'warn'); return; }
       d.food.entries.unshift({time, title, kcal});
       recalcFood(d);
       State.save();
