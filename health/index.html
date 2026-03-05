@@ -3,94 +3,41 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
 <title>Galenite Health</title>
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./css/styles.css">
-<link rel="stylesheet" href="./css/styles-mobile.css">
 </head>
-
 <body>
+<div class="app">
+  <header class="top">
+    <div>
+      <h1>Health</h1>
+      <p id="todayLine"></p>
+    </div>
+    <button id="logoutBtn" class="ghost">Выйти</button>
+  </header>
 
-<div class="bg"></div>
+  <p id="statusLine" class="status"></p>
 
-<div id="app" class="app">
-
-<aside id="sidebar" class="sidebar">
-
-<div class="brand">
-
-<div class="brand__mark">
-<img src="./assets/icons/dashboard.svg">
+  <section class="grid" id="cards"></section>
+  <section class="coach" id="coach"></section>
 </div>
 
-<div class="brand__title">
-<b>GALENITE</b>
-<span>Health module</span>
+<div id="modal" class="modal hidden">
+  <div class="sheet">
+    <button id="closeModal" class="ghost">Закрыть</button>
+    <div id="modalContent"></div>
+  </div>
 </div>
 
-</div>
-
-<nav class="nav"></nav>
-
-<div class="sidebar__footer">
-<span class="pill"><b>Local</b> storage</span>
-</div>
-
-</aside>
-
-
-<main class="main">
-
-<header class="topbar">
-
-<div class="topbar__left">
-
-<button id="btnMenu" class="iconbtn">
-<img src="./assets/icons/menu.svg">
-</button>
-
-<div>
-<h1 id="pageTitle" class="h1">Dashboard</h1>
-<div id="pageSub" class="subtitle">—</div>
-</div>
-
-</div>
-
-<div class="actions">
-
-<button id="btnExport" class="btn">
-Export
-</button>
-
-<button id="btnReset" class="btn">
-Reset
-</button>
-
-</div>
-
-</header>
-
-
-<div id="main"></div>
-
-</main>
-
-</div>
-
-
-<nav id="hotbar" class="hotbar"></nav>
-
-
-<script>
-window.GLNT_API_BASE="https://fatsecret.ilyasch2020.workers.dev"
-</script>
+<nav class="bottom-nav">
+  <a href="/">Home</a>
+  <a href="/galen_chat/">Chat</a>
+  <a href="/health/" class="active">Health</a>
+</nav>
 
 <script type="module" src="./js/app.js"></script>
-
 </body>
 </html>

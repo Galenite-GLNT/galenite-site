@@ -1,152 +1,65 @@
-import { loginEmail, registerEmail, loginGoogle } from "/shared/auth-core.js";
-import { getQueryParam } from "/shared/utils.js";
+import { getQueryParam } from '/shared/utils.js';
 
-const loginTab = document.getElementById("loginTab");
-const registerTab = document.getElementById("registerTab");
-const underline = document.querySelector(".tab-underline");
+const widget = document.getElementById('telegramWidget');
+const hint = document.getElementById('hint');
 
-const username = document.getElementById("username");
-const password = document.getElementById("password");
-const submitBtn = document.getElementById("submitBtn");
-const googleBtn = document.getElementById("googleBtn");
-
-const hint = document.getElementById("hint");
-const form = document.querySelector(".form");
-
-let mode = "login"; // "login" | "register"
-
-function setHint(text = "") {
-  if (!hint) return;
-  hint.textContent = text;
+function setHint(text) {
+  hint.textContent = text || '';
 }
 
-function setLoading(isLoading) {
-  submitBtn.disabled = isLoading;
-  if (googleBtn) googleBtn.disabled = isLoading;
+function scriptWidget(botUsername, redirectUrl) {
+  widget.innerHTML = '';
+  const script = document.createElement('script');
+  script.src = 'https://telegram.org/js/telegram-widget.js?22';
+  script.async = true;
+  script.setAttribute('data-telegram-login', botUsername);
+  script.setAttribute('data-size', 'large');
+  script.setAttribute('data-userpic', 'false');
+  script.setAttribute('data-auth-url', redirectUrl || `${window.location.origin}/auth/`);
+  script.setAttribute('data-request-access', 'write');
+  widget.appendChild(script);
+}
 
-  if (isLoading) {
-    submitBtn.style.opacity = "0.75";
-    submitBtn.style.cursor = "default";
-  } else {
-    submitBtn.style.opacity = "";
-    submitBtn.style.cursor = "";
+async function init() {
+  const me = await fetch('/api/auth/me').then((r) => r.json());
+  if (me.user) {
+    const returnTo = getQueryParam('return') || '/health/';
+    window.location.href = returnTo;
+    return;
+  }
+
+  try {
+    const cfg = await fetch('/api/config').then((r) => r.json());
+    if (!cfg.telegramBotUsername) {
+      setHint('Не задан TELEGRAM_BOT_USERNAME на сервере.');
+      return;
+    }
+    scriptWidget(cfg.telegramBotUsername, cfg.telegramAuthRedirectUrl);
+  } catch {
+    setHint('Не удалось загрузить конфиг авторизации.');
   }
 }
 
-function setMode(nextMode) {
-  mode = nextMode;
+// Callback mode: Telegram can redirect with query params
+async function maybeHandleTelegramCallback() {
+  const id = getQueryParam('id');
+  const hash = getQueryParam('hash');
+  if (!id || !hash) return;
 
-  const isLogin = mode === "login";
-  loginTab.classList.toggle("active", isLogin);
-  registerTab.classList.toggle("active", !isLogin);
+  const payload = Object.fromEntries(new URLSearchParams(window.location.search).entries());
+  const resp = await fetch('/api/auth/telegram', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
 
-  loginTab.setAttribute("aria-selected", String(isLogin));
-  registerTab.setAttribute("aria-selected", String(!isLogin));
-
-  // Текст на кнопке — капсом под макет
-  submitBtn.textContent = isLogin ? "LOGIN" : "REGISTER";
-
-  // underline
-  if (underline) {
-    underline.style.transform = isLogin ? "translateX(-44px)" : "translateX(44px)";
+  if (!resp.ok) {
+    setHint('Telegram авторизация не прошла валидацию.');
+    return;
   }
 
-  setHint("");
-}
-
-async function doRedirect() {
-  const returnTo = getQueryParam("return") || "/";
+  const returnTo = getQueryParam('return') || '/health/';
   window.location.href = returnTo;
 }
 
-function mapErrorToHint(error) {
-  const code = error?.code || "";
-
-  switch (code) {
-    case "auth/invalid-api-key":
-    case "auth/api-key-not-valid":
-      return "Проверь конфигурацию Firebase API key.";
-    case "auth/invalid-email":
-      return "Некорректный email.";
-    case "auth/missing-password":
-      return "Введи пароль.";
-    case "auth/wrong-password":
-    case "auth/invalid-credential":
-      return "Неверная связка email + пароль.";
-    case "auth/user-not-found":
-      return "Такого пользователя нет.";
-    case "auth/email-already-in-use":
-      return "Email уже занят.";
-    case "auth/weak-password":
-      return "Пароль должен быть длиннее 6 символов.";
-    case "auth/network-request-failed":
-      return "Нет сети или проблемы с Firebase.";
-    default:
-      return error?.message || "Auth failed";
-  }
-}
-
-async function handleSubmit() {
-  const u = username.value.trim().toLowerCase();
-  const p = password.value; // пароль НЕ тримим
-
-  if (!u || !p) return setHint("Заполни оба поля.");
-
-  try {
-    setLoading(true);
-    setHint("...");
-
-    if (mode === "login") {
-      await loginEmail(u, p);
-    } else {
-      await registerEmail(u, p, u);
-    }
-
-    await doRedirect();
-  } catch (err) {
-    setHint(mapErrorToHint(err));
-  } finally {
-    setLoading(false);
-  }
-}
-
-async function handleGoogle() {
-  try {
-    setLoading(true);
-    setHint("...");
-
-    await loginGoogle();
-
-    await doRedirect();
-  } catch (err) {
-    setHint(mapErrorToHint(err));
-  } finally {
-    setLoading(false);
-  }
-}
-
-// Tabs
-loginTab.addEventListener("click", () => setMode("login"));
-registerTab.addEventListener("click", () => setMode("register"));
-
-// Buttons
-submitBtn.addEventListener("click", handleSubmit);
-if (googleBtn) googleBtn.addEventListener("click", handleGoogle);
-
-// Enter submit (чтобы работало как норм форма)
-if (form) {
-  form.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleSubmit();
-    }
-  });
-}
-
-// Анимации влёта
-requestAnimationFrame(() => {
-  document.documentElement.classList.add("loaded");
-});
-
-// init
-setMode("login");
+maybeHandleTelegramCallback().then(init);
