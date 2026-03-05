@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Galen Health</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar glass">
+      <div>
+        <p class="caps">Galen • Health OS</p>
+        <h1>Трекер здоровья</h1>
+      </div>
+      <button id="connect-telegram" class="ghost-btn">Telegram</button>
+    </header>
+
+    <main class="screens">
+      <section class="screen active" data-screen="dashboard">
+        <article class="card hero-card">
+          <p class="caps">Сегодня</p>
+          <h2 id="greeting">Добро пожаловать</h2>
+          <p id="tg-status" class="muted">Проверяем Telegram WebApp…</p>
+          <p id="profile-output" class="profile-chip"></p>
+        </article>
+
+        <article class="card stats-grid">
+          <div>
+            <p class="caps">Вода</p>
+            <strong id="dash-water">0 / 2500 мл</strong>
+          </div>
+          <div>
+            <p class="caps">Калории</p>
+            <strong id="dash-kcal">0 ккал</strong>
+          </div>
+          <div>
+            <p class="caps">Сон</p>
+            <strong id="dash-sleep">0 ч</strong>
+          </div>
+        </article>
+
+        <article class="card">
+          <h3>Лента дня</h3>
+          <ul id="today-feed" class="feed"></ul>
+        </article>
+      </section>
+
+      <section class="screen" data-screen="nutrition">
+        <article class="card">
+          <h2>Калькулятор КБЖУ</h2>
+          <form id="kcal-form" class="grid-form">
+            <label>Пол<select id="gender"><option value="male">Мужчина</option><option value="female">Женщина</option></select></label>
+            <label>Возраст<input type="number" id="age" min="10" max="100" value="30" required /></label>
+            <label>Вес (кг)<input type="number" id="weight" min="30" max="300" value="70" required /></label>
+            <label>Рост (см)<input type="number" id="height" min="120" max="250" value="175" required /></label>
+            <label>Активность<select id="activity"><option value="1.2">Минимальная</option><option value="1.375">Легкая</option><option value="1.55" selected>Средняя</option><option value="1.725">Высокая</option></select></label>
+            <label>Цель<select id="goal"><option value="-0.15">Снижение веса</option><option value="0" selected>Поддержание</option><option value="0.12">Набор массы</option></select></label>
+            <button type="submit" class="primary-btn">Рассчитать</button>
+          </form>
+          <p id="kcal-result" class="result"></p>
+        </article>
+
+        <article class="card">
+          <h3>База продуктов (онлайн)</h3>
+          <p class="muted">Поиск идет по большой открытой базе OpenFoodFacts. Можно подключить FatSecret API, когда будут ключи.</p>
+          <input id="food-search" type="text" placeholder="Например: chicken, yogurt, rice" />
+          <div id="food-list" class="food-list"></div>
+          <h4>Дневной журнал</h4>
+          <ul id="meal-log"></ul>
+          <p id="meal-total" class="result"></p>
+        </article>
+      </section>
+
+      <section class="screen" data-screen="recovery">
+        <article class="card">
+          <h2>Сон</h2>
+          <form id="sleep-form" class="grid-form">
+            <label>Дата<input id="sleep-date" type="date" required /></label>
+            <label>Начало<input id="sleep-start" type="time" required /></label>
+            <label>Конец<input id="sleep-end" type="time" required /></label>
+            <label>Качество (1-5)<input id="sleep-quality" type="number" min="1" max="5" value="4" required /></label>
+            <button type="submit" class="primary-btn">Сохранить</button>
+          </form>
+          <ul id="sleep-list"></ul>
+          <p id="sleep-average" class="result"></p>
+        </article>
+
+        <article class="card">
+          <h2>Вода</h2>
+          <div class="inline">
+            <label>Цель (мл)<input id="water-goal" type="number" min="500" step="100" value="2500" /></label>
+            <button id="save-goal" class="ghost-btn">Сохранить</button>
+          </div>
+          <div class="inline">
+            <button class="ghost-btn water-btn" data-ml="200">+200</button>
+            <button class="ghost-btn water-btn" data-ml="300">+300</button>
+            <button class="ghost-btn water-btn" data-ml="500">+500</button>
+            <button id="water-reset" class="ghost-btn">Сброс</button>
+          </div>
+          <div class="progress"><div id="water-progress-bar"></div></div>
+          <p id="water-stats" class="result"></p>
+        </article>
+      </section>
+
+      <section class="screen" data-screen="settings">
+        <article class="card">
+          <h2>Аккаунт и настройки</h2>
+          <form id="fallback-form" class="grid-form">
+            <label>Локальный ник<input type="text" id="nickname" placeholder="Ваш ник" required /></label>
+            <button type="submit" class="primary-btn">Сохранить</button>
+          </form>
+          <p class="muted">Для продакшн-авторизации внутри Telegram используем initData + проверку подписи на backend.</p>
+        </article>
+      </section>
+    </main>
+
+    <nav class="hotbar glass">
+      <button class="tab active" data-tab="dashboard">Главная</button>
+      <button class="tab" data-tab="nutrition">КБЖУ</button>
+      <button class="tab" data-tab="recovery">Сон/Вода</button>
+      <button class="tab" data-tab="settings">Настройки</button>
+    </nav>
+  </div>
+
+  <script src="app.js" type="module"></script>
+</body>
+</html>

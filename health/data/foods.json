@@ -1,0 +1,14 @@
+[
+  {"id": 1, "name": "Куриная грудка (100 г)", "kcal": 165, "protein": 31, "fat": 3.6, "carbs": 0},
+  {"id": 2, "name": "Гречка вареная (100 г)", "kcal": 110, "protein": 4.2, "fat": 1.1, "carbs": 21},
+  {"id": 3, "name": "Рис вареный (100 г)", "kcal": 130, "protein": 2.7, "fat": 0.3, "carbs": 28},
+  {"id": 4, "name": "Овсянка (100 г)", "kcal": 68, "protein": 2.4, "fat": 1.4, "carbs": 12},
+  {"id": 5, "name": "Яйцо куриное (1 шт)", "kcal": 78, "protein": 6.3, "fat": 5.3, "carbs": 0.6},
+  {"id": 6, "name": "Творог 5% (100 г)", "kcal": 121, "protein": 17, "fat": 5, "carbs": 1.8},
+  {"id": 7, "name": "Банан (100 г)", "kcal": 89, "protein": 1.1, "fat": 0.3, "carbs": 23},
+  {"id": 8, "name": "Яблоко (100 г)", "kcal": 52, "protein": 0.3, "fat": 0.2, "carbs": 14},
+  {"id": 9, "name": "Лосось (100 г)", "kcal": 208, "protein": 20, "fat": 13, "carbs": 0},
+  {"id": 10, "name": "Авокадо (100 г)", "kcal": 160, "protein": 2, "fat": 15, "carbs": 9},
+  {"id": 11, "name": "Салат Цезарь (250 г)", "kcal": 430, "protein": 20, "fat": 29, "carbs": 20},
+  {"id": 12, "name": "Борщ (300 г)", "kcal": 180, "protein": 8, "fat": 7, "carbs": 22}
+]
