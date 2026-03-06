@@ -23,8 +23,15 @@ async function refresh() {
   try {
     await hydrateState();
     renderShell(state);
-  } catch {
-    window.location.href = '/auth/?return=/health/';
+  } catch (error) {
+    const msg = String(error?.message || '');
+    if (msg.includes('Unauthorized') || msg.includes('401')) {
+      window.location.href = '/auth/?return=/health/';
+      return;
+    }
+    const status = document.getElementById('statusLine');
+    if (status) status.textContent = `Ошибка загрузки Health: ${msg || 'unknown error'}`;
+    console.error('Health refresh failed:', error);
   }
 }
 

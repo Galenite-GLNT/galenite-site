@@ -184,12 +184,8 @@ async function ensureHealthSchema(env) {
     CREATE TABLE IF NOT EXISTS health_goals (
       user_id TEXT PRIMARY KEY,
       calories REAL NOT NULL DEFAULT 2200,
-      protein REAL NOT NULL DEFAULT 140,
-      fat REAL NOT NULL DEFAULT 70,
-      carbs REAL NOT NULL DEFAULT 240,
       water REAL NOT NULL DEFAULT 2500,
       sleep REAL NOT NULL DEFAULT 8,
-      weight REAL NOT NULL DEFAULT 70,
       updated_at TEXT NOT NULL
     );
 
@@ -225,6 +221,17 @@ async function ensureHealthSchema(env) {
       UNIQUE(user_id, product_key)
     );
   `);
+
+  const migrations = [
+    "ALTER TABLE health_goals ADD COLUMN protein REAL NOT NULL DEFAULT 140",
+    "ALTER TABLE health_goals ADD COLUMN fat REAL NOT NULL DEFAULT 70",
+    "ALTER TABLE health_goals ADD COLUMN carbs REAL NOT NULL DEFAULT 240",
+    "ALTER TABLE health_goals ADD COLUMN weight REAL NOT NULL DEFAULT 70",
+  ];
+  for (const sql of migrations) {
+    try { await env.DB.exec(sql); } catch { /* already exists */ }
+  }
+
   return true;
 }
 
@@ -237,16 +244,27 @@ function profileDefaults() {
 }
 
 async function getGoals(env, userId) {
-  const row = await env.DB.prepare('SELECT calories, protein, fat, carbs, water, sleep, weight FROM health_goals WHERE user_id=?').bind(userId).first();
-  return row ? {
-    calories: Number(row.calories || 0),
-    protein: Number(row.protein || 0),
-    fat: Number(row.fat || 0),
-    carbs: Number(row.carbs || 0),
-    water: Number(row.water || 0),
-    sleep: Number(row.sleep || 0),
-    weight: Number(row.weight || 0),
-  } : goalsDefaults();
+  try {
+    const row = await env.DB.prepare('SELECT calories, protein, fat, carbs, water, sleep, weight FROM health_goals WHERE user_id=?').bind(userId).first();
+    return row ? {
+      calories: Number(row.calories || 0),
+      protein: Number(row.protein || 0),
+      fat: Number(row.fat || 0),
+      carbs: Number(row.carbs || 0),
+      water: Number(row.water || 0),
+      sleep: Number(row.sleep || 0),
+      weight: Number(row.weight || 0),
+    } : goalsDefaults();
+  } catch {
+    const legacy = await env.DB.prepare('SELECT calories, water, sleep FROM health_goals WHERE user_id=?').bind(userId).first();
+    if (!legacy) return goalsDefaults();
+    return {
+      ...goalsDefaults(),
+      calories: Number(legacy.calories || 0),
+      water: Number(legacy.water || 0),
+      sleep: Number(legacy.sleep || 0),
+    };
+  }
 }
 
 async function getProfile(env, userId) {
