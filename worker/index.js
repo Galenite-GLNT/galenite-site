@@ -151,6 +151,31 @@ async function handleFoodSearch(url, env) {
   return json({ items });
 }
 
+
+async function readTelegramPayload(request, url) {
+  if (request.method === 'GET') {
+    return Object.fromEntries(url.searchParams.entries());
+  }
+
+  const contentType = (request.headers.get('content-type') || '').toLowerCase();
+
+  if (contentType.includes('application/json')) {
+    return request.json();
+  }
+
+  if (contentType.includes('application/x-www-form-urlencoded') || contentType.includes('multipart/form-data')) {
+    const form = await request.formData();
+    const payload = {};
+    for (const [k, v] of form.entries()) payload[k] = String(v);
+    return payload;
+  }
+
+  const raw = await request.text();
+  const params = new URLSearchParams(raw);
+  if ([...params.keys()].length) return Object.fromEntries(params.entries());
+  return {};
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -168,8 +193,8 @@ export default {
       return res;
     }
 
-    if (url.pathname === '/api/auth/telegram' && request.method === 'POST') {
-      const payload = await request.json();
+    if (url.pathname === '/api/auth/telegram' && (request.method === 'POST' || request.method === 'GET')) {
+      const payload = await readTelegramPayload(request, url);
       const valid = await verifyTelegramLogin(payload, env.TELEGRAM_BOT_TOKEN, env.TELEGRAM_AUTH_MAX_AGE_SECONDS || '86400');
       if (!valid) return json({ error: 'Invalid Telegram auth payload' }, 401, corsHeaders);
 

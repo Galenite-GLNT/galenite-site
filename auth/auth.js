@@ -1,4 +1,4 @@
-import { getQueryParam } from '/shared/utils.js?v=20260306_3';
+import { getQueryParam } from '/shared/utils.js?v=20260306_4';
 
 const widget = document.getElementById('telegramWidget');
 const hint = document.getElementById('hint');
@@ -42,16 +42,34 @@ function redirectToTarget() {
   window.location.href = returnTo;
 }
 
+async function postTelegramAuth(user) {
+  const body = new URLSearchParams();
+  Object.entries(user || {}).forEach(([k, v]) => {
+    if (v !== undefined && v !== null) body.set(k, String(v));
+  });
+
+  return fetch(apiUrl('/api/auth/telegram'), {
+    method: 'POST',
+    credentials: 'include',
+    body,
+  });
+}
+
 window.onTelegramAuth = async function onTelegramAuth(user) {
   try {
-    const response = await fetch(apiUrl('/api/auth/telegram'), {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-      body: JSON.stringify(user),
-    });
+    let response = await postTelegramAuth(user);
+
+    if (!response.ok) {
+      // fallback: GET with query params, avoids preflight in stricter environments
+      const qs = new URLSearchParams();
+      Object.entries(user || {}).forEach(([k, v]) => {
+        if (v !== undefined && v !== null) qs.set(k, String(v));
+      });
+      response = await fetch(`${apiUrl('/api/auth/telegram')}&${qs.toString()}`.replace('?&', '?'), {
+        method: 'GET',
+        credentials: 'include',
+      });
+    }
 
     if (!response.ok) {
       console.error('Telegram login failed', response.status);
