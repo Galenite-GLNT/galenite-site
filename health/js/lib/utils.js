@@ -68,6 +68,7 @@ export function daySummary(day) {
 
 export function mealGroups(entries) {
   const groups = Object.fromEntries(MEAL_TYPES.map((m) => [m.id, []]));
+  if (!Array.isArray(entries)) return groups;
   for (const e of entries) groups[e.meal || 'snacks']?.push(e);
   return groups;
 }

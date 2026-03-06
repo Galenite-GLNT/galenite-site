@@ -86,6 +86,7 @@ function cardMetric(title, value, unit, pct) {
 
 function render() {
   const mobile = isMobileViewport();
+  if (!NAV_ITEMS.some((x) => x.id === activeSection)) activeSection = 'today';
   const day = ensureDay(state, state.selectedDate);
   const sum = daySummary(day);
   const meals = mealGroups(day.foodEntries);
