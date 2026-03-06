@@ -1,9 +1,9 @@
-import { getQueryParam } from '/shared/utils.js?v=20260306_4';
+import { apiFetch } from '/shared/config.js?v=20260306_5';
+import { getQueryParam } from '/shared/utils.js?v=20260306_5';
 
 const widget = document.getElementById('telegramWidget');
 const hint = document.getElementById('hint');
 const TELEGRAM_BOT_USERNAME = 'glnt_auth_bot';
-const API_BASE_URL = 'https://galenite.ilyasch2020.workers.dev';
 
 requestAnimationFrame(() => {
   document.documentElement.classList.add('loaded');
@@ -13,14 +13,9 @@ function setHint(text = '') {
   if (hint) hint.textContent = text;
 }
 
-function apiUrl(path) {
-  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-  const sid = localStorage.getItem('glnt_session_id');
-  if (!sid || !normalizedPath.startsWith('/api/auth/')) return `${API_BASE_URL}${normalizedPath}`;
-  const [pathname, query = ''] = normalizedPath.split('?');
-  const params = new URLSearchParams(query);
-  params.set('session_id', sid);
-  return `${API_BASE_URL}${pathname}?${params.toString()}`;
+function redirectToTarget() {
+  const returnTo = getQueryParam('return') || '/health/';
+  window.location.href = returnTo;
 }
 
 function renderWidget() {
@@ -37,42 +32,17 @@ function renderWidget() {
   widget.appendChild(script);
 }
 
-function redirectToTarget() {
-  const returnTo = getQueryParam('return') || '/health/';
-  window.location.href = returnTo;
-}
-
-async function postTelegramAuth(user) {
-  const body = new URLSearchParams();
-  Object.entries(user || {}).forEach(([k, v]) => {
-    if (v !== undefined && v !== null) body.set(k, String(v));
-  });
-
-  return fetch(apiUrl('/api/auth/telegram'), {
-    method: 'POST',
-    credentials: 'include',
-    body,
-  });
-}
-
 window.onTelegramAuth = async function onTelegramAuth(user) {
   try {
-    let response = await postTelegramAuth(user);
+    const response = await apiFetch('/api/auth/telegram', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(user || {}),
+    });
 
     if (!response.ok) {
-      // fallback: GET with query params, avoids preflight in stricter environments
-      const qs = new URLSearchParams();
-      Object.entries(user || {}).forEach(([k, v]) => {
-        if (v !== undefined && v !== null) qs.set(k, String(v));
-      });
-      response = await fetch(`${apiUrl('/api/auth/telegram')}&${qs.toString()}`.replace('?&', '?'), {
-        method: 'GET',
-        credentials: 'include',
-      });
-    }
-
-    if (!response.ok) {
-      console.error('Telegram login failed', response.status);
       setHint(`Не удалось авторизоваться через Telegram (${response.status}).`);
       return;
     }
@@ -93,9 +63,7 @@ async function init() {
   renderWidget();
 
   try {
-    const meResponse = await fetch(apiUrl('/api/auth/me'), {
-      credentials: 'include',
-    });
+    const meResponse = await apiFetch('/api/auth/me', { method: 'GET' });
     if (meResponse.ok) {
       redirectToTarget();
     }

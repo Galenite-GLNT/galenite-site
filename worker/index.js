@@ -73,7 +73,7 @@ export async function verifyTelegramLogin(payload, botToken, maxAgeSeconds = 864
 
 function buildCorsHeaders(origin, env) {
   const configured = (env.ALLOWED_ORIGINS || '').split(',').map((s) => s.trim()).filter(Boolean);
-  const defaults = ['https://galenite.ru', 'https://www.galenite.ru', 'https://galenite.ilyasch2020.workers.dev'];
+  const defaults = ['https://galenite.ru', 'https://www.galenite.ru'];
   const allowed = [...new Set([...configured, ...defaults])];
 
   if (!origin) return {};

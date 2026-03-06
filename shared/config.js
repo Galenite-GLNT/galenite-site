@@ -1,10 +1,12 @@
-const DEFAULT_API_BASE_URL = 'https://galenite.ilyasch2020.workers.dev';
+const DEFAULT_API_BASE_URL = '';
 
 function normalizeBase(base) {
-  return String(base || '').trim().replace(/\/$/, '');
+  const value = String(base || '').trim();
+  if (!value || value === '/') return '';
+  return value.replace(/\/$/, '');
 }
 
-const configuredBase = normalizeBase(window.API_BASE_URL || DEFAULT_API_BASE_URL);
+const configuredBase = normalizeBase(window.API_BASE_URL);
 export const API_BASE = configuredBase || DEFAULT_API_BASE_URL;
 
 function withSessionId(path) {
@@ -19,7 +21,8 @@ function withSessionId(path) {
 
 export function apiUrl(path) {
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-  return `${API_BASE}${withSessionId(normalizedPath)}`;
+  const resolvedPath = withSessionId(normalizedPath);
+  return API_BASE ? `${API_BASE}${resolvedPath}` : resolvedPath;
 }
 
 export async function apiFetch(path, options = {}) {
