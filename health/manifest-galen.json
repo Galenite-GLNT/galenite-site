@@ -1,0 +1,20 @@
+{
+  "name": "Galen Chat",
+  "short_name": "Galen",
+  "start_url": "/galen_chat/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "icon-galen-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-galen-180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
