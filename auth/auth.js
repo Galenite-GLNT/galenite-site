@@ -1,9 +1,14 @@
 import { getQueryParam } from '/shared/utils.js';
+import { apiFetch } from '/shared/config.js';
 
 const widget = document.getElementById('telegramWidget');
 const hint = document.getElementById('hint');
 const TELEGRAM_BOT_USERNAME = 'glnt_auth_bot';
-const API_BASE_URL = String(window.API_BASE_URL || 'https://galenite.ilyasch2020.workers.dev').replace(/\/$/, '');
+
+const ENDPOINTS = {
+  telegramLogin: '/api/auth/telegram',
+  me: '/api/auth/me',
+};
 
 requestAnimationFrame(() => {
   document.documentElement.classList.add('loaded');
@@ -11,11 +16,6 @@ requestAnimationFrame(() => {
 
 function setHint(text = '') {
   if (hint) hint.textContent = text;
-}
-
-function authUrl(path) {
-  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-  return `${API_BASE_URL}${normalizedPath}`;
 }
 
 function renderWidget() {
@@ -39,18 +39,14 @@ function redirectToTarget() {
 
 window.onTelegramAuth = async function onTelegramAuth(user) {
   try {
-    const response = await fetch(authUrl('/api/auth/telegram'), {
+    const response = await apiFetch(ENDPOINTS.telegramLogin, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
       body: JSON.stringify(user),
     });
 
     if (!response.ok) {
       console.error('Telegram login failed', response.status);
-      setHint('Не удалось авторизоваться через Telegram.');
+      setHint(`Не удалось авторизоваться через Telegram (${response.status}).`);
       return;
     }
 
@@ -65,9 +61,7 @@ async function init() {
   renderWidget();
 
   try {
-    const meResponse = await fetch(authUrl('/api/auth/me'), {
-      credentials: 'include',
-    });
+    const meResponse = await apiFetch(ENDPOINTS.me, { method: 'GET' });
     if (meResponse.ok) {
       redirectToTarget();
     }
