@@ -135,6 +135,11 @@ function normalizeOffProduct(p) {
   };
 }
 
+function getSessionIdFromRequest(request, url) {
+  const cookies = parseCookies(request.headers.get('Cookie') || '');
+  return cookies.glnt_session || url.searchParams.get('session_id') || '';
+}
+
 async function handleFoodSearch(url, env) {
   const q = url.searchParams.get('q')?.trim();
   if (!q) return json({ items: [] });
@@ -177,22 +182,22 @@ export default {
       };
       const { sessionId, ttl } = await createSession(env, user);
       const secure = url.protocol === 'https:';
-      return json({ ok: true, user }, 200, {
+      return json({ ok: true, user, session_id: sessionId }, 200, {
         ...corsHeaders,
         'Set-Cookie': setCookie('glnt_session', sessionId, { maxAge: ttl, secure }),
       });
     }
 
     if (url.pathname === '/api/auth/me' && request.method === 'GET') {
-      const cookies = parseCookies(request.headers.get('Cookie') || '');
-      const session = await getSession(env, cookies.glnt_session);
+      const sessionId = getSessionIdFromRequest(request, url);
+      const session = await getSession(env, sessionId);
       if (!session) return json({ error: 'Unauthorized' }, 401, corsHeaders);
       return json({ user: session.user }, 200, corsHeaders);
     }
 
     if (url.pathname === '/api/auth/logout' && request.method === 'POST') {
-      const cookies = parseCookies(request.headers.get('Cookie') || '');
-      await deleteSession(env, cookies.glnt_session);
+      const sessionId = getSessionIdFromRequest(request, url);
+      await deleteSession(env, sessionId);
       const secure = url.protocol === 'https:';
       return json({ ok: true }, 200, {
         ...corsHeaders,

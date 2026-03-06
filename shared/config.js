@@ -7,9 +7,19 @@ function normalizeBase(base) {
 const configuredBase = normalizeBase(window.API_BASE_URL || DEFAULT_API_BASE_URL);
 export const API_BASE = configuredBase || DEFAULT_API_BASE_URL;
 
+function withSessionId(path) {
+  const sid = localStorage.getItem('glnt_session_id');
+  if (!sid) return path;
+  const [pathname, query = ''] = path.split('?');
+  if (!pathname.startsWith('/api/auth/')) return path;
+  const params = new URLSearchParams(query);
+  if (!params.has('session_id')) params.set('session_id', sid);
+  return `${pathname}?${params.toString()}`;
+}
+
 export function apiUrl(path) {
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-  return `${API_BASE}${normalizedPath}`;
+  return `${API_BASE}${withSessionId(normalizedPath)}`;
 }
 
 export async function apiFetch(path, options = {}) {

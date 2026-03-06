@@ -3,6 +3,15 @@ import assert from 'node:assert/strict';
 import worker, { parseCookies, setCookie, verifyTelegramLogin } from '../worker/index.js';
 import crypto from 'node:crypto';
 
+function makeHash(payload, botToken) {
+  const dataCheckString = Object.entries(payload)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([k, v]) => `${k}=${v}`)
+    .join('\n');
+  const secret = crypto.createHash('sha256').update(botToken).digest();
+  return crypto.createHmac('sha256', secret).update(dataCheckString).digest('hex');
+}
+
 test('cookie helpers', () => {
   const parsed = parseCookies('a=1; glnt_session=abc123');
   assert.equal(parsed.a, '1');
@@ -20,13 +29,7 @@ test('telegram verification works', async () => {
     username: 'ada',
     auth_date: String(Math.floor(Date.now() / 1000)),
   };
-  const dataCheckString = Object.entries(payload)
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([k, v]) => `${k}=${v}`)
-    .join('\n');
-
-  const secret = crypto.createHash('sha256').update(botToken).digest();
-  const hash = crypto.createHmac('sha256', secret).update(dataCheckString).digest('hex');
+  const hash = makeHash(payload, botToken);
   assert.equal(await verifyTelegramLogin({ ...payload, hash }, botToken, 86400), true);
   assert.equal(await verifyTelegramLogin({ ...payload, hash: 'bad' }, botToken, 86400), false);
 });
@@ -46,4 +49,33 @@ test('cors allows galenite.ru by default', async () => {
   const res = await worker.fetch(req, { TELEGRAM_BOT_USERNAME: 'glnt_auth_bot' });
   assert.equal(res.headers.get('Access-Control-Allow-Origin'), 'https://galenite.ru');
   assert.equal(res.headers.get('Access-Control-Allow-Credentials'), 'true');
+});
+
+test('auth/me accepts session_id query fallback', async () => {
+  const botToken = '123:abc';
+  const authPayload = {
+    id: '777',
+    first_name: 'Test',
+    username: 'tester',
+    auth_date: String(Math.floor(Date.now() / 1000)),
+  };
+  const hash = makeHash(authPayload, botToken);
+
+  const loginRes = await worker.fetch(new Request('https://api.example.com/api/auth/telegram', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Origin: 'https://galenite.ru' },
+    body: JSON.stringify({ ...authPayload, hash }),
+  }), { TELEGRAM_BOT_TOKEN: botToken, TELEGRAM_BOT_USERNAME: 'glnt_auth_bot' });
+
+  assert.equal(loginRes.status, 200);
+  const loginBody = await loginRes.json();
+  assert.ok(loginBody.session_id);
+
+  const meRes = await worker.fetch(new Request(`https://api.example.com/api/auth/me?session_id=${encodeURIComponent(loginBody.session_id)}`, {
+    headers: { Origin: 'https://galenite.ru' },
+  }), { TELEGRAM_BOT_TOKEN: botToken, TELEGRAM_BOT_USERNAME: 'glnt_auth_bot' });
+
+  assert.equal(meRes.status, 200);
+  const meBody = await meRes.json();
+  assert.equal(meBody.user.telegram_user_id, '777');
 });

@@ -1,4 +1,4 @@
-import { getQueryParam } from '/shared/utils.js?v=20260306_2';
+import { getQueryParam } from '/shared/utils.js?v=20260306_3';
 
 const widget = document.getElementById('telegramWidget');
 const hint = document.getElementById('hint');
@@ -15,7 +15,12 @@ function setHint(text = '') {
 
 function apiUrl(path) {
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-  return `${API_BASE_URL}${normalizedPath}`;
+  const sid = localStorage.getItem('glnt_session_id');
+  if (!sid || !normalizedPath.startsWith('/api/auth/')) return `${API_BASE_URL}${normalizedPath}`;
+  const [pathname, query = ''] = normalizedPath.split('?');
+  const params = new URLSearchParams(query);
+  params.set('session_id', sid);
+  return `${API_BASE_URL}${pathname}?${params.toString()}`;
 }
 
 function renderWidget() {
@@ -52,6 +57,11 @@ window.onTelegramAuth = async function onTelegramAuth(user) {
       console.error('Telegram login failed', response.status);
       setHint(`Не удалось авторизоваться через Telegram (${response.status}).`);
       return;
+    }
+
+    const payload = await response.json().catch(() => ({}));
+    if (payload.session_id) {
+      localStorage.setItem('glnt_session_id', payload.session_id);
     }
 
     redirectToTarget();

@@ -50,6 +50,7 @@ todayLine.textContent = new Date().toLocaleDateString('ru-RU', { weekday: 'long'
 
 document.getElementById('logoutBtn').onclick = async () => {
   await apiFetch('/api/auth/logout', { method: 'POST' });
+  localStorage.removeItem('glnt_session_id');
   window.location.href = '/auth/';
 };
 document.getElementById('closeModal').onclick = () => modal.classList.add('hidden');

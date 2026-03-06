@@ -28,6 +28,7 @@ export function watchAuth(callback) {
 export async function logout() {
   try {
     await apiFetch('/api/auth/logout', { method: 'POST' });
+    localStorage.removeItem('glnt_session_id');
   } catch {
     // ignore network failures on logout action
   }
