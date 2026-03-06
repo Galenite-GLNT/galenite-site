@@ -1,211 +1,182 @@
-import { loadState, saveState } from "./store.js";
-import { toast } from "./components/toast.js";
+import { apiFetch } from '/shared/config.js';
 
-import { renderDashboard } from "./components/view-dashboard.js";
-import { renderFood } from "./components/view-food.js";
-import { renderWater } from "./components/view-water.js";
-import { renderSleep } from "./components/view-sleep.js";
-import { renderSettings } from "./components/view-settings.js";
+const goals = { calories: 2200, water: 2500, sleep: 8 };
+const cards = document.getElementById('cards');
+const statusLine = document.getElementById('statusLine');
+const todayLine = document.getElementById('todayLine');
+const coach = document.getElementById('coach');
+const modal = document.getElementById('modal');
+const modalContent = document.getElementById('modalContent');
 
-const API_BASE = (window.GLNT_API_BASE || "https://fatsecret.ilyasch2020.workers.dev").replace(/\/$/,"");
+const LOGS_KEY = 'glnt.health.logs.v1';
 
-const ICONS = {
-  menu: "./assets/icons/menu.svg",
-  dashboard: "./assets/icons/dashboard.svg",
-  food: "./assets/icons/food.svg",
-  water: "./assets/icons/water.svg",
-  sleep: "./assets/icons/sleep.svg",
-  settings: "./assets/icons/settings.svg",
-  notes: "./assets/icons/notes.svg",
-  calories: "./assets/icons/calories.svg",
-  protein: "./assets/icons/protein.svg",
-  fat: "./assets/icons/fat.svg",
-  carbs: "./assets/icons/carbs.svg",
+function loadLogs() {
+  try {
+    return JSON.parse(localStorage.getItem(LOGS_KEY) || '{"water":[],"sleep":[],"weight":[],"calories":[]}');
+  } catch {
+    return { water: [], sleep: [], weight: [], calories: [] };
+  }
+}
+
+function saveLogs(logs) {
+  localStorage.setItem(LOGS_KEY, JSON.stringify(logs));
+}
+
+function todayIso() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function sameDay(iso) {
+  return String(iso || '').slice(0, 10) === todayIso();
+}
+
+function computeSummary(logs) {
+  const calories = logs.calories.filter((x) => sameDay(x.datetime)).reduce((acc, x) => acc + Number(x.kcal || 0), 0);
+  const water = logs.water.filter((x) => sameDay(x.datetime)).reduce((acc, x) => acc + Number(x.ml || 0), 0);
+  const sleepToday = logs.sleep.filter((x) => sameDay(x.datetime)).at(-1);
+  const sleepTrend = logs.sleep.slice(-7).map((x) => Number((Number(x.minutes || 0) / 60).toFixed(1)));
+  const weightTrend = logs.weight.slice(-14).map((x) => Number(x.kg || 0));
+  return {
+    calories,
+    water,
+    sleepHours: Number(((sleepToday?.minutes || 0) / 60).toFixed(1)),
+    sleepTrend,
+    weight: logs.weight.at(-1)?.kg || 0,
+    weightTrend,
+  };
+}
+
+todayLine.textContent = new Date().toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' });
+
+document.getElementById('logoutBtn').onclick = async () => {
+  await apiFetch('/api/auth/logout', { method: 'POST' });
+  window.location.href = '/auth/';
 };
+document.getElementById('closeModal').onclick = () => modal.classList.add('hidden');
 
-const ROUTES = [
-  { id:"dashboard", label:"Dashboard", icon: ICONS.dashboard, mobile:false },
-  { id:"food", label:"Еда", icon: ICONS.food, mobile:true },
-  { id:"sleep", label:"Сон", icon: ICONS.sleep, mobile:true },
-  { id:"water", label:"Вода", icon: ICONS.water, mobile:true },
-  { id:"settings", label:"Настройки", icon: ICONS.settings, mobile:false },
-];
-
-const sidebar = document.getElementById("sidebar");
-const main = document.getElementById("main");
-const title = document.getElementById("pageTitle");
-const subtitle = document.getElementById("pageSub");
-const hotbar = document.getElementById("hotbar");
-const btnMenu = document.getElementById("btnMenu");
-
-let state = loadState();
-let route = getInitialRoute();
-
-function setRoute(id){
-  route = id;
-  history.replaceState(null, "", `#${id}`);
-  window.addEventListener("glnt:food:changed", ()=>{
-  const sum = state.nutrition.entries.reduce((acc,e)=>{
-    acc.kcal += Number(e.kcal)||0;
-    acc.protein += Number(e.protein)||0;
-    acc.fat += Number(e.fat)||0;
-    acc.carbs += Number(e.carbs)||0;
-    return acc;
-  }, {kcal:0, protein:0, fat:0, carbs:0});
-  state.nutrition.kcal = sum.kcal;
-  state.nutrition.protein = sum.protein;
-  state.nutrition.fat = sum.fat;
-  state.nutrition.carbs = sum.carbs;
-  onUpdate(state);
-});
-
-render();
+function ring(percent, text) {
+  return `<div class="ring" style="--p:${Math.min(100, percent)}%"><span>${text}</span></div>`;
 }
 
-function onUpdate(next){
-  state = next;
-  saveState(state);
-  renderContentOnly();
+function bars(data) {
+  const list = data.length ? data : [5, 6, 7, 6, 8, 7, 7];
+  const max = Math.max(1, ...list);
+  return `<div class="bars">${list.map((v) => `<div class="bar" style="height:${(v / max) * 100}%"></div>`).join('')}</div>`;
 }
 
-function render(){
-  renderSidebar();
-  renderTopbar();
-  renderContentOnly();
-  renderHotbar();
+function sparkline(data) {
+  if (!data.length) return '<div class="muted">Добавьте вес</div>';
+  const max = Math.max(...data);
+  const min = Math.min(...data);
+  const points = data.map((v, i) => `${(i / (data.length - 1 || 1)) * 100},${50 - ((v - min) / (max - min || 1)) * 40}`).join(' ');
+  return `<svg class="spark" viewBox="0 0 100 50"><polyline fill="none" stroke="#111827" stroke-width="2" points="${points}"/></svg>`;
+}
 
-  if(window.innerWidth <= 760){
-    sidebar.classList.remove("is-open");
+async function searchFood(query) {
+  const response = await apiFetch(`/api/food/search?q=${encodeURIComponent(query)}`);
+  if (!response.ok) return [];
+  const data = await response.json();
+  return data.items || [];
+}
+
+function openModal(type, logs) {
+  modal.classList.remove('hidden');
+
+  if (type === 'water') {
+    modalContent.innerHTML = `<h2>Вода</h2><input id='waterMl' type='number' placeholder='мл'><button class='primary' id='saveWater'>Добавить</button>`;
+    document.getElementById('saveWater').onclick = () => {
+      logs.water.push({ datetime: new Date().toISOString(), ml: Number(document.getElementById('waterMl').value || 0) });
+      saveLogs(logs);
+      modal.classList.add('hidden');
+      refresh();
+    };
   }
-}
 
-function renderContentOnly(){
-  main.innerHTML = "";
-  main.appendChild(getView(route));
-  setActiveStates();
-}
+  if (type === 'sleep') {
+    modalContent.innerHTML = `<h2>Сон</h2><input id='sleepHours' type='number' step='0.1' placeholder='часы'><button class='primary' id='saveSleep'>Добавить</button>`;
+    document.getElementById('saveSleep').onclick = () => {
+      logs.sleep.push({ datetime: new Date().toISOString(), minutes: Number(document.getElementById('sleepHours').value || 0) * 60 });
+      saveLogs(logs);
+      modal.classList.add('hidden');
+      refresh();
+    };
+  }
 
-function renderSidebar(){
-  const nav = sidebar.querySelector(".nav");
-  nav.innerHTML = "";
-  for(const r of ROUTES){
-    const item = document.createElement("a");
-    item.href = `#${r.id}`;
-    item.className = "nav__item";
-    item.innerHTML = `
-      <span class="nav__icon"><img src="${r.icon}" alt=""></span>
-      <span>${r.label}</span>
+  if (type === 'weight') {
+    modalContent.innerHTML = `<h2>Вес</h2><input id='weightKg' type='number' step='0.1' placeholder='кг'><button class='primary' id='saveWeight'>Добавить</button>`;
+    document.getElementById('saveWeight').onclick = () => {
+      logs.weight.push({ datetime: new Date().toISOString(), kg: Number(document.getElementById('weightKg').value || 0) });
+      saveLogs(logs);
+      modal.classList.add('hidden');
+      refresh();
+    };
+  }
+
+  if (type === 'calories') {
+    modalContent.innerHTML = `
+      <h2>Калории</h2>
+      <input id='foodQuery' placeholder='например, apple'>
+      <button class='primary' id='findFood'>Искать в OpenFoodFacts</button>
+      <select id='foodList'></select>
+      <input id='grams' type='number' value='100' placeholder='граммы'>
+      <button class='primary' id='saveFood'>Добавить</button>
     `;
-    item.addEventListener("click", (e)=>{
-      e.preventDefault();
-      setRoute(r.id);
-    });
-    nav.appendChild(item);
+
+    let items = [];
+    document.getElementById('findFood').onclick = async () => {
+      items = await searchFood(document.getElementById('foodQuery').value || 'apple');
+      const list = document.getElementById('foodList');
+      list.innerHTML = items.map((item, idx) => `<option value="${idx}">${item.name} (${item.calories_100g} ккал/100г)</option>`).join('');
+    };
+
+    document.getElementById('saveFood').onclick = () => {
+      const idx = Number(document.getElementById('foodList').value || 0);
+      const item = items[idx];
+      if (!item) return;
+      const grams = Number(document.getElementById('grams').value || 100);
+      logs.calories.push({
+        datetime: new Date().toISOString(),
+        name: item.name,
+        grams,
+        kcal: (Number(item.calories_100g || 0) * grams) / 100,
+      });
+      saveLogs(logs);
+      modal.classList.add('hidden');
+      refresh();
+    };
   }
 }
 
-function renderTopbar(){
-  const r = ROUTES.find(x=>x.id===route) || ROUTES[0];
-  title.textContent = r.label;
-  subtitle.textContent = state.day;
-
-  btnMenu.onclick = ()=> sidebar.classList.toggle("is-open");
-
-  document.getElementById("btnExport").onclick = ()=>{
-    const blob = new Blob([JSON.stringify(state, null, 2)], { type:"application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `glnt-health-${state.day}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    toast("ok","Экспорт","Скачал JSON со стейтом.");
-  };
-
-  document.getElementById("btnReset").onclick = ()=>{
-    localStorage.removeItem("glnt.health.v4");
-    state = loadState();
-    toast("warn","Сброс","Очистил локальные данные.");
-    window.addEventListener("glnt:food:changed", ()=>{
-  const sum = state.nutrition.entries.reduce((acc,e)=>{
-    acc.kcal += Number(e.kcal)||0;
-    acc.protein += Number(e.protein)||0;
-    acc.fat += Number(e.fat)||0;
-    acc.carbs += Number(e.carbs)||0;
-    return acc;
-  }, {kcal:0, protein:0, fat:0, carbs:0});
-  state.nutrition.kcal = sum.kcal;
-  state.nutrition.protein = sum.protein;
-  state.nutrition.fat = sum.fat;
-  state.nutrition.carbs = sum.carbs;
-  onUpdate(state);
-});
-
-render();
-  };
-}
-
-function renderHotbar(){
-  hotbar.innerHTML = "";
-  const mobileRoutes = ROUTES.filter(r=>r.mobile);
-  for(const r of mobileRoutes){
-    const item = document.createElement("button");
-    item.type = "button";
-    item.className = "hotbar__item";
-    item.innerHTML = `<img src="${r.icon}" alt=""><div>${r.label}</div>`;
-    item.addEventListener("click", ()=>setRoute(r.id));
-    hotbar.appendChild(item);
+async function refresh() {
+  let meResponse;
+  try {
+    meResponse = await apiFetch('/api/auth/me', { method: 'GET' });
+  } catch {
+    window.location.href = '/auth/?return=/health/';
+    return;
   }
-  setActiveStates();
-}
 
-function setActiveStates(){
-  sidebar.querySelectorAll(".nav__item").forEach(a=>{
-    const id = (a.getAttribute("href")||"").replace("#","");
-    a.classList.toggle("is-active", id === route);
+  if (!meResponse.ok) {
+    window.location.href = '/auth/?return=/health/';
+    return;
+  }
+
+  const logs = loadLogs();
+  const summary = computeSummary(logs);
+  statusLine.textContent = `Ты на ${Math.round((summary.water / goals.water) * 100)}% от цели по воде`;
+
+  cards.innerHTML = `
+    <article class='card' data-type='calories'><h3>Calories</h3><div class='metric'>${Math.round(summary.calories)} <span class='muted'>kcal</span></div>${ring((summary.calories / goals.calories) * 100, `${Math.round((summary.calories / goals.calories) * 100)}%`)}</article>
+    <article class='card' data-type='water'><h3>Water</h3><div class='metric'>${Math.round(summary.water)} <span class='muted'>ml</span></div>${ring((summary.water / goals.water) * 100, `${Math.round((summary.water / goals.water) * 100)}%`)}</article>
+    <article class='card' data-type='sleep'><h3>Sleep</h3><div class='metric'>${summary.sleepHours.toFixed(1)} <span class='muted'>hours</span></div>${bars(summary.sleepTrend)}</article>
+    <article class='card' data-type='weight'><h3>Weight</h3><div class='metric'>${summary.weight ? Number(summary.weight).toFixed(1) : '—'} <span class='muted'>kg</span></div>${sparkline(summary.weightTrend)}</article>
+  `;
+
+  cards.querySelectorAll('.card').forEach((el) => {
+    el.onclick = () => openModal(el.dataset.type, logs);
   });
-  const mobileRoutes = ROUTES.filter(r=>r.mobile);
-  hotbar.querySelectorAll(".hotbar__item").forEach((b,i)=>{
-    b.classList.toggle("is-active", mobileRoutes[i]?.id === route);
-  });
+
+  coach.innerHTML = `<h3>AI Coach</h3><p>Скоро будет персональный AI коуч. Пока держи фокус: вода, белок и стабильный сон.</p>`;
 }
 
-function getView(id){
-  switch(id){
-    case "food": return renderFood(state, ICONS, onUpdate, API_BASE);
-    case "water": return renderWater(state, ICONS, onUpdate);
-    case "sleep": return renderSleep(state, ICONS, onUpdate);
-    case "settings": return renderSettings(state, ICONS, onUpdate);
-    default: return renderDashboard(state, ICONS);
-  }
-}
-
-function getInitialRoute(){
-  const hash = (location.hash || "").replace("#","").trim();
-  return ROUTES.some(r=>r.id===hash) ? hash : "dashboard";
-}
-
-window.addEventListener("hashchange", ()=>{
-  const next = getInitialRoute();
-  if(next !== route) setRoute(next);
-});
-window.addEventListener("keydown", (e)=>{
-  if(e.key === "Escape") sidebar.classList.remove("is-open");
-});
-
-window.addEventListener("glnt:food:changed", ()=>{
-  const sum = state.nutrition.entries.reduce((acc,e)=>{
-    acc.kcal += Number(e.kcal)||0;
-    acc.protein += Number(e.protein)||0;
-    acc.fat += Number(e.fat)||0;
-    acc.carbs += Number(e.carbs)||0;
-    return acc;
-  }, {kcal:0, protein:0, fat:0, carbs:0});
-  state.nutrition.kcal = sum.kcal;
-  state.nutrition.protein = sum.protein;
-  state.nutrition.fat = sum.fat;
-  state.nutrition.carbs = sum.carbs;
-  onUpdate(state);
-});
-
-render();
+refresh();

@@ -1,0 +1,8 @@
+name = "galenite-api"
+main = "worker/index.js"
+compatibility_date = "2025-01-01"
+
+# Add this KV binding in Cloudflare dashboard / wrangler if used
+# [[kv_namespaces]]
+# binding = "SESSIONS"
+# id = "<your-kv-namespace-id>"

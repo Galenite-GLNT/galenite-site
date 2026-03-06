@@ -1,60 +1,34 @@
-import {
-  GoogleAuthProvider,
-  onAuthStateChanged,
-  signInWithPopup,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  updateProfile,
-} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+import { apiFetch } from '/shared/config.js';
 
-import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-import { auth, db } from "/shared/firebase.js";
-
-const provider = new GoogleAuthProvider();
+export async function getCurrentUser() {
+  try {
+    const resp = await apiFetch('/api/auth/me');
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    return data.user || null;
+  } catch {
+    return null;
+  }
+}
 
 export function watchAuth(callback) {
-  return onAuthStateChanged(auth, callback);
-}
-
-export async function loginEmail(email, password) {
-  return signInWithEmailAndPassword(auth, email, password);
-}
-
-export async function registerEmail(email, password, displayName = "") {
-  const cred = await createUserWithEmailAndPassword(auth, email, password);
-  if (displayName) await updateProfile(cred.user, { displayName });
-
-  await setDoc(
-    doc(db, "users", cred.user.uid),
-    {
-      displayName: displayName || cred.user.displayName || "User",
-      photoURL: cred.user.photoURL || "",
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-    },
-    { merge: true }
-  );
-
-  return cred;
-}
-
-export async function loginGoogle() {
-  const cred = await signInWithPopup(auth, provider);
-
-  await setDoc(
-    doc(db, "users", cred.user.uid),
-    {
-      displayName: cred.user.displayName || "User",
-      photoURL: cred.user.photoURL || "",
-      updatedAt: serverTimestamp(),
-    },
-    { merge: true }
-  );
-
-  return cred;
+  let active = true;
+  async function tick() {
+    if (!active) return;
+    callback(await getCurrentUser());
+  }
+  tick();
+  const intervalId = setInterval(tick, 15000);
+  return () => {
+    active = false;
+    clearInterval(intervalId);
+  };
 }
 
 export async function logout() {
-  return signOut(auth);
+  try {
+    await apiFetch('/api/auth/logout', { method: 'POST' });
+  } catch {
+    // ignore network failures on logout action
+  }
 }

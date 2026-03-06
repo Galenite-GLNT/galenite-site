@@ -13,8 +13,8 @@ function renderGuest(){
 }
 
 function renderUser(user){
-  const name = (user.displayName || "User").trim();
-  const photo = user.photoURL || "";
+  const name = (user.first_name || user.displayName || user.username || "User").trim();
+  const photo = user.photo_url || user.photoURL || "";
   el.innerHTML = `
     <div class="sidebar-user">
       <div class="avatar">
@@ -26,7 +26,10 @@ function renderUser(user){
       </div>
     </div>
   `;
-  el.querySelector("#logoutBtn").addEventListener("click", async () => { await logout(); });
+  el.querySelector("#logoutBtn").addEventListener("click", async () => {
+    await logout();
+    goAuth();
+  });
 }
 
 watchAuth((user) => {
