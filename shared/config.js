@@ -13,7 +13,8 @@ function withSessionId(path) {
   const sid = localStorage.getItem('glnt_session_id');
   if (!sid) return path;
   const [pathname, query = ''] = path.split('?');
-  if (!pathname.startsWith('/api/auth/')) return path;
+  const needsSessionFallback = pathname.startsWith('/api/auth/') || pathname.startsWith('/api/health/');
+  if (!needsSessionFallback) return path;
   const params = new URLSearchParams(query);
   if (!params.has('session_id')) params.set('session_id', sid);
   return `${pathname}?${params.toString()}`;
