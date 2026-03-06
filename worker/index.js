@@ -85,7 +85,7 @@ function buildCorsHeaders(origin, env) {
     'Access-Control-Allow-Origin': origin,
     'Access-Control-Allow-Credentials': 'true',
     'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'GET,POST,DELETE,OPTIONS',
+    'Access-Control-Allow-Methods': 'GET,POST,PATCH,DELETE,OPTIONS',
     Vary: 'Origin',
   };
 }
@@ -135,11 +135,6 @@ function normalizeOffProduct(p) {
   };
 }
 
-function getSessionIdFromRequest(request, url) {
-  const cookies = parseCookies(request.headers.get('Cookie') || '');
-  return cookies.glnt_session || url.searchParams.get('session_id') || '';
-}
-
 async function handleFoodSearch(url, env) {
   const q = url.searchParams.get('q')?.trim();
   if (!q) return json({ items: [] });
@@ -151,30 +146,20 @@ async function handleFoodSearch(url, env) {
   return json({ items });
 }
 
-async function ensureHealthSchema(env) {
-  if (!env.DB) return false;
+async function handleFoodBarcode(url, env) {
+  const code = url.searchParams.get('code')?.trim();
+  if (!code) return json({ item: null });
+  const offUrl = `${getApiBase(env)}/api/v2/product/${encodeURIComponent(code)}.json`;
+  const resp = await fetch(offUrl, { headers: { 'User-Agent': 'galenite-worker/1.0' } });
+  if (!resp.ok) return json({ item: null });
+  const data = await resp.json();
+  if (data.status !== 1 || !data.product) return json({ item: null });
+  return json({ item: normalizeOffProduct(data.product) });
+}
 
-  await env.DB.exec(`
-    CREATE TABLE IF NOT EXISTS health_goals (
-      user_id TEXT PRIMARY KEY,
-      calories REAL NOT NULL DEFAULT 2200,
-      water REAL NOT NULL DEFAULT 2500,
-      sleep REAL NOT NULL DEFAULT 8,
-      updated_at TEXT NOT NULL
-    );
-
-    CREATE TABLE IF NOT EXISTS health_logs (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id TEXT NOT NULL,
-      type TEXT NOT NULL,
-      value REAL NOT NULL DEFAULT 0,
-      meta TEXT NOT NULL DEFAULT '{}',
-      created_at TEXT NOT NULL
-    );
-
-    CREATE INDEX IF NOT EXISTS idx_health_logs_user_type_date ON health_logs(user_id, type, created_at DESC);
-  `);
-  return true;
+function getSessionIdFromRequest(request, url) {
+  const cookies = parseCookies(request.headers.get('Cookie') || '');
+  return cookies.glnt_session || url.searchParams.get('session_id') || '';
 }
 
 function todayIso() {
@@ -193,67 +178,226 @@ function toLogDTO(row) {
   };
 }
 
-async function loadUserHealthState(env, userId) {
-  const hasDb = await ensureHealthSchema(env);
-  if (!hasDb) return { goals: { calories: 2200, water: 2500, sleep: 8 }, logs: { water: [], sleep: [], weight: [], calories: [] } };
+async function ensureHealthSchema(env) {
+  if (!env.DB) return false;
+  await env.DB.exec(`
+    CREATE TABLE IF NOT EXISTS health_goals (
+      user_id TEXT PRIMARY KEY,
+      calories REAL NOT NULL DEFAULT 2200,
+      protein REAL NOT NULL DEFAULT 140,
+      fat REAL NOT NULL DEFAULT 70,
+      carbs REAL NOT NULL DEFAULT 240,
+      water REAL NOT NULL DEFAULT 2500,
+      sleep REAL NOT NULL DEFAULT 8,
+      weight REAL NOT NULL DEFAULT 70,
+      updated_at TEXT NOT NULL
+    );
 
-  const goalsRow = await env.DB.prepare('SELECT calories, water, sleep FROM health_goals WHERE user_id = ?').bind(userId).first();
-  const goals = goalsRow
-    ? { calories: Number(goalsRow.calories), water: Number(goalsRow.water), sleep: Number(goalsRow.sleep) }
-    : { calories: 2200, water: 2500, sleep: 8 };
+    CREATE TABLE IF NOT EXISTS health_logs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id TEXT NOT NULL,
+      type TEXT NOT NULL,
+      value REAL NOT NULL DEFAULT 0,
+      meta TEXT NOT NULL DEFAULT '{}',
+      created_at TEXT NOT NULL
+    );
 
-  const today = `${todayIso()}%`;
-  const logRows = await env.DB.prepare('SELECT id, type, value, meta, created_at FROM health_logs WHERE user_id = ? AND created_at LIKE ? ORDER BY created_at ASC').bind(userId, today).all();
-  const logs = { water: [], sleep: [], weight: [], calories: [] };
+    CREATE INDEX IF NOT EXISTS idx_health_logs_user_type_date ON health_logs(user_id, type, created_at DESC);
 
-  for (const row of (logRows.results || [])) {
-    const item = toLogDTO(row);
-    if (item.type === 'water') logs.water.push({ id: item.id, datetime: item.datetime, ml: item.value });
-    if (item.type === 'sleep') logs.sleep.push({ id: item.id, datetime: item.datetime, minutes: item.value });
-    if (item.type === 'weight') logs.weight.push({ id: item.id, datetime: item.datetime, kg: item.value });
-    if (item.type === 'calories') logs.calories.push({ id: item.id, datetime: item.datetime, ...item, kcal: item.value });
-  }
+    CREATE TABLE IF NOT EXISTS health_profile (
+      user_id TEXT PRIMARY KEY,
+      display_name TEXT NOT NULL DEFAULT '',
+      gender TEXT NOT NULL DEFAULT '',
+      age INTEGER NOT NULL DEFAULT 0,
+      height_cm REAL NOT NULL DEFAULT 0,
+      activity_level TEXT NOT NULL DEFAULT '',
+      current_weight REAL NOT NULL DEFAULT 0,
+      target_weight REAL NOT NULL DEFAULT 0,
+      updated_at TEXT NOT NULL
+    );
 
-  return { goals, logs };
+    CREATE TABLE IF NOT EXISTS health_food_favorites (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id TEXT NOT NULL,
+      product_key TEXT NOT NULL,
+      payload TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      UNIQUE(user_id, product_key)
+    );
+  `);
+  return true;
 }
 
-async function getRecentLogs(env, userId, type, limit = 10) {
+function goalsDefaults() {
+  return { calories: 2200, protein: 140, fat: 70, carbs: 240, water: 2500, sleep: 8, weight: 70 };
+}
+
+function profileDefaults() {
+  return { display_name: '', gender: '', age: 0, height_cm: 0, activity_level: '', current_weight: 0, target_weight: 0 };
+}
+
+async function getGoals(env, userId) {
+  const row = await env.DB.prepare('SELECT calories, protein, fat, carbs, water, sleep, weight FROM health_goals WHERE user_id=?').bind(userId).first();
+  return row ? {
+    calories: Number(row.calories || 0),
+    protein: Number(row.protein || 0),
+    fat: Number(row.fat || 0),
+    carbs: Number(row.carbs || 0),
+    water: Number(row.water || 0),
+    sleep: Number(row.sleep || 0),
+    weight: Number(row.weight || 0),
+  } : goalsDefaults();
+}
+
+async function getProfile(env, userId) {
+  const row = await env.DB.prepare('SELECT display_name, gender, age, height_cm, activity_level, current_weight, target_weight FROM health_profile WHERE user_id=?').bind(userId).first();
+  return row ? {
+    display_name: row.display_name || '',
+    gender: row.gender || '',
+    age: Number(row.age || 0),
+    height_cm: Number(row.height_cm || 0),
+    activity_level: row.activity_level || '',
+    current_weight: Number(row.current_weight || 0),
+    target_weight: Number(row.target_weight || 0),
+  } : profileDefaults();
+}
+
+async function getFavorites(env, userId) {
+  const rows = await env.DB.prepare('SELECT payload FROM health_food_favorites WHERE user_id=? ORDER BY created_at DESC LIMIT 30').bind(userId).all();
+  return (rows.results || []).map((x) => {
+    try { return JSON.parse(x.payload || '{}'); } catch { return {}; }
+  }).filter((x) => x.name);
+}
+
+async function getRecentFoods(env, userId) {
+  const rows = await env.DB.prepare(`
+    SELECT meta, MAX(created_at) as created_at
+    FROM health_logs
+    WHERE user_id=? AND type='calories'
+    GROUP BY json_extract(meta, '$.name'), json_extract(meta, '$.brand')
+    ORDER BY created_at DESC
+    LIMIT 12
+  `).bind(userId).all();
+
+  return (rows.results || []).map((x) => {
+    try {
+      const meta = JSON.parse(x.meta || '{}');
+      return {
+        name: meta.name || '',
+        brand: meta.brand || '',
+        image: meta.image || '',
+        calories_100g: Number(meta.calories_100g || 0),
+        protein_100g: Number(meta.protein_100g || 0),
+        fat_100g: Number(meta.fat_100g || 0),
+        carbs_100g: Number(meta.carbs_100g || 0),
+        barcode: meta.barcode || '',
+      };
+    } catch {
+      return null;
+    }
+  }).filter(Boolean);
+}
+
+async function getLogsByDate(env, userId, dateIso = todayIso()) {
+  const rows = await env.DB.prepare('SELECT id, type, value, meta, created_at FROM health_logs WHERE user_id=? AND created_at LIKE ? ORDER BY created_at ASC').bind(userId, `${dateIso}%`).all();
+  const logs = { water: [], sleep: [], weight: [], calories: [] };
+
+  for (const row of (rows.results || [])) {
+    const dto = toLogDTO(row);
+    if (dto.type === 'water') logs.water.push({ id: dto.id, datetime: dto.datetime, ml: dto.value, ...dto });
+    if (dto.type === 'sleep') logs.sleep.push({ id: dto.id, datetime: dto.datetime, start_time: dto.start_time || '', end_time: dto.end_time || '', minutes: dto.minutes || dto.value });
+    if (dto.type === 'weight') logs.weight.push({ id: dto.id, datetime: dto.datetime, kg: dto.value });
+    if (dto.type === 'calories') logs.calories.push({ id: dto.id, datetime: dto.datetime, ...dto, kcal: dto.kcal || dto.value });
+  }
+  return logs;
+}
+
+async function loadUserHealthState(env, userId, dateIso = todayIso()) {
   const hasDb = await ensureHealthSchema(env);
-  if (!hasDb) return [];
-  const rows = await env.DB.prepare('SELECT id, type, value, meta, created_at FROM health_logs WHERE user_id = ? AND type = ? ORDER BY created_at DESC LIMIT ?').bind(userId, type, limit).all();
-  return (rows.results || []).map(toLogDTO);
+  if (!hasDb) return { goals: goalsDefaults(), profile: profileDefaults(), logs: { water: [], sleep: [], weight: [], calories: [] }, favorites: [], recentFoods: [] };
+
+  const [goals, profile, logs, favorites, recentFoods] = await Promise.all([
+    getGoals(env, userId),
+    getProfile(env, userId),
+    getLogsByDate(env, userId, dateIso),
+    getFavorites(env, userId),
+    getRecentFoods(env, userId),
+  ]);
+
+  return { goals, profile, logs, favorites, recentFoods, date: dateIso };
+}
+
+function prepareLog(payload) {
+  const type = String(payload.type || '');
+  if (!['water', 'sleep', 'weight', 'calories'].includes(type)) return { error: 'Unsupported log type' };
+
+  let value = 0;
+  let meta = {};
+
+  if (type === 'water') value = Number(payload.ml || 0);
+  if (type === 'sleep') {
+    value = Number(payload.minutes || 0);
+    meta = { start_time: payload.start_time || '', end_time: payload.end_time || '', minutes: value };
+  }
+  if (type === 'weight') value = Number(payload.kg || 0);
+  if (type === 'calories') {
+    value = Number(payload.kcal || 0);
+    meta = {
+      name: String(payload.name || ''),
+      brand: String(payload.brand || ''),
+      image: String(payload.image || ''),
+      barcode: String(payload.barcode || ''),
+      meal: String(payload.meal || 'snacks'),
+      grams: Number(payload.grams || 0),
+      calories_100g: Number(payload.calories_100g || 0),
+      protein_100g: Number(payload.protein_100g || 0),
+      fat_100g: Number(payload.fat_100g || 0),
+      carbs_100g: Number(payload.carbs_100g || 0),
+      kcal: Number(payload.kcal || 0),
+      protein: Number(payload.protein || 0),
+      fat: Number(payload.fat || 0),
+      carbs: Number(payload.carbs || 0),
+    };
+  }
+
+  if (!Number.isFinite(value) || value <= 0) return { error: 'Invalid value' };
+  return { type, value, meta };
 }
 
 async function insertLog(env, userId, payload) {
   const hasDb = await ensureHealthSchema(env);
   if (!hasDb) return { error: 'Health DB not configured' };
 
-  const type = String(payload.type || '');
-  if (!['water', 'sleep', 'weight', 'calories'].includes(type)) return { error: 'Unsupported log type' };
-
-  const createdAt = new Date().toISOString();
-  let value = 0;
-  let meta = {};
-
-  if (type === 'water') value = Number(payload.ml || 0);
-  if (type === 'sleep') value = Number(payload.minutes || 0);
-  if (type === 'weight') value = Number(payload.kg || 0);
-  if (type === 'calories') {
-    value = Number(payload.kcal || 0);
-    meta = {
-      name: String(payload.name || ''),
-      grams: Number(payload.grams || 0),
-      calories_100g: Number(payload.calories_100g || 0),
-    };
-  }
-
-  if (!Number.isFinite(value) || value <= 0) return { error: 'Invalid value' };
+  const prepared = prepareLog(payload);
+  if (prepared.error) return prepared;
+  const dt = payload.date ? `${payload.date}T${new Date().toISOString().slice(11)}` : new Date().toISOString();
 
   const result = await env.DB.prepare('INSERT INTO health_logs (user_id, type, value, meta, created_at) VALUES (?, ?, ?, ?, ?)')
-    .bind(userId, type, value, JSON.stringify(meta), createdAt)
+    .bind(userId, prepared.type, prepared.value, JSON.stringify(prepared.meta), dt)
+    .run();
+  return { ok: true, id: Number(result.meta?.last_row_id || 0) };
+}
+
+async function updateLog(env, userId, id, payload) {
+  const hasDb = await ensureHealthSchema(env);
+  if (!hasDb) return { error: 'Health DB not configured' };
+  const row = await env.DB.prepare('SELECT id FROM health_logs WHERE id=? AND user_id=?').bind(id, userId).first();
+  if (!row) return { error: 'Log not found' };
+
+  const prepared = prepareLog(payload);
+  if (prepared.error) return prepared;
+  const dt = payload.date ? `${payload.date}T${new Date().toISOString().slice(11)}` : new Date().toISOString();
+
+  await env.DB.prepare('UPDATE health_logs SET type=?, value=?, meta=?, created_at=? WHERE id=? AND user_id=?')
+    .bind(prepared.type, prepared.value, JSON.stringify(prepared.meta), dt, id, userId)
     .run();
 
-  return { ok: true, id: Number(result.meta?.last_row_id || 0) };
+  return { ok: true };
+}
+
+async function deleteLogById(env, userId, id) {
+  await env.DB.prepare('DELETE FROM health_logs WHERE id=? AND user_id=?').bind(id, userId).run();
+  return { ok: true };
 }
 
 async function callAiCoach(env, payload) {
@@ -273,11 +417,7 @@ async function callAiCoach(env, payload) {
     body: JSON.stringify(payload),
   });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    return { ok: false, error: `AI upstream error: ${response.status}`, details: errorText.slice(0, 500) };
-  }
-
+  if (!response.ok) return { ok: false, error: `AI upstream error: ${response.status}` };
   const data = await response.json();
   return {
     ok: true,
@@ -289,7 +429,6 @@ async function callAiCoach(env, payload) {
 
 async function readTelegramPayload(request, url) {
   if (request.method === 'GET') return Object.fromEntries(url.searchParams.entries());
-
   const contentType = (request.headers.get('content-type') || '').toLowerCase();
 
   if (contentType.includes('application/json')) {
@@ -309,7 +448,7 @@ async function readTelegramPayload(request, url) {
       for (const [k, v] of form.entries()) payload[k] = String(v);
       if (Object.keys(payload).length) return payload;
     } catch {
-      // fallback below
+      // no-op
     }
   }
 
@@ -343,6 +482,12 @@ export default {
       return res;
     }
 
+    if (url.pathname === '/api/food/barcode' && request.method === 'GET') {
+      const res = await handleFoodBarcode(url, env);
+      Object.entries(corsHeaders).forEach(([k, v]) => res.headers.set(k, v));
+      return res;
+    }
+
     if (url.pathname === '/api/auth/telegram' && (request.method === 'POST' || request.method === 'GET')) {
       const payload = await readTelegramPayload(request, url);
       if (!payload || !payload.id || !payload.auth_date || !payload.hash) return json({ error: 'Bad auth payload format' }, 400, corsHeaders);
@@ -359,7 +504,10 @@ export default {
       };
       const { sessionId, ttl } = await createSession(env, user);
       const secure = url.protocol === 'https:';
-      return json({ ok: true, user, session_id: sessionId }, 200, { ...corsHeaders, 'Set-Cookie': setCookie('glnt_session', sessionId, { maxAge: ttl, secure }) });
+      return json({ ok: true, user, session_id: sessionId }, 200, {
+        ...corsHeaders,
+        'Set-Cookie': setCookie('glnt_session', sessionId, { maxAge: ttl, secure }),
+      });
     }
 
     if (url.pathname === '/api/auth/me' && request.method === 'GET') {
@@ -373,7 +521,10 @@ export default {
       const sessionId = getSessionIdFromRequest(request, url);
       await deleteSession(env, sessionId);
       const secure = url.protocol === 'https:';
-      return json({ ok: true }, 200, { ...corsHeaders, 'Set-Cookie': clearCookie('glnt_session', { secure }) });
+      return json({ ok: true }, 200, {
+        ...corsHeaders,
+        'Set-Cookie': clearCookie('glnt_session', { secure }),
+      });
     }
 
     if (url.pathname.startsWith('/api/health/')) {
@@ -383,32 +534,77 @@ export default {
       const userId = session.user.telegram_user_id;
 
       if (url.pathname === '/api/health/state' && request.method === 'GET') {
-        const state = await loadUserHealthState(env, userId);
-        return json({ ok: true, ...state }, 200, corsHeaders);
+        const date = url.searchParams.get('date') || todayIso();
+        const data = await loadUserHealthState(env, userId, date);
+        return json({ ok: true, ...data }, 200, corsHeaders);
+      }
+
+      if (url.pathname === '/api/health/profile' && request.method === 'POST') {
+        await ensureHealthSchema(env);
+        const body = await request.json().catch(() => ({}));
+        await env.DB.prepare(`
+          INSERT INTO health_profile (user_id, display_name, gender, age, height_cm, activity_level, current_weight, target_weight, updated_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+          ON CONFLICT(user_id) DO UPDATE SET
+            display_name=excluded.display_name,
+            gender=excluded.gender,
+            age=excluded.age,
+            height_cm=excluded.height_cm,
+            activity_level=excluded.activity_level,
+            current_weight=excluded.current_weight,
+            target_weight=excluded.target_weight,
+            updated_at=excluded.updated_at
+        `).bind(
+          userId,
+          String(body.display_name || ''),
+          String(body.gender || ''),
+          Number(body.age || 0),
+          Number(body.height_cm || 0),
+          String(body.activity_level || ''),
+          Number(body.current_weight || 0),
+          Number(body.target_weight || 0),
+          new Date().toISOString(),
+        ).run();
+        return json({ ok: true }, 200, corsHeaders);
       }
 
       if (url.pathname === '/api/health/goals' && request.method === 'POST') {
-        if (!(await ensureHealthSchema(env))) return json({ error: 'Health DB not configured' }, 503, corsHeaders);
+        await ensureHealthSchema(env);
         const body = await request.json().catch(() => ({}));
-        const calories = Number(body.calories || 2200);
-        const water = Number(body.water || 2500);
-        const sleep = Number(body.sleep || 8);
-        if (!Number.isFinite(calories) || !Number.isFinite(water) || !Number.isFinite(sleep)) return json({ error: 'Invalid goals' }, 400, corsHeaders);
-
+        const values = { ...goalsDefaults(), ...body };
         await env.DB.prepare(`
-          INSERT INTO health_goals (user_id, calories, water, sleep, updated_at)
-          VALUES (?, ?, ?, ?, ?)
-          ON CONFLICT(user_id) DO UPDATE SET calories=excluded.calories, water=excluded.water, sleep=excluded.sleep, updated_at=excluded.updated_at
-        `).bind(userId, calories, water, sleep, new Date().toISOString()).run();
-
+          INSERT INTO health_goals (user_id, calories, protein, fat, carbs, water, sleep, weight, updated_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+          ON CONFLICT(user_id) DO UPDATE SET
+            calories=excluded.calories,
+            protein=excluded.protein,
+            fat=excluded.fat,
+            carbs=excluded.carbs,
+            water=excluded.water,
+            sleep=excluded.sleep,
+            weight=excluded.weight,
+            updated_at=excluded.updated_at
+        `).bind(
+          userId,
+          Number(values.calories || 0),
+          Number(values.protein || 0),
+          Number(values.fat || 0),
+          Number(values.carbs || 0),
+          Number(values.water || 0),
+          Number(values.sleep || 0),
+          Number(values.weight || 0),
+          new Date().toISOString(),
+        ).run();
         return json({ ok: true }, 200, corsHeaders);
       }
 
       if (url.pathname === '/api/health/logs' && request.method === 'GET') {
         const type = String(url.searchParams.get('type') || 'water');
-        const limit = Math.min(30, Math.max(1, Number(url.searchParams.get('limit') || 10)));
-        const items = await getRecentLogs(env, userId, type, limit);
-        return json({ ok: true, items }, 200, corsHeaders);
+        const limit = Math.min(50, Math.max(1, Number(url.searchParams.get('limit') || 10)));
+        const date = url.searchParams.get('date') || todayIso();
+        const rows = await env.DB.prepare('SELECT id, type, value, meta, created_at FROM health_logs WHERE user_id=? AND type=? AND created_at LIKE ? ORDER BY created_at DESC LIMIT ?')
+          .bind(userId, type, `${date}%`, limit).all();
+        return json({ ok: true, items: (rows.results || []).map(toLogDTO) }, 200, corsHeaders);
       }
 
       if (url.pathname === '/api/health/logs' && request.method === 'POST') {
@@ -418,26 +614,59 @@ export default {
         return json(result, 200, corsHeaders);
       }
 
+      if (url.pathname === '/api/health/logs' && request.method === 'PATCH') {
+        const body = await request.json().catch(() => ({}));
+        const result = await updateLog(env, userId, Number(body.id || 0), body);
+        if (result.error) return json({ error: result.error }, 400, corsHeaders);
+        return json(result, 200, corsHeaders);
+      }
+
+      if (url.pathname === '/api/health/logs' && request.method === 'DELETE') {
+        const id = Number(url.searchParams.get('id') || 0);
+        if (!id) return json({ error: 'id required' }, 400, corsHeaders);
+        const result = await deleteLogById(env, userId, id);
+        return json(result, 200, corsHeaders);
+      }
+
+      if (url.pathname === '/api/health/favorites' && (request.method === 'POST' || request.method === 'DELETE')) {
+        await ensureHealthSchema(env);
+        const body = await request.json().catch(() => ({}));
+        const key = `${String(body.barcode || '').trim()}::${String(body.name || '').trim()}::${String(body.brand || '').trim()}`;
+        if (!String(body.name || '').trim()) return json({ error: 'name required' }, 400, corsHeaders);
+
+        if (request.method === 'POST') {
+          await env.DB.prepare('INSERT OR REPLACE INTO health_food_favorites (user_id, product_key, payload, created_at) VALUES (?, ?, ?, ?)')
+            .bind(userId, key, JSON.stringify(body), new Date().toISOString()).run();
+          return json({ ok: true }, 200, corsHeaders);
+        }
+
+        await env.DB.prepare('DELETE FROM health_food_favorites WHERE user_id=? AND product_key=?').bind(userId, key).run();
+        return json({ ok: true }, 200, corsHeaders);
+      }
+
       if (url.pathname === '/api/health/coach' && request.method === 'POST') {
         const body = await request.json().catch(() => ({}));
         const question = String(body.question || '').trim();
         if (!question) return json({ error: 'Question is required' }, 400, corsHeaders);
 
-        const state = await loadUserHealthState(env, userId);
-        const aiResponse = await callAiCoach(env, {
+        const date = url.searchParams.get('date') || todayIso();
+        const health = await loadUserHealthState(env, userId, date);
+        const ai = await callAiCoach(env, {
           question,
+          date,
           user: {
             telegram_user_id: session.user.telegram_user_id,
             username: session.user.username || '',
             first_name: session.user.first_name || '',
             last_name: session.user.last_name || '',
           },
-          goals: state.goals,
-          logs: state.logs,
+          goals: health.goals,
+          profile: health.profile,
+          logs: health.logs,
         });
 
-        if (!aiResponse.ok) return json({ ok: false, error: aiResponse.error || 'AI unavailable', meta: { details: aiResponse.details || '' } }, 502, corsHeaders);
-        return json({ ok: true, tips: aiResponse.tips, summary: aiResponse.summary, meta: aiResponse.meta }, 200, corsHeaders);
+        if (!ai.ok) return json({ ok: false, error: ai.error || 'AI unavailable', tips: [], summary: '', meta: {} }, 502, corsHeaders);
+        return json({ ok: true, tips: ai.tips, summary: ai.summary, meta: ai.meta }, 200, corsHeaders);
       }
     }
 

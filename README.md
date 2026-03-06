@@ -11,11 +11,17 @@
 - `POST /api/auth/telegram`
 - `GET /api/auth/me`
 - `POST /api/auth/logout`
-- `GET /api/health/state`
+- `GET /api/health/state?date=YYYY-MM-DD`
 - `POST /api/health/goals`
-- `GET /api/health/logs?type=water&limit=8`
+- `POST /api/health/profile`
+- `GET /api/health/logs?type=water&date=YYYY-MM-DD&limit=20`
 - `POST /api/health/logs`
+- `PATCH /api/health/logs`
+- `DELETE /api/health/logs?id=...`
+- `POST /api/health/favorites`
+- `DELETE /api/health/favorites`
 - `POST /api/health/coach`
+- `GET /api/food/barcode?code=...`
 
 ## Cloudflare Worker variables/secrets
 Задаются в **Worker Settings → Variables and Secrets**:

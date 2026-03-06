@@ -178,3 +178,24 @@ test('health/coach proxies to ai worker via backend endpoint', async () => {
     globalThis.fetch = originalFetch;
   }
 });
+
+
+test('barcode endpoint normalizes product response', async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url) => {
+    if (String(url).includes('/api/v2/product/')) {
+      return new Response(JSON.stringify({ status: 1, product: { product_name: 'Milk', brands: 'Brand', nutriments: { 'energy-kcal_100g': 60, proteins_100g: 3, fat_100g: 2, carbohydrates_100g: 5 }, code: '12345' } }), { status: 200 });
+    }
+    return originalFetch(url);
+  };
+
+  try {
+    const res = await worker.fetch(new Request('https://api.example.com/api/food/barcode?code=12345'), {});
+    assert.equal(res.status, 200);
+    const body = await res.json();
+    assert.equal(body.item.name, 'Milk');
+    assert.equal(body.item.calories_100g, 60);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
