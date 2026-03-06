@@ -160,19 +160,18 @@ async function readTelegramPayload(request, url) {
   const contentType = (request.headers.get('content-type') || '').toLowerCase();
 
   if (contentType.includes('application/json')) {
-    return request.json();
-  }
-
-  if (contentType.includes('application/x-www-form-urlencoded') || contentType.includes('multipart/form-data')) {
-    const form = await request.formData();
-    const payload = {};
-    for (const [k, v] of form.entries()) payload[k] = String(v);
-    return payload;
+    const raw = await request.text();
+    if (!raw) return {};
+    return JSON.parse(raw);
   }
 
   const raw = await request.text();
+  if (!raw) return {};
   const params = new URLSearchParams(raw);
-  if ([...params.keys()].length) return Object.fromEntries(params.entries());
+  if ([...params.keys()].length) {
+    return Object.fromEntries(params.entries());
+  }
+
   return {};
 }
 
@@ -194,23 +193,27 @@ export default {
     }
 
     if (url.pathname === '/api/auth/telegram' && (request.method === 'POST' || request.method === 'GET')) {
-      const payload = await readTelegramPayload(request, url);
-      const valid = await verifyTelegramLogin(payload, env.TELEGRAM_BOT_TOKEN, env.TELEGRAM_AUTH_MAX_AGE_SECONDS || '86400');
-      if (!valid) return json({ error: 'Invalid Telegram auth payload' }, 401, corsHeaders);
+      try {
+        const payload = await readTelegramPayload(request, url);
+        const valid = await verifyTelegramLogin(payload, env.TELEGRAM_BOT_TOKEN, env.TELEGRAM_AUTH_MAX_AGE_SECONDS || '86400');
+        if (!valid) return json({ error: 'Invalid Telegram auth payload' }, 401, corsHeaders);
 
-      const user = {
-        telegram_user_id: String(payload.id),
-        username: payload.username || '',
-        first_name: payload.first_name || '',
-        last_name: payload.last_name || '',
-        photo_url: payload.photo_url || '',
-      };
-      const { sessionId, ttl } = await createSession(env, user);
-      const secure = url.protocol === 'https:';
-      return json({ ok: true, user, session_id: sessionId }, 200, {
-        ...corsHeaders,
-        'Set-Cookie': setCookie('glnt_session', sessionId, { maxAge: ttl, secure }),
-      });
+        const user = {
+          telegram_user_id: String(payload.id),
+          username: payload.username || '',
+          first_name: payload.first_name || '',
+          last_name: payload.last_name || '',
+          photo_url: payload.photo_url || '',
+        };
+        const { sessionId, ttl } = await createSession(env, user);
+        const secure = url.protocol === 'https:';
+        return json({ ok: true, user, session_id: sessionId }, 200, {
+          ...corsHeaders,
+          'Set-Cookie': setCookie('glnt_session', sessionId, { maxAge: ttl, secure }),
+        });
+      } catch (error) {
+        return json({ error: 'Bad auth payload format' }, 400, corsHeaders);
+      }
     }
 
     if (url.pathname === '/api/auth/me' && request.method === 'GET') {

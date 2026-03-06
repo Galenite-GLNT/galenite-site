@@ -94,7 +94,7 @@ test('auth/telegram accepts urlencoded payload', async () => {
 
   const res = await worker.fetch(new Request('https://api.example.com/api/auth/telegram', {
     method: 'POST',
-    headers: { Origin: 'https://galenite.ru', 'Content-Type': 'application/x-www-form-urlencoded' },
+    headers: { Origin: 'https://galenite.ru', 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
     body,
   }), { TELEGRAM_BOT_TOKEN: botToken, TELEGRAM_BOT_USERNAME: 'glnt_auth_bot' });
 
