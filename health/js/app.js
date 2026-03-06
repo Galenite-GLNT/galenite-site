@@ -19,6 +19,7 @@ let state = loadState();
 let foodSearchResults = [];
 let selectedFood = null;
 let editEntryId = null;
+let activeSection = 'today';
 
 init();
 
@@ -47,6 +48,11 @@ async function init() {
 
   renderNav();
   render();
+
+  window.addEventListener('resize', () => {
+    renderNav();
+    render();
+  });
 }
 
 function persist() {
@@ -55,14 +61,21 @@ function persist() {
 }
 
 function renderNav() {
-  const navMarkup = NAV_ITEMS.map((item, i) => `<button class="nav-btn ${i === 0 ? 'active' : ''}" data-target="${item.id}">${item.label}</button>`).join('');
+  const navMarkup = NAV_ITEMS.map((item) => `<button class="nav-btn ${item.id === activeSection ? 'active' : ''}" data-target="${item.id}">${item.label}</button>`).join('');
   el.bottomNav.innerHTML = navMarkup;
   el.sideNav.innerHTML = `<div class="brand">Galenite</div>${navMarkup}`;
   document.querySelectorAll('.nav-btn').forEach((btn) => {
     btn.onclick = () => {
-      document.querySelectorAll(`.nav-btn[data-target="${btn.dataset.target}"]`).forEach((n) => n.classList.add('active'));
-      document.querySelectorAll('.nav-btn').forEach((n) => { if (n.dataset.target !== btn.dataset.target) n.classList.remove('active'); });
-      document.getElementById(`sec-${btn.dataset.target}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      activeSection = btn.dataset.target;
+      if (isMobileViewport()) {
+        renderNav();
+        render();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+      document.querySelectorAll(`.nav-btn[data-target="${activeSection}"]`).forEach((n) => n.classList.add('active'));
+      document.querySelectorAll('.nav-btn').forEach((n) => { if (n.dataset.target !== activeSection) n.classList.remove('active'); });
+      document.getElementById(`sec-${activeSection}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
   });
 }
@@ -72,6 +85,7 @@ function cardMetric(title, value, unit, pct) {
 }
 
 function render() {
+  const mobile = isMobileViewport();
   const day = ensureDay(state, state.selectedDate);
   const sum = daySummary(day);
   const meals = mealGroups(day.foodEntries);
@@ -81,7 +95,7 @@ function render() {
   el.statusLine.textContent = `Вода: ${Math.round(sum.waterMl)} / ${state.goals.waterMl} мл · Сон: ${formatMinutes(sum.sleepMinutes || 0)} · Калории: ${Math.round(sum.calories)} / ${state.goals.calories}`;
 
   el.sections.innerHTML = `
-    <section class="section" id="sec-today">
+    <section class="section ${mobile && activeSection !== 'today' ? 'section--hidden' : ''}" id="sec-today">
       <div class="cards-grid">
         ${cardMetric('Calories', Math.round(sum.calories), 'kcal', progress(sum.calories, state.goals.calories))}
         ${cardMetric('Protein', Math.round(sum.protein), 'g', progress(sum.protein, state.goals.protein))}
@@ -94,7 +108,7 @@ function render() {
       <article class="coach"><h3>AI Coach</h3><p>${coachAdvice(sum)}</p></article>
     </section>
 
-    <section class="section" id="sec-food">
+    <section class="section ${mobile && activeSection !== 'food' ? 'section--hidden' : ''}" id="sec-food">
       <div class="section-head"><h2>Food log</h2><button class="btn" id="addFoodBtn">Добавить еду</button></div>
       <div class="food-blocks">${MEAL_TYPES.map((meal) => renderMealBlock(meal, meals[meal.id] || [])).join('')}</div>
       <div class="split-cards">
@@ -103,7 +117,7 @@ function render() {
       </div>
     </section>
 
-    <section class="section" id="sec-progress">
+    <section class="section ${mobile && activeSection !== 'progress' ? 'section--hidden' : ''}" id="sec-progress">
       <div class="split-cards">
         <article class="panel">
           <div class="section-head"><h2>Water</h2><button class="btn" id="customWaterBtn">Свой объем</button></div>
@@ -123,20 +137,24 @@ function render() {
       </article>
     </section>
 
-    <section class="section" id="sec-goals">
+    <section class="section ${mobile && activeSection !== 'goals' ? 'section--hidden' : ''}" id="sec-goals">
       <article class="panel"><div class="section-head"><h2>Goals</h2><button class="btn" id="saveGoalsBtn">Сохранить</button></div>${renderGoalsForm()}</article>
     </section>
 
-    <section class="section" id="sec-profile">
+    <section class="section ${mobile && activeSection !== 'profile' ? 'section--hidden' : ''}" id="sec-profile">
       <article class="panel"><div class="section-head"><h2>Profile</h2><button class="btn" id="saveProfileBtn">Сохранить</button></div>${renderProfileForm()}</article>
     </section>
 
-    <section class="section" id="sec-history">
+    <section class="section ${mobile && activeSection !== 'history' ? 'section--hidden' : ''}" id="sec-history">
       <article class="panel"><h2>History</h2><p class="muted">Выберите дату выше, чтобы открыть записи прошлых дней. Все записи доступны для редактирования и удаления.</p></article>
     </section>
   `;
 
   bindEvents();
+}
+
+function isMobileViewport() {
+  return window.matchMedia('(max-width: 1023px)').matches;
 }
 
 function coachAdvice(sum) {
