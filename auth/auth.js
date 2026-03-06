@@ -1,9 +1,14 @@
 import { getQueryParam } from '/shared/utils.js';
-import { API_BASE, apiFetch } from '/shared/config.js';
+import { apiFetch } from '/shared/config.js';
 
 const widget = document.getElementById('telegramWidget');
 const hint = document.getElementById('hint');
 const TELEGRAM_BOT_USERNAME = 'glnt_auth_bot';
+
+const ENDPOINTS = {
+  telegramLogin: '/api/auth/telegram',
+  me: '/api/auth/me',
+};
 
 requestAnimationFrame(() => {
   document.documentElement.classList.add('loaded');
@@ -34,10 +39,8 @@ function redirectToTarget() {
 
 window.onTelegramAuth = async function onTelegramAuth(user) {
   try {
-    const response = await fetch(`${API_BASE}/api/auth/telegram`, {
+    const response = await apiFetch(ENDPOINTS.telegramLogin, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
       body: JSON.stringify(user),
     });
 
@@ -58,7 +61,7 @@ async function init() {
   renderWidget();
 
   try {
-    const meResponse = await apiFetch('/api/auth/me', { method: 'GET' });
+    const meResponse = await apiFetch(ENDPOINTS.me, { method: 'GET' });
     if (meResponse.ok) {
       redirectToTarget();
     }
