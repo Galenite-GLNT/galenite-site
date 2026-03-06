@@ -16,7 +16,18 @@
       <h1>Health</h1>
       <p id="todayLine"></p>
     </div>
-    <button id="logoutBtn" class="ghost">Выйти</button>
+    <div class="top-actions">
+      <button id="goalsBtn" class="ghost">Цели</button>
+      <div class="account">
+        <button id="accountBtn" class="account-btn">
+          <span id="accountAvatar" class="account-avatar">U</span>
+          <span id="accountName">Профиль</span>
+        </button>
+        <div id="accountMenu" class="account-menu hidden">
+          <button id="logoutBtn" class="ghost account-logout">Выйти</button>
+        </div>
+      </div>
+    </div>
   </header>
 
   <p id="statusLine" class="status"></p>

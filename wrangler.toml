@@ -6,3 +6,13 @@ compatibility_date = "2025-01-01"
 # [[kv_namespaces]]
 # binding = "SESSIONS"
 # id = "<your-kv-namespace-id>"
+
+# Add D1 for persistent health data
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "galenite-health"
+# database_id = "<your-d1-id>"
+
+# AI bridge variables (set in Worker settings)
+# AI_WORKER_URL = "https://galenite-ai.ilyasch2020.workers.dev"
+# AI_INTERNAL_TOKEN = "<set-as-secret>"

@@ -11,6 +11,11 @@
 - `POST /api/auth/telegram`
 - `GET /api/auth/me`
 - `POST /api/auth/logout`
+- `GET /api/health/state`
+- `POST /api/health/goals`
+- `GET /api/health/logs?type=water&limit=8`
+- `POST /api/health/logs`
+- `POST /api/health/coach`
 
 ## Cloudflare Worker variables/secrets
 Задаются в **Worker Settings → Variables and Secrets**:
@@ -21,10 +26,12 @@ Plaintext variables:
 - `TELEGRAM_AUTH_MAX_AGE_SECONDS=604800`
 - `TELEGRAM_BOT_USERNAME=glnt_auth_bot`
 - `ALLOWED_ORIGINS=https://galenite.ru,https://www.galenite.ru`
+- `AI_WORKER_URL=https://galenite-ai.ilyasch2020.workers.dev`
 
 Secrets:
 - `SESSION_SECRET`
 - `TELEGRAM_BOT_TOKEN`
+- `AI_INTERNAL_TOKEN`
 
 > В клиентском коде нет `TELEGRAM_BOT_TOKEN` и `SESSION_SECRET`.
 
@@ -55,3 +62,13 @@ npm test
 3. `/health` без логина редиректит на `/auth`.
 4. `/api/food/search?q=apple` возвращает `items`.
 5. Logout чистит cookie-сессию и доступ к `/health` теряется.
+
+
+## Health DB (D1)
+Добавьте D1 binding для хранения целей и логов Health (вместо localStorage):
+```toml
+[[d1_databases]]
+binding = "DB"
+database_name = "galenite-health"
+database_id = "<your-d1-id>"
+```

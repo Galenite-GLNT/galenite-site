@@ -103,3 +103,78 @@ test('auth/telegram accepts urlencoded payload', async () => {
   assert.equal(payload.user.telegram_user_id, '888');
   assert.ok(payload.session_id);
 });
+
+
+test('health/state is available for authorized user', async () => {
+  const botToken = '123:abc';
+  const authPayload = {
+    id: '999',
+    first_name: 'Health',
+    username: 'healthuser',
+    auth_date: String(Math.floor(Date.now() / 1000)),
+  };
+  const hash = makeHash(authPayload, botToken);
+
+  const loginRes = await worker.fetch(new Request('https://api.example.com/api/auth/telegram', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Origin: 'https://galenite.ru' },
+    body: JSON.stringify({ ...authPayload, hash }),
+  }), { TELEGRAM_BOT_TOKEN: botToken, TELEGRAM_BOT_USERNAME: 'glnt_auth_bot' });
+
+  const loginBody = await loginRes.json();
+  const stateRes = await worker.fetch(new Request(`https://api.example.com/api/health/state?session_id=${encodeURIComponent(loginBody.session_id)}`, {
+    headers: { Origin: 'https://galenite.ru' },
+  }), { TELEGRAM_BOT_TOKEN: botToken, TELEGRAM_BOT_USERNAME: 'glnt_auth_bot' });
+
+  assert.equal(stateRes.status, 200);
+  const payload = await stateRes.json();
+  assert.equal(payload.ok, true);
+  assert.ok(payload.goals);
+  assert.ok(payload.logs);
+});
+
+
+test('health/coach proxies to ai worker via backend endpoint', async () => {
+  const botToken = '123:abc';
+  const authPayload = {
+    id: '1111',
+    first_name: 'Coach',
+    username: 'coachuser',
+    auth_date: String(Math.floor(Date.now() / 1000)),
+  };
+  const hash = makeHash(authPayload, botToken);
+
+  const loginRes = await worker.fetch(new Request('https://api.example.com/api/auth/telegram', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Origin: 'https://galenite.ru' },
+    body: JSON.stringify({ ...authPayload, hash }),
+  }), { TELEGRAM_BOT_TOKEN: botToken, TELEGRAM_BOT_USERNAME: 'glnt_auth_bot' });
+
+  const loginBody = await loginRes.json();
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url, init) => {
+    if (String(url).includes('/v1/health/coach')) {
+      assert.equal(init.method, 'POST');
+      const parsed = JSON.parse(init.body);
+      assert.equal(typeof parsed.question, 'string');
+      return new Response(JSON.stringify({ ok: true, tips: ['t1', 't2'], summary: 'sum', meta: { provider: 'ai' } }), { status: 200 });
+    }
+    return originalFetch(url, init);
+  };
+
+  try {
+    const coachRes = await worker.fetch(new Request(`https://api.example.com/api/health/coach?session_id=${encodeURIComponent(loginBody.session_id)}`, {
+      method: 'POST',
+      headers: { Origin: 'https://galenite.ru', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: 'Что делать сегодня?' }),
+    }), { TELEGRAM_BOT_TOKEN: botToken, TELEGRAM_BOT_USERNAME: 'glnt_auth_bot', AI_WORKER_URL: 'https://galenite-ai.example.workers.dev', AI_INTERNAL_TOKEN: 'internal' });
+
+    assert.equal(coachRes.status, 200);
+    const payload = await coachRes.json();
+    assert.equal(payload.ok, true);
+    assert.deepEqual(payload.tips, ['t1', 't2']);
+    assert.equal(payload.summary, 'sum');
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
