@@ -10,33 +10,34 @@
 <link rel="stylesheet" href="./css/styles.css">
 </head>
 <body>
-<div class="app">
-  <header class="top">
-    <div>
-      <h1>Health</h1>
-      <p id="todayLine"></p>
-    </div>
-    <button id="logoutBtn" class="ghost">Выйти</button>
-  </header>
+<div class="layout">
+  <aside class="side-nav" id="sideNav"></aside>
 
-  <p id="statusLine" class="status"></p>
-  <section class="grid" id="cards"></section>
-  <section class="coach" id="coach"></section>
+  <main class="main" id="main">
+    <header class="top">
+      <div>
+        <h1>Health</h1>
+        <p id="todayLine" class="muted"></p>
+      </div>
+      <div class="top-actions">
+        <input type="date" id="dayPicker" class="input input--compact">
+        <button id="logoutBtn" class="btn btn--ghost">Выйти</button>
+      </div>
+    </header>
+
+    <p id="statusLine" class="status"></p>
+    <section id="appSections"></section>
+  </main>
 </div>
 
 <div id="modal" class="modal hidden">
-  <div class="sheet">
-    <button id="closeModal" class="ghost">Закрыть</button>
+  <div class="sheet" id="modalSheet">
+    <button id="closeModal" class="btn btn--ghost">Закрыть</button>
     <div id="modalContent"></div>
   </div>
 </div>
 
-<nav class="bottom-nav">
-  <a href="#">Activity</a>
-  <a href="#">Fitness</a>
-  <a href="#">Plans</a>
-  <a href="#" class="active">Progress</a>
-</nav>
+<nav class="bottom-nav" id="bottomNav"></nav>
 
 <script type="module" src="./js/app.js"></script>
 </body>
