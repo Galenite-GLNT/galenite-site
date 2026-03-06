@@ -23,3 +23,13 @@ input,select{width:100%;padding:10px;border-radius:10px;border:1px solid #cbd5e1
 button.primary{background:#111827;color:#fff;border:0;padding:10px 14px;border-radius:10px}
 .bottom-nav{position:fixed;left:0;right:0;bottom:0;background:#fff;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #e2e8f0}
 .bottom-nav a{color:#475569;text-decoration:none}.bottom-nav .active{color:#111827;font-weight:600}
+
+.diary{margin-top:14px;display:flex;flex-direction:column;gap:10px}
+.section-head{display:flex;justify-content:space-between;align-items:center;background:#fff;padding:12px 16px;border-radius:18px;box-shadow:0 10px 30px rgba(15,23,42,.06)}
+.section-head h3{margin:0}
+.meal-card{background:#fff;padding:12px 16px;border-radius:16px;box-shadow:0 8px 24px rgba(15,23,42,.05)}
+.meal-head{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
+.meal-card h4{margin:0}
+.meal-card ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
+.quick-row{display:flex;gap:8px;margin:8px 0;flex-wrap:wrap}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}

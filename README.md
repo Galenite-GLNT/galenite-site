@@ -11,6 +11,7 @@
 ## Worker API endpoints
 - `GET /api/ping`
 - `GET /api/food/search?q=apple`
+- `GET /api/food/barcode/:code`
 - `POST /api/auth/telegram`
 - `GET /api/auth/me`
 - `POST /api/auth/logout`

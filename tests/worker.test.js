@@ -103,3 +103,32 @@ test('auth/telegram accepts urlencoded payload', async () => {
   assert.equal(payload.user.telegram_user_id, '888');
   assert.ok(payload.session_id);
 });
+
+
+test('food barcode endpoint normalizes product', async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => new Response(JSON.stringify({
+    product: {
+      code: '4601234567890',
+      product_name: 'Йогурт',
+      brands: 'Brand',
+      nutriments: {
+        'energy-kcal_100g': 95,
+        proteins_100g: 3.5,
+        fat_100g: 2.8,
+        carbohydrates_100g: 14
+      }
+    }
+  }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+
+  const res = await worker.fetch(new Request('https://api.example.com/api/food/barcode/4601234567890'), {
+    OPENFOODFACTS_BASE_URL: 'https://world.openfoodfacts.net'
+  });
+
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.item.barcode, '4601234567890');
+  assert.equal(body.item.calories_100g, 95);
+
+  globalThis.fetch = originalFetch;
+});

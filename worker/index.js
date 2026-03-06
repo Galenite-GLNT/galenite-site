@@ -152,6 +152,19 @@ async function handleFoodSearch(url, env) {
 }
 
 
+
+async function handleFoodBarcode(url, env) {
+  const barcode = (url.pathname.split('/').pop() || '').trim();
+  if (!barcode) return json({ item: null }, 400);
+  const offUrl = `${getApiBase(env)}/api/v2/product/${encodeURIComponent(barcode)}?fields=code,product_name,product_name_en,brands,image_front_small_url,image_front_url,nutriments`;
+  const resp = await fetch(offUrl, { headers: { 'User-Agent': 'galenite-worker/1.0' } });
+  if (!resp.ok) return json({ item: null }, 502);
+  const data = await resp.json();
+  const product = data?.product;
+  if (!product) return json({ item: null });
+  return json({ item: normalizeOffProduct(product) });
+}
+
 async function readTelegramPayload(request, url) {
   if (request.method === 'GET') {
     return Object.fromEntries(url.searchParams.entries());
@@ -209,6 +222,13 @@ export default {
 
     if (url.pathname === '/api/food/search' && request.method === 'GET') {
       const res = await handleFoodSearch(url, env);
+      Object.entries(corsHeaders).forEach(([k, v]) => res.headers.set(k, v));
+      return res;
+    }
+
+
+    if (url.pathname.startsWith('/api/food/barcode/') && request.method === 'GET') {
+      const res = await handleFoodBarcode(url, env);
       Object.entries(corsHeaders).forEach(([k, v]) => res.headers.set(k, v));
       return res;
     }
