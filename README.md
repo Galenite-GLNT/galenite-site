@@ -40,7 +40,7 @@ Worker валидирует payload по официальной схеме:
 ## Frontend config
 На страницах `auth/index.html` и `health/index.html` можно задать:
 ```html
-<script>window.__API_BASE__ = "https://galenite.ilyasch2020.workers.dev";</script>
+<script>window.API_BASE_URL = "https://galenite.ilyasch2020.workers.dev";</script>
 ```
 Если не задано, используется текущий origin.
 

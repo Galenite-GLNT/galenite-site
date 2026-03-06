@@ -1,10 +1,8 @@
 const DEFAULT_API_BASE_URL = 'https://galenite.ilyasch2020.workers.dev';
+const rawBase = String(window.API_BASE_URL || DEFAULT_API_BASE_URL).trim();
+const normalizedBase = rawBase.replace(/\/$/, '');
 
-if (!window.API_BASE_URL) {
-  window.API_BASE_URL = DEFAULT_API_BASE_URL;
-}
-
-export const API_BASE = String(window.API_BASE_URL || DEFAULT_API_BASE_URL).replace(/\/$/, '');
+export const API_BASE = normalizedBase.startsWith('http') ? normalizedBase : DEFAULT_API_BASE_URL;
 
 export function apiUrl(path) {
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
