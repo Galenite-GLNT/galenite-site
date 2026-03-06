@@ -5,6 +5,9 @@
 - **Backend API**: Cloudflare Worker (`worker/index.js`).
 - **Auth**: только Telegram Login Widget + серверная cookie-сессия (`HttpOnly`).
 
+## Product research
+- Подробный аналитический документ по UX/техрешениям nutrition/health-трекеров: `docs/galenite-nutrition-ux-tech-research.md`.
+
 ## Worker API endpoints
 - `GET /api/ping`
 - `GET /api/food/search?q=apple`
