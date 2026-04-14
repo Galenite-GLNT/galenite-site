@@ -1,0 +1,260 @@
+:root {
+  --bg: #040507;
+  --bg-soft: #0b0e14;
+  --text: #f5f7fa;
+  --muted: #b4bdcb;
+  --line: rgba(255, 255, 255, 0.12);
+  --card: rgba(255, 255, 255, 0.03);
+  --card-strong: rgba(255, 255, 255, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: radial-gradient(circle at 80% 0%, #11151f 0%, var(--bg) 35%);
+  color: var(--text);
+  font-family: "SF Pro Display", "Inter", "Segoe UI", Roboto, sans-serif;
+  scroll-behavior: smooth;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.landing-root {
+  overflow-x: clip;
+}
+
+.section {
+  width: min(1200px, 92vw);
+  margin: 0 auto;
+  padding: clamp(4rem, 11vw, 9rem) 0;
+}
+
+.hero {
+  min-height: 100svh;
+  display: grid;
+  align-content: center;
+  gap: 1.25rem;
+  position: relative;
+}
+
+.hero-glow {
+  position: absolute;
+  right: -10%;
+  top: 20%;
+  width: clamp(260px, 42vw, 560px);
+  aspect-ratio: 1;
+  background: radial-gradient(circle, rgba(95, 128, 174, 0.35), transparent 68%);
+  filter: blur(12px);
+  pointer-events: none;
+}
+
+.hero-kicker,
+.eyebrow {
+  font-size: 0.82rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0;
+}
+
+.hero-title {
+  margin: 0;
+  font-size: clamp(2.2rem, 8vw, 6.2rem);
+  line-height: 0.97;
+  max-width: 14ch;
+  letter-spacing: -0.03em;
+}
+
+.hero-copy,
+.section-subtitle,
+.card p,
+.module-item p,
+.value-row p,
+.footer {
+  color: var(--muted);
+}
+
+.hero-copy {
+  margin: 0.5rem 0 0;
+  max-width: 56ch;
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  line-height: 1.6;
+}
+
+.hero-actions {
+  margin-top: 1.6rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.8rem 1.35rem;
+  font-size: 0.95rem;
+  transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn-primary {
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.btn-primary:hover {
+  background: rgba(255, 255, 255, 0.17);
+}
+
+.btn-ghost {
+  border: 1px solid var(--line);
+  background: transparent;
+}
+
+.section-head {
+  max-width: 74ch;
+}
+
+.section h2 {
+  margin: 0.55rem 0 0;
+  font-size: clamp(1.9rem, 5.2vw, 4rem);
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.section-subtitle {
+  margin-top: 1rem;
+  line-height: 1.6;
+  font-size: clamp(0.98rem, 1.8vw, 1.2rem);
+}
+
+.grid-3 {
+  margin-top: clamp(1.6rem, 3vw, 2.8rem);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.card,
+.module-item,
+.value-shell {
+  background: linear-gradient(180deg, var(--card-strong), var(--card));
+  border: 1px solid var(--line);
+  border-radius: 1.2rem;
+}
+
+.card {
+  padding: 1.4rem;
+  min-height: 220px;
+}
+
+.card h3,
+.module-item h3 {
+  margin: 0;
+  font-size: 1.32rem;
+}
+
+.card p,
+.module-item p {
+  margin: 0.85rem 0 0;
+  line-height: 1.55;
+}
+
+.module-list {
+  margin-top: 1.8rem;
+  display: grid;
+  gap: 0.9rem;
+}
+
+.module-item {
+  padding: 1.25rem;
+}
+
+.module-type {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #cdd5e1;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+}
+
+.value-shell {
+  margin-top: 1.8rem;
+  padding: clamp(1.1rem, 2.2vw, 2rem);
+}
+
+.value-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.value-row:last-child {
+  border-bottom: 0;
+}
+
+.value-row p {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.value-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #d8e2f4;
+  margin-top: 0.5rem;
+  flex: none;
+}
+
+.cta {
+  text-align: center;
+}
+
+.cta .section-subtitle {
+  max-width: 60ch;
+  margin-inline: auto;
+}
+
+.cta .btn {
+  margin-top: 1.4rem;
+}
+
+.footer {
+  width: min(1200px, 92vw);
+  margin: 0 auto;
+  padding: 0 0 3rem;
+  font-size: 0.9rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  padding-top: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .hero {
+    min-height: auto;
+    padding-top: 7.5rem;
+  }
+
+  .hero-title {
+    max-width: 11ch;
+  }
+}
