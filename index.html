@@ -1,307 +1,189 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Galenite</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-  <!-- Шрифт Inter -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-  <!-- Основной стиль (десктоп по умолчанию) -->
+  <title>Galenite</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <!-- Стиль для маленьких ноутбуков -->
   <link rel="stylesheet" href="style_laptop.css" media="(min-width: 901px) and (max-width: 1280px)">
-  <!-- Стиль для телефонов -->
   <link rel="stylesheet" href="style_mobile.css" media="(max-width: 900px)">
 </head>
 <body>
-
-  <!-- HEADER -->
   <header class="header">
     <div class="header-inner">
-      <div class="logo-block">
-        <img src="image/logo.png" class="logo-img" alt="Galenite logo">
-      </div>
+      <a href="#galenite" class="brand">
+        <img src="image/logo.png" alt="Galenite logo" class="brand-logo">
+        <span>GALENITE</span>
+      </a>
 
-      <nav class="nav">
-        <div class="nav-group nav-group-left">
-          <a class="nav-link" href="#install">INSTALL</a>
-          <a class="nav-link" href="#modules">MODULES</a>
-        </div>
-
-        <a class="nav-link nav-center nav-link-active" href="#galenite">GALENITE</a>
-
-        <div class="nav-group nav-group-right">
-          <a class="nav-link" href="#ecosystem">ECOSYSTEM</a>
-          <a class="nav-link" href="#contacts">CONTACTS</a>
-        </div>
+      <nav class="nav" aria-label="Главное меню">
+        <a href="#install">Install</a>
+        <a href="#modules">Modules</a>
+        <a href="#ecosystem">Ecosystem</a>
+        <a href="#contacts">Contacts</a>
       </nav>
     </div>
   </header>
 
   <main>
-
-    <!-- BLOCK 1: HERO -->
-    <section class="block block-hero block-visible" id="galenite">
-      <div class="hero-inner">
-        <div class="hero-text">
-          <p class="hero-kicker">OPERATING SYSTEM FOR LIFE & BUSINESS</p>
-          <h1 class="hero-title">
-            <span>BEYOND ARTIFICIAL,</span>
-            <span>INTO INTELLIGENCE.</span>
-          </h1>
-          <p class="hero-subtitle">
-            Galenite — модульная экосистема ИИ, которая подключается к твоим деньгам,
-            привычкам, дому и работе. Одна система вместо десятков разрозненных сервисов.
-          </p>
-
-          <div class="hero-actions" id="install">
-            <a href="/galen_chat" class="btn btn-primary">Try it at work</a>
-            <button class="btn btn-ghost" type="button">
-              Watch how it works
-            </button>
-          </div>
+    <section class="hero section" id="galenite">
+      <div class="aurora" aria-hidden="true"></div>
+      <div class="hero-content reveal">
+        <p class="eyebrow">OPERATING SYSTEM FOR LIFE & BUSINESS</p>
+        <h1>Beyond artificial.<br>Into intelligence.</h1>
+        <p class="lead">
+          Galenite — модульная ИИ-экосистема, которая объединяет деньги, привычки,
+          дом, работу и планы в одну цельную систему вместо десятков разрозненных сервисов.
+        </p>
+        <div class="hero-actions" id="install">
+          <a href="/galen_chat" class="btn btn-primary">Try it at work</a>
+          <a href="#ecosystem" class="btn btn-secondary">Watch how it works</a>
         </div>
+      </div>
+      <div class="hero-visual reveal" aria-hidden="true">
+        <img src="image/logo.png" alt="" class="floating-logo">
+      </div>
+    </section>
 
-        <div class="hero-visual">
-          <div class="hero-crystal">
-            <img src="image/logo.png" alt="Galenite crystal">
-          </div>
+    <section class="section section-goal reveal">
+      <div class="content-grid two-col">
+        <article class="glass-card">
+          <p class="eyebrow">Цель Galenite</p>
+          <h2>Контроль над жизнью, а не только над цифрами.</h2>
+          <p>
+            Galenite помогает держать под контролем ключевые части жизни: финансы,
+            здоровье, дом, работу и время. Всё, что обычно разорвано между сервисами,
+            собирается в одну прозрачную картину.
+          </p>
+          <p>
+            Система снимает рутину, подсказывает следующий шаг и возвращает ощущение,
+            что ты управляешь своим днём и долгосрочными целями.
+          </p>
+        </article>
+        <div class="media-card">
+          <img src="image/finance.png" alt="Иконка финансового модуля Galenite">
         </div>
       </div>
     </section>
 
-    <!-- BLOCK 2: ЦЕЛЬ GALENITE -->
-    <section class="block block-goal">
-      <div class="goal-inner">
-        <div class="goal-card">
-          <div class="goal-badge">
-            <img src="image/cup.png" alt="" class="goal-icon">
-            <span>Цель Galenite</span>
-          </div>
-          <h2 class="goal-title">Контроль над жизнью, а не только над цифрами</h2>
-          <p class="goal-text">
-            Galenite — это система, которая помогает держать под контролем ключевые части
-            жизни: финансы, здоровье, дом, работу и время. Всё, что обычно разорвано между
-            разными сервисами, собирается в одну прозрачную картину.
-          </p>
-          <p class="goal-text">
-            Galenite снимает рутину, подсказывает, что делать дальше, и даёт ощущение,
-            что ты управляешь своим днём и долгосрочными целями, а не тонешь в хаосе
-            чатов и уведомлений.
-          </p>
+    <section class="section" id="ecosystem">
+      <div class="content-grid ecosystem">
+        <div class="showcase reveal">
+          <img src="image/chat-with-galen.png" alt="Интерфейс чата Galenite" class="showcase-chat">
+          <img src="image/iphone2.png" alt="Мобильный интерфейс Galenite" class="showcase-phone">
         </div>
 
-        <div class="goal-visual">
-          <img src="image/finance.png" alt="Galenite core" class="goal-finance-icon">
-        </div>
-      </div>
-    </section>
-
-    <!-- BLOCK 3: AI TECHNOLOGIES + HARDWARE -->
-    <section class="block block-tech" id="ecosystem">
-      <div class="tech-inner">
-
-        <!-- ЧАТ СЛЕВА -->
-        <div class="tech-chat">
-          <img src="image/chat-with-galen.png" alt="Chat with Galen" class="tech-chat-img">
-        </div>
-
-        <!-- ТЕЛЕФОН ПО ЦЕНТРУ -->
-        <div class="tech-phone">
-          <img src="image/iphone2.png" alt="Galenite hardware" class="tech-phone-img">
-        </div>
-
-        <!-- ТЕКСТ СПРАВА -->
-        <div class="tech-content">
-          <div class="tech-block">
-            <div class="tech-title-row">
-              <img src="image/CPU.png" alt="" class="tech-icon">
-              <h2 class="tech-title">AI Technologies</h2>
+        <div class="stack reveal">
+          <article class="info-card">
+            <div class="title-row">
+              <img src="image/CPU.png" alt="">
+              <h3>AI Technologies</h3>
             </div>
-            <p class="tech-text">
-              Our solutions are powered by in-house artificial intelligence models,
-              developed and trained on exclusive datasets collected by our team.
-              Models adapt to your routines, language and context rather than forcing
-              you into a template.
+            <p>
+              Наши решения работают на внутренних AI-моделях, обученных на уникальных
+              датасетах команды. Модели адаптируются к привычкам, языку и контексту пользователя.
             </p>
-          </div>
+          </article>
 
-          <div class="tech-block">
-            <div class="tech-title-row">
-              <img src="image/units.png" alt="" class="tech-icon">
-              <h2 class="tech-title">Galenite's Hardware</h2>
+          <article class="info-card">
+            <div class="title-row">
+              <img src="image/units.png" alt="">
+              <h3>Galenite’s Hardware</h3>
             </div>
-            <p class="tech-text">
-              Custom-built servers designed specifically for <strong>GALENITE</strong>
-              deliver lightning-fast response times and stable performance even under
-              heavy workloads. Dedicated hardware means your assistants stay responsive
-              while handling thousands of parallel requests.
+            <p>
+              Собственная серверная архитектура даёт высокую скорость отклика и стабильную
+              работу даже при больших параллельных нагрузках.
             </p>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- BLOCK 4: MODULES GRID -->
-    <section class="block block-modules" id="modules">
-      <div class="modules-inner">
-        <header class="modules-header">
-          <p class="modules-kicker">MODULE ECOSYSTEM</p>
-          <h2 class="modules-title">Один ядро — шесть модулей</h2>
-          <p class="modules-subtitle">
-            Galenite собирает вокруг себя цифровые модули: от финансов и здоровья
-            до бизнеса, дома и детских привычек.
-          </p>
-        </header>
-
-        <div class="modules-grid">
-          <!-- FINANCE -->
-          <article class="module-item">
-            <div class="module-icon-wrap">
-              <img src="image/finance.png" alt="Finance icon" class="module-icon">
-            </div>
-            <div class="module-content">
-              <h3 class="module-title">FINANCE</h3>
-              <p class="module-text">
-                Модуль, созданный для сохранения и грамотного умножения финансов.
-                Видит все карты и счета в одном месте, помогает наводить порядок
-                в тратах и планировать крупные цели.
-              </p>
-            </div>
-          </article>
-
-          <!-- HEALTH -->
-          <article class="module-item">
-            <div class="module-icon-wrap">
-              <img src="image/health.png" alt="Health icon" class="module-icon">
-            </div>
-            <div class="module-content">
-              <h3 class="module-title">HEALTH</h3>
-              <p class="module-text">
-                Следит за питанием, шагами, тренировками, водой и режимом сна.
-                Собирает всё в единую картину и помогает держать тело в тонусе
-                без лишней волокиты.
-              </p>
-            </div>
-          </article>
-
-          <!-- BOTHIVE -->
-          <article class="module-item">
-            <div class="module-icon-wrap">
-              <img src="image/bothive.png" alt="Bothive icon" class="module-icon">
-            </div>
-            <div class="module-content">
-              <h3 class="module-title">BOTHIVE</h3>
-              <p class="module-text">
-                Модуль для бизнеса, который создаёт умных ИИ-ботов под продажи,
-                поддержку и обучение. Боты знают продукт, говорят на языке клиента
-                и работают 24/7 как цифровые сотрудники.
-              </p>
-            </div>
-          </article>
-
-          <!-- HOUSEHUB -->
-          <article class="module-item">
-            <div class="module-icon-wrap">
-              <img src="image/househub.png" alt="Househub icon" class="module-icon">
-            </div>
-            <div class="module-content">
-              <h3 class="module-title">HOUSEHUB</h3>
-              <p class="module-text">
-                Управляет умным домом, подключает устройства и автоматизирует бытовые
-                процессы. Свет, климат, безопасность — в одном интерфейсе.
-              </p>
-            </div>
-          </article>
-
-          <!-- KIDS -->
-          <article class="module-item">
-            <div class="module-icon-wrap">
-              <img src="image/kids.png" alt="Kids icon" class="module-icon">
-            </div>
-            <div class="module-content">
-              <h3 class="module-title">KIDS</h3>
-              <p class="module-text">
-                Модуль для детей, где у ребёнка появляется свой ИИ-друг. Он
-                придумывает задания и игры, помогает учиться, но мягко объясняет
-                важность живого общения и реальных друзей.
-              </p>
-            </div>
-          </article>
-
-          <!-- AUTOPILOT -->
-          <article class="module-item">
-            <div class="module-icon-wrap">
-              <img src="image/autopilot.png" alt="Autopilot icon" class="module-icon">
-            </div>
-            <div class="module-content">
-              <h3 class="module-title">AUTOPILOT</h3>
-              <p class="module-text">
-                Модуль, который сам планирует твой день, неделю и месяц. Учитывает
-                привычки и расписание, подстраивается под переносы дел и собирает
-                всё в понятный план прямо в чате.
-              </p>
-            </div>
           </article>
         </div>
       </div>
     </section>
 
-    <!-- BLOCK 5: CONTACTS -->
-    <section class="block block-contacts" id="contacts">
-      <div class="contacts-inner">
-        <div class="contacts-left">
-          <img src="image/iphone1.png" alt="Galenite phone" class="contacts-phone">
-        </div>
+    <section class="section" id="modules">
+      <div class="section-head reveal">
+        <p class="eyebrow">MODULE ECOSYSTEM</p>
+        <h2>Одно ядро — шесть модулей.</h2>
+        <p>Финансы, здоровье, бизнес, дом, дети и персональный автопилот работают как единая система.</p>
+      </div>
 
-        <div class="contacts-right">
-          <img src="image/qr.png" alt="QR to Galenite" class="contacts-qr">
-
-          <div class="contacts-text">
-            <p class="contacts-line">+7 (913) 009 2961</p>
-            <p class="contacts-line contacts-strong">WWW.GALENITE.RU</p>
-            <p class="contacts-line contacts-strong">INFO@GALENITE.RU</p>
-          </div>
-        </div>
+      <div class="modules-grid">
+        <article class="module-card reveal">
+          <img src="image/finance.png" alt="Finance">
+          <h3>FINANCE</h3>
+          <p>Собирает карты и счета в одном месте, упорядочивает траты и помогает планировать цели.</p>
+        </article>
+        <article class="module-card reveal">
+          <img src="image/health.png" alt="Health">
+          <h3>HEALTH</h3>
+          <p>Следит за питанием, шагами, тренировками, водой и сном, собирая здоровье в понятную картину.</p>
+        </article>
+        <article class="module-card reveal">
+          <img src="image/bothive.png" alt="Bothive">
+          <h3>BOTHIVE</h3>
+          <p>Создаёт ИИ-ботов для продаж, поддержки и обучения, которые знают продукт и работают 24/7.</p>
+        </article>
+        <article class="module-card reveal">
+          <img src="image/househub.png" alt="Househub">
+          <h3>HOUSEHUB</h3>
+          <p>Подключает устройства умного дома и автоматизирует свет, климат и безопасность.</p>
+        </article>
+        <article class="module-card reveal">
+          <img src="image/kids.png" alt="Kids">
+          <h3>KIDS</h3>
+          <p>ИИ-друг для ребёнка: задания, обучение и игры с акцентом на баланс с живым общением.</p>
+        </article>
+        <article class="module-card reveal">
+          <img src="image/autopilot.png" alt="Autopilot">
+          <h3>AUTOPILOT</h3>
+          <p>Планирует день, неделю и месяц, учитывает переносы и формирует понятный план прямо в чате.</p>
+        </article>
       </div>
     </section>
 
+    <section class="section section-contacts" id="contacts">
+      <div class="content-grid two-col">
+        <div class="media-card reveal">
+          <img src="image/iphone1.png" alt="Телефон с интерфейсом Galenite" class="phone-left">
+        </div>
+        <article class="contact-card reveal">
+          <img src="image/qr.png" alt="QR-код на Galenite" class="qr">
+          <p>+7 (913) 009 2961</p>
+          <p>WWW.GALENITE.RU</p>
+          <p>INFO@GALENITE.RU</p>
+        </article>
+      </div>
+    </section>
   </main>
 
-  <!-- JS: анимация появления блоков и эффект хедера -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      const revealItems = document.querySelectorAll('.reveal');
       const header = document.querySelector('.header');
-      const blocks = document.querySelectorAll('.block');
 
-      // липкий хедер с тенью
-      window.addEventListener('scroll', () => {
-        if (window.scrollY > 40) {
-          header.classList.add('header-scrolled');
-        } else {
-          header.classList.remove('header-scrolled');
-        }
-      });
+      const onScroll = () => {
+        header.classList.toggle('header-scrolled', window.scrollY > 24);
+      };
 
-      // плавное появление блоков при скролле
       const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add('block-visible');
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
           }
         });
-      }, { threshold: 0.18 });
+      }, { threshold: 0.16, rootMargin: '0px 0px -8% 0px' });
 
-      blocks.forEach(block => {
-        if (!block.classList.contains('block-hero')) {
-          observer.observe(block);
-        }
-      });
+      revealItems.forEach((item) => observer.observe(item));
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        revealItems.forEach((item) => item.classList.add('is-visible'));
+      }
     });
   </script>
-
 </body>
 </html>
