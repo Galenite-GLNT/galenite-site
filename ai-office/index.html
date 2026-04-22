@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Galenite — AI Office</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="noise"></div>
+
+  <header class="topbar">
+    <div class="topbar__brand">GALENITE / AI OFFICE</div>
+    <div class="topbar__line"></div>
+  </header>
+
+  <main>
+    <section class="screen hero-screen" id="hero">
+      <div class="hero-shell reveal">
+        <div class="eyebrow">Galenite product system</div>
+        <h1>AI OFFICE</h1>
+        <p>
+          Живой интерфейс для ИИ-команды: роли, задачи, маршруты,
+          статусы и единая точка управления без визуального шума.
+        </p>
+      </div>
+
+      <div class="hero-video-peek" aria-hidden="true">
+        <div class="hero-video-peek__crop">
+          <div class="hero-video-peek__card">
+            <video class="hero-video-peek__video" autoplay muted loop playsinline preload="auto" poster="assets/office-plan.png">
+              <source src="assets/office-loop.mp4" type="video/mp4" />
+            </video>
+          </div>
+        </div>
+      </div>
+      <div class="hero-rings" aria-hidden="true"></div>
+    </section>
+
+    <section class="screen office-screen" id="office">
+      <div class="office-stage reveal">
+        <div class="office-card video-card" id="officeCard">
+          <div class="video-frame">
+            <video
+              class="office-video"
+              autoplay
+              muted
+              loop
+              playsinline
+              preload="auto"
+              poster="assets/office-plan.png"
+            >
+              <source src="assets/office-loop.mp4" type="video/mp4" />
+            </video>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section capabilities-section">
+      <div class="section-wrap reveal">
+        <div class="section-intro">
+          <div class="eyebrow">MVP</div>
+          <h2>Что уже есть в продукте</h2>
+          <p>Не абстрактная идея, а уже собранная база, которую можно показывать, тестировать и быстро доводить до рабочего внедрения.</p>
+        </div>
+
+        <div class="capability-grid">
+          <article class="capability-card capability-card--wide">
+            <span class="card-kicker">01</span>
+            <h3>Живой офис вместо сухой панели</h3>
+            <p>Команда показана как понятная сцена: пространство, сотрудники, логика перемещений и ощущение реальной работы системы.</p>
+          </article>
+          <article class="capability-card">
+            <span class="card-kicker">02</span>
+            <h3>Роли внутри одной системы</h3>
+            <p>Маркетолог, дизайнер, юрист, продажник и другие сотрудники собираются в одну управляемую структуру.</p>
+          </article>
+          <article class="capability-card">
+            <span class="card-kicker">03</span>
+            <h3>Назначение задач</h3>
+            <p>Каждой роли можно давать конкретные задачи и видеть, кто чем занят прямо в интерфейсе.</p>
+          </article>
+          <article class="capability-card">
+            <span class="card-kicker">04</span>
+            <h3>Аккуратный motion layer</h3>
+            <p>Чистый ЧБ-стиль, презентационная подача и ощущение премиального продукта уже на уровне первого экрана.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section workflow-section">
+      <div class="section-wrap reveal">
+        <div class="section-intro section-intro--split">
+          <div>
+            <div class="eyebrow">System logic</div>
+            <h2>Как это работает</h2>
+          </div>
+          <p>Смысл не в том, чтобы просто подключить пару ботов. AI Office собирает цифровой штат, даёт ему роли, логику взаимодействия и понятный уровень контроля для владельца бизнеса.</p>
+        </div>
+
+        <div class="workflow-line">
+          <article class="workflow-step">
+            <span>01</span>
+            <h3>Подключение сотрудников</h3>
+            <p>В систему добавляются нужные ИИ-роли под задачи конкретной компании.</p>
+          </article>
+          <article class="workflow-step">
+            <span>02</span>
+            <h3>Распределение задач</h3>
+            <p>Каждый сотрудник получает свою функцию, зону ответственности и контекст работы.</p>
+          </article>
+          <article class="workflow-step">
+            <span>03</span>
+            <h3>Контроль и координация</h3>
+            <p>Руководитель видит общую картину, статусы и результат без перегруженных админок.</p>
+          </article>
+          <article class="workflow-step">
+            <span>04</span>
+            <h3>Рост в систему</h3>
+            <p>Поверх MVP докручиваются интеграции, автоматизация, отчёты и глубокие сценарии.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section roles-section">
+      <div class="section-wrap reveal">
+        <div class="section-intro">
+          <div class="eyebrow">AI staff</div>
+          <h2>Кого можно подключить</h2>
+          <p>Состав команды масштабируется под бизнес: от базового офиса до полноценного набора цифровых специалистов.</p>
+        </div>
+
+        <div class="roles-grid">
+          <article class="role-chip">Маркетолог</article>
+          <article class="role-chip">Дизайнер</article>
+          <article class="role-chip">Продажник</article>
+          <article class="role-chip">Юрист</article>
+          <article class="role-chip">Техспециалист</article>
+          <article class="role-chip">Аналитик</article>
+          <article class="role-chip">Поддержка</article>
+          <article class="role-chip">Руководитель / координатор</article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section roadmap-section">
+      <div class="section-wrap reveal">
+        <div class="section-intro section-intro--split">
+          <div>
+            <div class="eyebrow">Next</div>
+            <h2>Куда продукт идёт дальше</h2>
+          </div>
+          <p>Текущая версия уже задаёт визуальный и продуктовый фундамент. Дальше AI Office превращается из эффектной сцены в полноценную рабочую платформу.</p>
+        </div>
+
+        <div class="roadmap-grid">
+          <article class="roadmap-card">
+            <span>Phase 1</span>
+            <h3>Пилотное внедрение</h3>
+            <p>Запуск на реальном бизнесе, сбор обратной связи и доведение сценариев до уверенного продакшн-уровня.</p>
+          </article>
+          <article class="roadmap-card">
+            <span>Phase 2</span>
+            <h3>Интеграции и API</h3>
+            <p>Подключение внешних систем, корпоративных источников данных и внутренних процессов компании.</p>
+          </article>
+          <article class="roadmap-card">
+            <span>Phase 3</span>
+            <h3>Автоматизация офиса</h3>
+            <p>Рутинные задачи, координация сотрудников, статусы, отчёты и часть бизнес-операций переходят в AI слой.</p>
+          </article>
+          <article class="roadmap-card">
+            <span>Phase 4</span>
+            <h3>Масштабируемая подписка</h3>
+            <p>Пакеты по составу команды, уровню поддержки и сложности внедрения для разных компаний.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
