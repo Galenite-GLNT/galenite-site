@@ -19,13 +19,13 @@ function setupOfficeTilt() {
     const progress = (viewport - rect.top) / (viewport + rect.height);
     const clamped = Math.max(0, Math.min(1, progress));
 
-    const start = 28;
-    const end = -28;
+    const start = 30;
+    const end = -30;
     const rotateX = start + (end - start) * clamped;
-    const translateY = (0.5 - clamped) * 32;
-    const scale = 0.96 + Math.sin(clamped * Math.PI) * 0.04;
+    const translateY = (0.5 - clamped) * 30;
+    const scale = 0.97 + Math.sin(clamped * Math.PI) * 0.03;
 
-    card.style.transform = `perspective(1800px) rotateX(${rotateX}deg) translateY(${translateY}px) scale(${scale})`;
+    card.style.transform = `perspective(1900px) rotateX(${rotateX}deg) translateY(${translateY}px) scale(${scale})`;
   };
 
   updateTilt();

@@ -23,8 +23,8 @@
         <div class="eyebrow">Galenite product system</div>
         <h1>AI OFFICE</h1>
         <p>
-          Живой интерфейс для ИИ-команды: роли, задачи, маршруты,
-          статусы и единая точка управления без визуального шума.
+          Визуальный интерфейс для ИИ-команды: роли, задачи, маршруты,
+          статусы и единая точка управления.
         </p>
       </div>
 
@@ -44,15 +44,7 @@
       <div class="office-stage reveal">
         <div class="office-card video-card" id="officeCard">
           <div class="video-frame">
-            <video
-              class="office-video"
-              autoplay
-              muted
-              loop
-              playsinline
-              preload="auto"
-              poster="assets/office-plan.png"
-            >
+            <video class="office-video" autoplay muted loop playsinline preload="auto" poster="assets/office-plan.png">
               <source src="assets/office-loop.mp4" type="video/mp4" />
             </video>
           </div>
@@ -60,125 +52,234 @@
       </div>
     </section>
 
-    <section class="content-section capabilities-section">
+    <section class="content-section showcase-section">
       <div class="section-wrap reveal">
-        <div class="section-intro">
-          <div class="eyebrow">MVP</div>
-          <h2>Что уже есть в продукте</h2>
-          <p>Не абстрактная идея, а уже собранная база, которую можно показывать, тестировать и быстро доводить до рабочего внедрения.</p>
-        </div>
-
-        <div class="capability-grid">
-          <article class="capability-card capability-card--wide">
-            <span class="card-kicker">01</span>
-            <h3>Живой офис вместо сухой панели</h3>
-            <p>Команда показана как понятная сцена: пространство, сотрудники, логика перемещений и ощущение реальной работы системы.</p>
-          </article>
-          <article class="capability-card">
-            <span class="card-kicker">02</span>
-            <h3>Роли внутри одной системы</h3>
-            <p>Маркетолог, дизайнер, юрист, продажник и другие сотрудники собираются в одну управляемую структуру.</p>
-          </article>
-          <article class="capability-card">
-            <span class="card-kicker">03</span>
-            <h3>Назначение задач</h3>
-            <p>Каждой роли можно давать конкретные задачи и видеть, кто чем занят прямо в интерфейсе.</p>
-          </article>
-          <article class="capability-card">
-            <span class="card-kicker">04</span>
-            <h3>Аккуратный motion layer</h3>
-            <p>Чистый ЧБ-стиль, презентационная подача и ощущение премиального продукта уже на уровне первого экрана.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="content-section workflow-section">
-      <div class="section-wrap reveal">
-        <div class="section-intro section-intro--split">
+        <div class="section-head section-head--compact">
           <div>
-            <div class="eyebrow">System logic</div>
-            <h2>Как это работает</h2>
+            <div class="eyebrow">Inside the product</div>
+            <h2>Не текст про офис. Сам офис.</h2>
           </div>
-          <p>Смысл не в том, чтобы просто подключить пару ботов. AI Office собирает цифровой штат, даёт ему роли, логику взаимодействия и понятный уровень контроля для владельца бизнеса.</p>
+          <p>Ниже не список фич, а наглядная модель того, как AI Office собирает роли, задачи и контроль в одну живую систему.</p>
         </div>
 
-        <div class="workflow-line">
-          <article class="workflow-step">
-            <span>01</span>
-            <h3>Подключение сотрудников</h3>
-            <p>В систему добавляются нужные ИИ-роли под задачи конкретной компании.</p>
+        <div class="showcase-grid">
+          <article class="bento-card bento-card--hero">
+            <div class="card-topline">
+              <span>Control layer</span>
+              <span>Live state</span>
+            </div>
+            <div class="console-window">
+              <div class="console-sidebar">
+                <div class="sidebar-pill active">Coordinator</div>
+                <div class="sidebar-pill">Marketing</div>
+                <div class="sidebar-pill">Design</div>
+                <div class="sidebar-pill">Legal</div>
+              </div>
+              <div class="console-main">
+                <div class="console-row console-row--header">
+                  <span>Task routing</span>
+                  <span>4 active</span>
+                </div>
+                <div class="console-task-list">
+                  <div class="task-item">
+                    <div>
+                      <strong>New request</strong>
+                      <span>Inbound brief → coordinator</span>
+                    </div>
+                    <em>queued</em>
+                  </div>
+                  <div class="task-item">
+                    <div>
+                      <strong>Landing page update</strong>
+                      <span>Coordinator → design</span>
+                    </div>
+                    <em>in work</em>
+                  </div>
+                  <div class="task-item">
+                    <div>
+                      <strong>Offer refinement</strong>
+                      <span>Coordinator → marketing</span>
+                    </div>
+                    <em>review</em>
+                  </div>
+                </div>
+                <div class="console-statusbar">
+                  <span>Roles synced</span>
+                  <span>Routes active</span>
+                  <span>Owner online</span>
+                </div>
+              </div>
+            </div>
           </article>
-          <article class="workflow-step">
-            <span>02</span>
-            <h3>Распределение задач</h3>
-            <p>Каждый сотрудник получает свою функцию, зону ответственности и контекст работы.</p>
+
+          <article class="bento-card stat-card">
+            <div class="card-topline"><span>Roles</span><span>01</span></div>
+            <div class="big-stat">08</div>
+            <p>Подключаемые сотрудники внутри одного интерфейса.</p>
           </article>
-          <article class="workflow-step">
-            <span>03</span>
-            <h3>Контроль и координация</h3>
-            <p>Руководитель видит общую картину, статусы и результат без перегруженных админок.</p>
+
+          <article class="bento-card stat-card">
+            <div class="card-topline"><span>State</span><span>02</span></div>
+            <div class="signal-stack">
+              <span class="signal-pill active">active</span>
+              <span class="signal-pill">queued</span>
+              <span class="signal-pill">review</span>
+            </div>
+            <p>Статусы понятны с первого взгляда, без тяжелой админки.</p>
           </article>
-          <article class="workflow-step">
-            <span>04</span>
-            <h3>Рост в систему</h3>
-            <p>Поверх MVP докручиваются интеграции, автоматизация, отчёты и глубокие сценарии.</p>
+
+          <article class="bento-card routes-card">
+            <div class="card-topline"><span>Routing map</span><span>03</span></div>
+            <div class="route-map">
+              <div class="route-node route-node--center">owner</div>
+              <div class="route-node route-node--a">marketing</div>
+              <div class="route-node route-node--b">design</div>
+              <div class="route-node route-node--c">legal</div>
+              <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M50 50 C60 34, 74 28, 82 20"/>
+                <path d="M50 50 C66 50, 78 50, 88 50"/>
+                <path d="M50 50 C60 66, 74 72, 82 80"/>
+              </svg>
+            </div>
+          </article>
+
+          <article class="bento-card glass-card">
+            <div class="card-topline"><span>Output</span><span>04</span></div>
+            <div class="mini-docs">
+              <div class="mini-doc"></div>
+              <div class="mini-doc"></div>
+              <div class="mini-doc"></div>
+            </div>
+            <p>Задачи превращаются в результат, а не просто в ответы в чате.</p>
           </article>
         </div>
       </div>
     </section>
 
-    <section class="content-section roles-section">
+    <section class="content-section process-section">
       <div class="section-wrap reveal">
-        <div class="section-intro">
-          <div class="eyebrow">AI staff</div>
-          <h2>Кого можно подключить</h2>
-          <p>Состав команды масштабируется под бизнес: от базового офиса до полноценного набора цифровых специалистов.</p>
-        </div>
-
-        <div class="roles-grid">
-          <article class="role-chip">Маркетолог</article>
-          <article class="role-chip">Дизайнер</article>
-          <article class="role-chip">Продажник</article>
-          <article class="role-chip">Юрист</article>
-          <article class="role-chip">Техспециалист</article>
-          <article class="role-chip">Аналитик</article>
-          <article class="role-chip">Поддержка</article>
-          <article class="role-chip">Руководитель / координатор</article>
-        </div>
-      </div>
-    </section>
-
-    <section class="content-section roadmap-section">
-      <div class="section-wrap reveal">
-        <div class="section-intro section-intro--split">
+        <div class="section-head section-head--split">
           <div>
-            <div class="eyebrow">Next</div>
-            <h2>Куда продукт идёт дальше</h2>
+            <div class="eyebrow">Workflow</div>
+            <h2>Как проходит работа</h2>
           </div>
-          <p>Текущая версия уже задаёт визуальный и продуктовый фундамент. Дальше AI Office превращается из эффектной сцены в полноценную рабочую платформу.</p>
+          <p>AI Office выглядит как продукт не тогда, когда много обещает, а когда показывает понятный путь от входящего запроса до готового результата.</p>
         </div>
 
-        <div class="roadmap-grid">
-          <article class="roadmap-card">
-            <span>Phase 1</span>
-            <h3>Пилотное внедрение</h3>
-            <p>Запуск на реальном бизнесе, сбор обратной связи и доведение сценариев до уверенного продакшн-уровня.</p>
+        <div class="process-rail">
+          <article class="process-card">
+            <span class="process-index">01</span>
+            <h3>Запрос попадает в офис</h3>
+            <p>Входящее сообщение, задача или бриф сначала попадает в координационный слой.</p>
+            <div class="process-visual process-visual--inbox">
+              <div class="pv-window"></div>
+              <div class="pv-line short"></div>
+              <div class="pv-line"></div>
+            </div>
           </article>
-          <article class="roadmap-card">
-            <span>Phase 2</span>
-            <h3>Интеграции и API</h3>
-            <p>Подключение внешних систем, корпоративных источников данных и внутренних процессов компании.</p>
+
+          <article class="process-card process-card--featured">
+            <span class="process-index">02</span>
+            <h3>Система назначает роль и маршрут</h3>
+            <p>Задача уходит не в общий хаос, а по нужному сценарию: кто выполняет, кто проверяет, кто возвращает итог.</p>
+            <div class="process-visual process-visual--route">
+              <div class="pv-orbit pv-orbit--core"></div>
+              <div class="pv-orbit pv-orbit--one"></div>
+              <div class="pv-orbit pv-orbit--two"></div>
+              <div class="pv-dot pv-dot--one"></div>
+              <div class="pv-dot pv-dot--two"></div>
+              <div class="pv-dot pv-dot--three"></div>
+            </div>
           </article>
-          <article class="roadmap-card">
-            <span>Phase 3</span>
-            <h3>Автоматизация офиса</h3>
-            <p>Рутинные задачи, координация сотрудников, статусы, отчёты и часть бизнес-операций переходят в AI слой.</p>
+
+          <article class="process-card">
+            <span class="process-index">03</span>
+            <h3>Владелец видит статус и итог</h3>
+            <p>Не нужно разбирать логи. Система показывает прогресс, занятость и готовый выход.</p>
+            <div class="process-visual process-visual--output">
+              <div class="pv-sheet large"></div>
+              <div class="pv-sheet small"></div>
+            </div>
           </article>
-          <article class="roadmap-card">
-            <span>Phase 4</span>
-            <h3>Масштабируемая подписка</h3>
-            <p>Пакеты по составу команды, уровню поддержки и сложности внедрения для разных компаний.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section staff-section">
+      <div class="section-wrap reveal">
+        <div class="section-head section-head--compact">
+          <div>
+            <div class="eyebrow">AI staff</div>
+            <h2>Состав команды под задачу</h2>
+          </div>
+          <p>Можно стартовать с малого состава, а можно собрать полноценный цифровой офис под отделы, поддержку и внутренние процессы.</p>
+        </div>
+
+        <div class="staff-layout">
+          <article class="staff-board">
+            <div class="staff-core">coordinator</div>
+            <div class="staff-node staff-node--1">marketing</div>
+            <div class="staff-node staff-node--2">design</div>
+            <div class="staff-node staff-node--3">sales</div>
+            <div class="staff-node staff-node--4">legal</div>
+            <div class="staff-node staff-node--5">support</div>
+            <div class="staff-node staff-node--6">tech</div>
+          </article>
+
+          <div class="staff-packs">
+            <article class="staff-pack">
+              <div class="card-topline"><span>Starter office</span><span>Base</span></div>
+              <div class="pack-tags">
+                <span>Coordinator</span>
+                <span>Marketing</span>
+                <span>Design</span>
+              </div>
+              <p>Для упаковки, контента, лендингов и ежедневной координации.</p>
+            </article>
+
+            <article class="staff-pack">
+              <div class="card-topline"><span>Extended office</span><span>Scale</span></div>
+              <div class="pack-tags">
+                <span>Sales</span>
+                <span>Legal</span>
+                <span>Support</span>
+                <span>Tech</span>
+              </div>
+              <p>Когда офис начинает работать не как демо, а как операционный слой бизнеса.</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section rollout-section">
+      <div class="section-wrap reveal">
+        <div class="section-head section-head--split">
+          <div>
+            <div class="eyebrow">Rollout</div>
+            <h2>MVP уже собран. Дальше — внедрение.</h2>
+          </div>
+          <p>Сейчас продукт уже показывает интерфейс, роли, маршруты и динамику. Следующий слой — подключение интеграций, сценариев и реальной нагрузки на пилотах.</p>
+        </div>
+
+        <div class="rollout-grid">
+          <article class="rollout-panel">
+            <div class="rollout-label">Now</div>
+            <ul>
+              <li>живой офис как интерфейс</li>
+              <li>роли и статусы сотрудников</li>
+              <li>визуальная демонстрация маршрутов</li>
+              <li>презентационный MVP для первых запусков</li>
+            </ul>
+          </article>
+          <article class="rollout-panel rollout-panel--accent">
+            <div class="rollout-label">Next</div>
+            <ul>
+              <li>пилот на реальном бизнесе</li>
+              <li>интеграции и API-слой</li>
+              <li>глубокие сценарии автоматизации</li>
+              <li>масштабируемая подписка по составу офиса</li>
+            </ul>
           </article>
         </div>
       </div>
