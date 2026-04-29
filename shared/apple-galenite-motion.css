@@ -1,0 +1,114 @@
+/* Apple + Galenite shared motion layer */
+:root{
+  --glnt-ink:#101014;
+  --glnt-soft:#f6f6f2;
+  --glnt-surface:rgba(255,255,255,.68);
+  --glnt-line:rgba(17,17,20,.09);
+  --glnt-shadow:0 34px 110px rgba(15,17,24,.14);
+  --glnt-ease:cubic-bezier(.2,.8,.2,1);
+}
+
+body{
+  background:
+    radial-gradient(circle at 18% 14%,rgba(255,255,255,.92),transparent 28%),
+    radial-gradient(circle at 84% 10%,rgba(30,31,38,.10),transparent 32%),
+    radial-gradient(circle at 52% 90%,rgba(210,210,204,.78),transparent 38%),
+    linear-gradient(135deg,#fbfbf8,#eeeeea 54%,#deded8) !important;
+}
+
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  opacity:.045;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 280 280' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.header,.topbar,.sidebar,.goal-card,.module-item,.contacts-inner,.chat-shell,.input-pill,.auth-card,.center,.app-shell{
+  -webkit-backdrop-filter:blur(30px) saturate(150%);
+  backdrop-filter:blur(30px) saturate(150%);
+}
+
+.header,.sidebar,.goal-card,.chat-shell,.input-pill{
+  background:var(--glnt-surface) !important;
+  border-color:var(--glnt-line) !important;
+  box-shadow:var(--glnt-shadow), inset 0 1px 0 rgba(255,255,255,.72) !important;
+}
+
+.logo-img,.crystal,.hero-crystal,.goal-finance-icon,.tech-chat-img,.tech-phone-img,.contacts-phone,.galen-avatar img{
+  animation:glntFloat 5.8s ease-in-out infinite;
+  will-change:transform;
+}
+
+.hero-text,.goal-card,.tech-content,.modules-header,.contacts-right,.galen-block{
+  animation:glntEnter .75s var(--glnt-ease) both;
+}
+
+.hero-visual,.goal-visual,.tech-chat,.tech-phone,.modules-grid,.contacts-left,.chat-shell{
+  animation:glntEnter .85s var(--glnt-ease) .08s both;
+}
+
+.btn,.cta,.social-btn,.module-item,.chat-item,.chats-new,#send,.input-pill,button,a{
+  transition:transform .22s var(--glnt-ease), box-shadow .22s var(--glnt-ease), background .22s var(--glnt-ease), opacity .22s var(--glnt-ease), color .22s var(--glnt-ease);
+}
+
+.btn:hover,.cta:hover,.social-btn:hover,.module-item:hover,.chat-item:hover,.chats-new:hover,#send:hover{
+  transform:translateY(-2px);
+}
+
+.btn-primary,.cta,#send,.chats-new{
+  position:relative;
+  overflow:hidden;
+}
+
+.btn-primary::after,.cta::after,#send::after,.chats-new::after{
+  content:"";
+  position:absolute;
+  top:-45%;
+  left:-70%;
+  width:64%;
+  height:190%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);
+  transform:rotate(18deg);
+  transition:left .6s var(--glnt-ease);
+}
+
+.btn-primary:hover::after,.cta:hover::after,#send:hover::after,.chats-new:hover::after{left:125%;}
+
+.block{
+  transition:opacity .82s var(--glnt-ease), transform .82s var(--glnt-ease), filter .82s var(--glnt-ease) !important;
+  filter:blur(8px);
+}
+.block-visible{filter:blur(0);}
+
+.chat-messages .message,.message,.chat-bubble{
+  animation:glntMessage .28s var(--glnt-ease) both;
+}
+
+.input-pill,.field,.pass,.composer{
+  box-shadow:0 20px 52px rgba(40,44,54,.12), inset 0 1px 0 rgba(255,255,255,.86) !important;
+}
+
+.input-pill:focus-within,.field:focus,.pass:focus-within,.composer:focus-within{
+  transform:translateY(-1px);
+  box-shadow:0 28px 70px rgba(40,44,54,.18), 0 0 0 3px rgba(17,17,20,.08), inset 0 1px 0 rgba(255,255,255,.9) !important;
+}
+
+@keyframes glntEnter{
+  from{opacity:0;transform:translateY(26px) scale(.985);filter:blur(12px)}
+  to{opacity:1;transform:none;filter:blur(0)}
+}
+@keyframes glntFloat{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-8px)}
+}
+@keyframes glntMessage{
+  from{opacity:0;transform:translateY(10px) scale(.985)}
+  to{opacity:1;transform:none}
+}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important;}
+}
