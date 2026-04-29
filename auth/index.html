@@ -6,20 +6,35 @@
   <title>Galenite Auth</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css?v=20260429_premium_2" />
 </head>
 <body>
-  <main class="page">
-    <div class="header">GALENITE AUTH</div>
-    <div class="center">
-      <img class="crystal" src="./images/auth.png" alt="Galenite auth" />
-      <h1>Вход/Регистрация Telegram</h1>
-      <p class="hint">На данный момент Galenite использует только Telegram для авторизации</p>
-      <div id="telegramWidget" class="widget"></div>
-      <div id="hint" class="hint" aria-live="polite"></div>
-    </div>
+  <main class="auth-page">
+    <a class="brand" href="/">
+      <img src="./images/logo.png" alt="">
+      <span>GALENITE</span>
+    </a>
+
+    <section class="auth-shell">
+      <div class="auth-copy">
+        <p class="eyebrow">SECURE ENTRY</p>
+        <h1>Один аккаунт для всей экосистемы.</h1>
+        <p>Вход через Telegram открывает доступ к Health, Galen Chat и будущим модулям Galenite без лишних форм и паролей.</p>
+      </div>
+
+      <div class="auth-card">
+        <div class="crystal-wrap">
+          <img class="crystal" src="./images/auth.png" alt="Galenite auth" />
+        </div>
+        <span class="card-label">GALENITE ID</span>
+        <h2>Войти через Telegram</h2>
+        <p class="hint-main">Сессия хранится на сервере через защищенную cookie. Секреты не лежат в клиентском коде.</p>
+        <div id="telegramWidget" class="widget"></div>
+        <div id="hint" class="hint" aria-live="polite"></div>
+      </div>
+    </section>
   </main>
-  <script type="module" src="./auth.js?v=20260306_5"></script>
+  <script type="module" src="./auth.js?v=20260429_premium_2"></script>
 </body>
 </html>
