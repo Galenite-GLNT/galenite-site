@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="title desc">
+  <title id="title">Sable</title>
+  <desc id="desc">Гранёный силуэт соболя</desc>
+  <g fill="none" fill-rule="evenodd">
+    <path fill="#0A0B0D" d="M25 93 41 45l25-24 26 12 18 21-16 13-27-4-16 17 17 25-25 24-22-18z"/>
+    <path fill="#31343A" d="m41 45 25-24 4 39-19 20z"/>
+    <path fill="#676B73" d="m66 21 26 12-22 27z"/>
+    <path fill="#B7BAC1" d="m92 33 18 21-16 13-24-7z"/>
+    <path fill="#15171B" d="m51 80 16-17 27 4-26 38z"/>
+    <path fill="#25282E" d="m68 105 21 9 28-13 21 9-15 25-38 9-42-15z"/>
+    <path fill="#5D6169" d="m89 114 28-13 6 34z"/>
+    <path fill="#9A9DA5" d="m117 101 21 9-15 25z"/>
+    <path fill="#050607" d="m43 129 25-24 21 9-4 30z"/>
+    <path fill="#0A0B0D" d="m105 54 24 8-17 8-18-3z"/>
+    <path fill="#E4E5E8" d="m92 33 13 21-35 6z" opacity=".9"/>
+  </g>
+</svg>
