@@ -6,20 +6,31 @@
   <title>Galenite Auth</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
   <main class="page">
     <div class="header">GALENITE AUTH</div>
-    <div class="center">
-      <img class="crystal" src="./images/auth.png" alt="Galenite auth" />
+
+    <section class="center">
+      <div class="crystal" id="authSticker" aria-label="Galenite Auth"></div>
+
       <h1>Вход/Регистрация Telegram</h1>
-      <p class="hint">На данный момент Galenite использует только Telegram для авторизации</p>
-      <div id="telegramWidget" class="widget"></div>
-      <div id="hint" class="hint" aria-live="polite"></div>
-    </div>
+      <p class="subtitle">Galenite использует Telegram для быстрого входа в аккаунт.</p>
+
+      <div class="telegram-login-wrap">
+        <button class="telegram-login-visual" type="button" tabindex="-1" aria-hidden="true">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.6 3.3 18.4 19c-.2 1.1-.9 1.4-1.8.9l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.4-5 9.1-8.2c.4-.4-.1-.6-.6-.2L6 12.8l-4.8-1.5c-1-.3-1.1-1 .2-1.5L20.1 2.6c.9-.3 1.7.2 1.5.7Z"/></svg>
+          <span>Войти через Telegram</span>
+        </button>
+        <div id="telegramWidget" class="telegram-widget" aria-label="Войти через Telegram"></div>
+      </div>
+
+      <p id="hint" class="hint" aria-live="polite"></p>
+    </section>
   </main>
-  <script type="module" src="./auth.js?v=20260306_5"></script>
+
+  <script src="./auth.js?v=20260831_1"></script>
 </body>
 </html>
